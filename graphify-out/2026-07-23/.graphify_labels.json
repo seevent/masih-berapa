@@ -7,7 +7,6 @@
   "5": "Task Dependency Hierarchy",
   "6": "SettingsPage.tsx",
   "7": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
-  "8": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
   "9": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
   "10": "graphify.md",
   "11": "idea-orchestrator.md",
@@ -21,7 +20,5 @@
   "19": "Project Handoff Document: SSES T2 Sparepart Management (\"Masih Berapa\")",
   "20": "Implementation Tickets: Dashboard Manajemen Sparepart",
   "21": "handoff.md",
-  "22": "mockSeedData.ts",
-  "23": "to-spec.md",
-  "24": "to-ticket.md"
+  "22": "mockSeedData.ts"
 }

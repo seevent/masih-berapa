@@ -9,7 +9,7 @@
       "source_file": "package.json",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_json",
+      "id": "package",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "package.json"
@@ -20,7 +20,7 @@
       "source_file": "package.json",
       "source_location": "L2",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_name",
+      "id": "package_name",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "name"
@@ -31,7 +31,7 @@
       "source_file": "package.json",
       "source_location": "L3",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_private",
+      "id": "package_private",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "private"
@@ -42,7 +42,7 @@
       "source_file": "package.json",
       "source_location": "L4",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_version",
+      "id": "package_version",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "version"
@@ -53,7 +53,7 @@
       "source_file": "package.json",
       "source_location": "L5",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_type",
+      "id": "package_type",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "type"
@@ -64,7 +64,7 @@
       "source_file": "package.json",
       "source_location": "L6",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_scripts",
+      "id": "package_scripts",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "scripts"
@@ -75,7 +75,7 @@
       "source_file": "package.json",
       "source_location": "L7",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_scripts_dev",
+      "id": "package_scripts_dev",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "dev"
@@ -86,7 +86,7 @@
       "source_file": "package.json",
       "source_location": "L8",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_scripts_build",
+      "id": "package_scripts_build",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "build"
@@ -97,7 +97,7 @@
       "source_file": "package.json",
       "source_location": "L9",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_scripts_preview",
+      "id": "package_scripts_preview",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "preview"
@@ -108,7 +108,7 @@
       "source_file": "package.json",
       "source_location": "L11",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
+      "id": "package_dependencies",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "dependencies"
@@ -119,7 +119,7 @@
       "source_file": "package.json",
       "source_location": "L12",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_supabase_supabase_js",
+      "id": "package_dependencies_supabase_supabase_js",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "@supabase/supabase-js"
@@ -141,7 +141,7 @@
       "source_file": "package.json",
       "source_location": "L13",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_clsx",
+      "id": "package_dependencies_clsx",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "clsx"
@@ -163,7 +163,7 @@
       "source_file": "package.json",
       "source_location": "L14",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_core_js",
+      "id": "package_dependencies_core_js",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "core-js"
@@ -185,7 +185,7 @@
       "source_file": "package.json",
       "source_location": "L15",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_html2canvas",
+      "id": "package_dependencies_html2canvas",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "html2canvas"
@@ -207,7 +207,7 @@
       "source_file": "package.json",
       "source_location": "L16",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_html5_qrcode",
+      "id": "package_dependencies_html5_qrcode",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "html5-qrcode"
@@ -229,7 +229,7 @@
       "source_file": "package.json",
       "source_location": "L17",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_jspdf",
+      "id": "package_dependencies_jspdf",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "jspdf"
@@ -251,7 +251,7 @@
       "source_file": "package.json",
       "source_location": "L18",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_lucide_react",
+      "id": "package_dependencies_lucide_react",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "lucide-react"
@@ -273,7 +273,7 @@
       "source_file": "package.json",
       "source_location": "L19",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_motion",
+      "id": "package_dependencies_motion",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "motion"
@@ -295,7 +295,7 @@
       "source_file": "package.json",
       "source_location": "L20",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_qrcode_react",
+      "id": "package_dependencies_qrcode_react",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "qrcode.react"
@@ -317,7 +317,7 @@
       "source_file": "package.json",
       "source_location": "L21",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_react",
+      "id": "package_dependencies_react",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "react"
@@ -339,7 +339,7 @@
       "source_file": "package.json",
       "source_location": "L22",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_react_dom",
+      "id": "package_dependencies_react_dom",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "react-dom"
@@ -361,7 +361,7 @@
       "source_file": "package.json",
       "source_location": "L23",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_react_router_dom",
+      "id": "package_dependencies_react_router_dom",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "react-router-dom"
@@ -383,7 +383,7 @@
       "source_file": "package.json",
       "source_location": "L24",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_recharts",
+      "id": "package_dependencies_recharts",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "recharts"
@@ -405,7 +405,7 @@
       "source_file": "package.json",
       "source_location": "L25",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_tailwind_merge",
+      "id": "package_dependencies_tailwind_merge",
       "community": 0,
       "community_name": "dependencies",
       "norm_label": "tailwind-merge"
@@ -427,7 +427,7 @@
       "source_file": "package.json",
       "source_location": "L26",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_xlsx",
+      "id": "package_dependencies_xlsx",
       "community": 3,
       "community_name": "App.tsx",
       "norm_label": "xlsx"
@@ -449,7 +449,7 @@
       "source_file": "package.json",
       "source_location": "L28",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies",
+      "id": "package_devdependencies",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "devdependencies"
@@ -460,7 +460,7 @@
       "source_file": "package.json",
       "source_location": "L29",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_tailwindcss_vite",
+      "id": "package_devdependencies_tailwindcss_vite",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "@tailwindcss/vite"
@@ -482,7 +482,7 @@
       "source_file": "package.json",
       "source_location": "L30",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_types_node",
+      "id": "package_devdependencies_types_node",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "@types/node"
@@ -504,7 +504,7 @@
       "source_file": "package.json",
       "source_location": "L31",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_types_react",
+      "id": "package_devdependencies_types_react",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "@types/react"
@@ -526,7 +526,7 @@
       "source_file": "package.json",
       "source_location": "L32",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_types_react_dom",
+      "id": "package_devdependencies_types_react_dom",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "@types/react-dom"
@@ -548,7 +548,7 @@
       "source_file": "package.json",
       "source_location": "L33",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_vitejs_plugin_react",
+      "id": "package_devdependencies_vitejs_plugin_react",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "@vitejs/plugin-react"
@@ -570,7 +570,7 @@
       "source_file": "package.json",
       "source_location": "L34",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_autoprefixer",
+      "id": "package_devdependencies_autoprefixer",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "autoprefixer"
@@ -592,7 +592,7 @@
       "source_file": "package.json",
       "source_location": "L35",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_postcss",
+      "id": "package_devdependencies_postcss",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "postcss"
@@ -614,7 +614,7 @@
       "source_file": "package.json",
       "source_location": "L36",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_tailwindcss",
+      "id": "package_devdependencies_tailwindcss",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "tailwindcss"
@@ -636,7 +636,7 @@
       "source_file": "package.json",
       "source_location": "L37",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_typescript",
+      "id": "package_devdependencies_typescript",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "typescript"
@@ -658,7 +658,7 @@
       "source_file": "package.json",
       "source_location": "L38",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_vite",
+      "id": "package_devdependencies_vite",
       "community": 4,
       "community_name": "devDependencies",
       "norm_label": "vite"
@@ -931,7 +931,7 @@
       "label": "OnDutyPersonel",
       "file_type": "code",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L23",
+      "source_location": "L22",
       "_origin": "ast",
       "id": "src_context_inventorycontext_ondutypersonel",
       "community": 22,
@@ -942,7 +942,7 @@
       "label": "InventoryContextType",
       "file_type": "code",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L27",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "src_context_inventorycontext_inventorycontexttype",
       "community": 22,
@@ -953,7 +953,7 @@
       "label": "InventoryContext",
       "file_type": "code",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L78",
+      "source_location": "L76",
       "_origin": "ast",
       "id": "src_context_inventorycontext_inventorycontext",
       "community": 22,
@@ -964,7 +964,7 @@
       "label": "InventoryProvider()",
       "file_type": "code",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L80",
+      "source_location": "L78",
       "_origin": "ast",
       "id": "src_context_inventorycontext_inventoryprovider",
       "community": 6,
@@ -975,7 +975,7 @@
       "label": "useInventory()",
       "file_type": "code",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L583",
+      "source_location": "L574",
       "_origin": "ast",
       "id": "src_context_inventorycontext_useinventory",
       "community": 3,
@@ -1044,8 +1044,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_context_notificationcontext_notificationprovider",
-      "community": 6,
-      "community_name": "SettingsPage.tsx",
+      "community": 3,
+      "community_name": "App.tsx",
       "norm_label": "notificationprovider()"
     },
     {
@@ -1074,7 +1074,7 @@
       "label": "INITIAL_JENIS_PERALATAN",
       "file_type": "code",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L17",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "src_data_mockseeddata_initial_jenis_peralatan",
       "community": 6,
@@ -1085,7 +1085,7 @@
       "label": "INITIAL_TIPE_PERALATAN",
       "file_type": "code",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L25",
+      "source_location": "L24",
       "_origin": "ast",
       "id": "src_data_mockseeddata_initial_tipe_peralatan",
       "community": 6,
@@ -1096,7 +1096,7 @@
       "label": "INITIAL_LOKASI",
       "file_type": "code",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L34",
+      "source_location": "L33",
       "_origin": "ast",
       "id": "src_data_mockseeddata_initial_lokasi",
       "community": 6,
@@ -1107,7 +1107,7 @@
       "label": "INITIAL_TITIK_LOKASI",
       "file_type": "code",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L42",
+      "source_location": "L41",
       "_origin": "ast",
       "id": "src_data_mockseeddata_initial_titik_lokasi",
       "community": 6,
@@ -1118,7 +1118,7 @@
       "label": "INITIAL_UNIT_PERALATAN",
       "file_type": "code",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L50",
+      "source_location": "L49",
       "_origin": "ast",
       "id": "src_data_mockseeddata_initial_unit_peralatan",
       "community": 6,
@@ -1129,7 +1129,7 @@
       "label": "INITIAL_PENEMPATAN_PERALATAN",
       "file_type": "code",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L123",
+      "source_location": "L122",
       "_origin": "ast",
       "id": "src_data_mockseeddata_initial_penempatan_peralatan",
       "community": 6,
@@ -1140,7 +1140,7 @@
       "label": "INITIAL_UNIT_KERJA",
       "file_type": "code",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L162",
+      "source_location": "L161",
       "_origin": "ast",
       "id": "src_data_mockseeddata_initial_unit_kerja",
       "community": 6,
@@ -1151,7 +1151,7 @@
       "label": "INITIAL_PERSONEL",
       "file_type": "code",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L169",
+      "source_location": "L168",
       "_origin": "ast",
       "id": "src_data_mockseeddata_initial_personel",
       "community": 6,
@@ -1162,7 +1162,7 @@
       "label": "INITIAL_JADWAL_SHIFT",
       "file_type": "code",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L212",
+      "source_location": "L211",
       "_origin": "ast",
       "id": "src_data_mockseeddata_initial_jadwal_shift",
       "community": 6,
@@ -1173,7 +1173,7 @@
       "label": "INITIAL_MASTER_CONFIGS",
       "file_type": "code",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L247",
+      "source_location": "L246",
       "_origin": "ast",
       "id": "src_data_mockseeddata_initial_master_configs",
       "community": 6,
@@ -1184,7 +1184,7 @@
       "label": "INITIAL_SPAREPARTS",
       "file_type": "code",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L261",
+      "source_location": "L260",
       "_origin": "ast",
       "id": "src_data_mockseeddata_initial_spareparts",
       "community": 6,
@@ -1195,23 +1195,12 @@
       "label": "INITIAL_MUTATIONS",
       "file_type": "code",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L404",
+      "source_location": "L403",
       "_origin": "ast",
       "id": "src_data_mockseeddata_initial_mutations",
       "community": 6,
       "community_name": "SettingsPage.tsx",
       "norm_label": "initial_mutations"
-    },
-    {
-      "label": "INITIAL_SPAREPART_COMPATIBILITY",
-      "file_type": "code",
-      "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L455",
-      "_origin": "ast",
-      "id": "src_data_mockseeddata_initial_sparepart_compatibility",
-      "community": 6,
-      "community_name": "SettingsPage.tsx",
-      "norm_label": "initial_sparepart_compatibility"
     },
     {
       "label": "sparepartAnalytics.ts",
@@ -1305,7 +1294,7 @@
       "label": "calculateABCAnalysisPhysical()",
       "file_type": "code",
       "source_file": "src/lib/sparepartAnalytics.ts",
-      "source_location": "L84",
+      "source_location": "L83",
       "_origin": "ast",
       "id": "src_lib_sparepartanalytics_calculateabcanalysisphysical",
       "community": 1,
@@ -1316,7 +1305,7 @@
       "label": "calculateCategoryPhysicalBreakdown()",
       "file_type": "code",
       "source_file": "src/lib/sparepartAnalytics.ts",
-      "source_location": "L177",
+      "source_location": "L176",
       "_origin": "ast",
       "id": "src_lib_sparepartanalytics_calculatecategoryphysicalbreakdown",
       "community": 1,
@@ -1327,7 +1316,7 @@
       "label": "calculateMonthlyPhysicalTrend()",
       "file_type": "code",
       "source_file": "src/lib/sparepartAnalytics.ts",
-      "source_location": "L233",
+      "source_location": "L232",
       "_origin": "ast",
       "id": "src_lib_sparepartanalytics_calculatemonthlyphysicaltrend",
       "community": 1,
@@ -1338,7 +1327,7 @@
       "label": "getReorderPriorityListPhysical()",
       "file_type": "code",
       "source_file": "src/lib/sparepartAnalytics.ts",
-      "source_location": "L256",
+      "source_location": "L255",
       "_origin": "ast",
       "id": "src_lib_sparepartanalytics_getreorderprioritylistphysical",
       "community": 1,
@@ -1360,7 +1349,7 @@
       "label": "getStoredSupabaseConfig()",
       "file_type": "code",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L21",
+      "source_location": "L20",
       "_origin": "ast",
       "id": "src_lib_supabase_getstoredsupabaseconfig",
       "community": 6,
@@ -1371,7 +1360,7 @@
       "label": "saveSupabaseConfig()",
       "file_type": "code",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L27",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "src_lib_supabase_savesupabaseconfig",
       "community": 6,
@@ -1382,7 +1371,7 @@
       "label": "getSupabaseClient()",
       "file_type": "code",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L35",
+      "source_location": "L34",
       "_origin": "ast",
       "id": "src_lib_supabase_getsupabaseclient",
       "community": 6,
@@ -1393,7 +1382,7 @@
       "label": "seedSupabaseDatabase()",
       "file_type": "code",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L52",
+      "source_location": "L51",
       "_origin": "ast",
       "id": "src_lib_supabase_seedsupabasedatabase",
       "community": 6,
@@ -1857,7 +1846,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_json",
+      "id": "tsconfig",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "tsconfig.json"
@@ -1868,7 +1857,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L2",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
+      "id": "tsconfig_compileroptions",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "compileroptions"
@@ -1879,7 +1868,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L3",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_target",
+      "id": "tsconfig_compileroptions_target",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "target"
@@ -1890,7 +1879,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L4",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_usedefineforclassfields",
+      "id": "tsconfig_compileroptions_usedefineforclassfields",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "usedefineforclassfields"
@@ -1901,7 +1890,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L5",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_lib",
+      "id": "tsconfig_compileroptions_lib",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "lib"
@@ -1945,7 +1934,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L6",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_module",
+      "id": "tsconfig_compileroptions_module",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "module"
@@ -1956,7 +1945,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L7",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_skiplibcheck",
+      "id": "tsconfig_compileroptions_skiplibcheck",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "skiplibcheck"
@@ -1967,7 +1956,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L8",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_moduleresolution",
+      "id": "tsconfig_compileroptions_moduleresolution",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "moduleresolution"
@@ -1978,7 +1967,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L9",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_allowimportingtsextensions",
+      "id": "tsconfig_compileroptions_allowimportingtsextensions",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "allowimportingtsextensions"
@@ -1989,7 +1978,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L10",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_isolatedmodules",
+      "id": "tsconfig_compileroptions_isolatedmodules",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "isolatedmodules"
@@ -2000,7 +1989,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L11",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_moduledetection",
+      "id": "tsconfig_compileroptions_moduledetection",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "moduledetection"
@@ -2011,7 +2000,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L12",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_noemit",
+      "id": "tsconfig_compileroptions_noemit",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "noemit"
@@ -2022,7 +2011,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L13",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_jsx",
+      "id": "tsconfig_compileroptions_jsx",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "jsx"
@@ -2033,7 +2022,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L14",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_strict",
+      "id": "tsconfig_compileroptions_strict",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "strict"
@@ -2044,7 +2033,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L15",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_nounusedlocals",
+      "id": "tsconfig_compileroptions_nounusedlocals",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "nounusedlocals"
@@ -2055,7 +2044,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L16",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_nounusedparameters",
+      "id": "tsconfig_compileroptions_nounusedparameters",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "nounusedparameters"
@@ -2066,7 +2055,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L17",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_noimplicitreturns",
+      "id": "tsconfig_compileroptions_noimplicitreturns",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "noimplicitreturns"
@@ -2077,7 +2066,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L18",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_baseurl",
+      "id": "tsconfig_compileroptions_baseurl",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "baseurl"
@@ -2088,7 +2077,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L19",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_paths",
+      "id": "tsconfig_compileroptions_paths",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "paths"
@@ -2099,7 +2088,7 @@
       "source_file": "tsconfig.json",
       "source_location": "L23",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_include",
+      "id": "tsconfig_include",
       "community": 2,
       "community_name": "compilerOptions",
       "norm_label": "include"
@@ -2132,9 +2121,9 @@
       "source_file": ".agents/rules/graphify.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_rules_graphify_md",
-      "community": 14,
-      "community_name": "idea-orchestrator.md",
+      "id": "agents_rules_graphify",
+      "community": 10,
+      "community_name": "graphify.md",
       "norm_label": "graphify.md"
     },
     {
@@ -2143,9 +2132,9 @@
       "source_file": ".agents/rules/graphify.md",
       "source_location": "L6",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_rules_graphify_graphify",
-      "community": 14,
-      "community_name": "idea-orchestrator.md",
+      "id": "agents_rules_graphify_graphify",
+      "community": 10,
+      "community_name": "graphify.md",
       "norm_label": "graphify"
     },
     {
@@ -2154,9 +2143,9 @@
       "source_file": ".agents/rules/idea-orchestrator.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_rules_idea_orchestrator_md",
-      "community": 15,
-      "community_name": "implement.md",
+      "id": "agents_rules_idea_orchestrator",
+      "community": 11,
+      "community_name": "idea-orchestrator.md",
       "norm_label": "idea-orchestrator.md"
     },
     {
@@ -2165,9 +2154,9 @@
       "source_file": ".agents/rules/idea-orchestrator.md",
       "source_location": "L6",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_rules_idea_orchestrator_idea_orchestrator_rule",
-      "community": 15,
-      "community_name": "implement.md",
+      "id": "agents_rules_idea_orchestrator_idea_orchestrator_rule",
+      "community": 11,
+      "community_name": "idea-orchestrator.md",
       "norm_label": "idea orchestrator rule"
     },
     {
@@ -2176,9 +2165,9 @@
       "source_file": ".agents/workflows/code-review.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_code_review_md",
-      "community": 16,
-      "community_name": "to-spec.md",
+      "id": "agents_workflows_code_review",
+      "community": 12,
+      "community_name": "code-review.md",
       "norm_label": "code-review.md"
     },
     {
@@ -2187,9 +2176,9 @@
       "source_file": ".agents/workflows/code-review.md",
       "source_location": "L6",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_code_review_workflow_code_review",
-      "community": 16,
-      "community_name": "to-spec.md",
+      "id": "agents_workflows_code_review_workflow_code_review",
+      "community": 12,
+      "community_name": "code-review.md",
       "norm_label": "workflow: code-review"
     },
     {
@@ -2198,9 +2187,9 @@
       "source_file": ".agents/workflows/graphify.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_graphify_md",
-      "community": 17,
-      "community_name": "to-ticket.md",
+      "id": "agents_workflows_graphify",
+      "community": 13,
+      "community_name": "graphify.md",
       "norm_label": "graphify.md"
     },
     {
@@ -2209,9 +2198,9 @@
       "source_file": ".agents/workflows/graphify.md",
       "source_location": "L6",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_graphify_workflow_graphify",
-      "community": 17,
-      "community_name": "to-ticket.md",
+      "id": "agents_workflows_graphify_workflow_graphify",
+      "community": 13,
+      "community_name": "graphify.md",
       "norm_label": "workflow: graphify"
     },
     {
@@ -2220,9 +2209,9 @@
       "source_file": ".agents/workflows/handoff.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_handoff_md",
-      "community": 19,
-      "community_name": "Project Handoff Document: SSES T2 Sparepart Management (\"Masih Berapa\")",
+      "id": "agents_workflows_handoff",
+      "community": 21,
+      "community_name": "handoff.md",
       "norm_label": "handoff.md"
     },
     {
@@ -2231,9 +2220,9 @@
       "source_file": ".agents/workflows/handoff.md",
       "source_location": "L6",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_handoff_workflow_handoff",
-      "community": 19,
-      "community_name": "Project Handoff Document: SSES T2 Sparepart Management (\"Masih Berapa\")",
+      "id": "agents_workflows_handoff_workflow_handoff",
+      "community": 21,
+      "community_name": "handoff.md",
       "norm_label": "workflow: handoff"
     },
     {
@@ -2242,9 +2231,9 @@
       "source_file": ".agents/workflows/idea-orchestrator.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_idea_orchestrator_md",
-      "community": 20,
-      "community_name": "Implementation Tickets: Dashboard Manajemen Sparepart",
+      "id": "agents_workflows_idea_orchestrator",
+      "community": 14,
+      "community_name": "idea-orchestrator.md",
       "norm_label": "idea-orchestrator.md"
     },
     {
@@ -2253,9 +2242,9 @@
       "source_file": ".agents/workflows/idea-orchestrator.md",
       "source_location": "L6",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_idea_orchestrator_workflow_idea_orchestrator",
-      "community": 20,
-      "community_name": "Implementation Tickets: Dashboard Manajemen Sparepart",
+      "id": "agents_workflows_idea_orchestrator_workflow_idea_orchestrator",
+      "community": 14,
+      "community_name": "idea-orchestrator.md",
       "norm_label": "workflow: idea-orchestrator"
     },
     {
@@ -2264,9 +2253,9 @@
       "source_file": ".agents/workflows/implement.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_implement_md",
-      "community": 21,
-      "community_name": "handoff.md",
+      "id": "agents_workflows_implement",
+      "community": 15,
+      "community_name": "implement.md",
       "norm_label": "implement.md"
     },
     {
@@ -2275,9 +2264,9 @@
       "source_file": ".agents/workflows/implement.md",
       "source_location": "L6",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_implement_workflow_implement",
-      "community": 21,
-      "community_name": "handoff.md",
+      "id": "agents_workflows_implement_workflow_implement",
+      "community": 15,
+      "community_name": "implement.md",
       "norm_label": "workflow: implement"
     },
     {
@@ -2286,8 +2275,8 @@
       "source_file": ".agents/workflows/to-spec.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_to_spec_md",
-      "community": 23,
+      "id": "agents_workflows_to_spec",
+      "community": 16,
       "community_name": "to-spec.md",
       "norm_label": "to-spec.md"
     },
@@ -2297,8 +2286,8 @@
       "source_file": ".agents/workflows/to-spec.md",
       "source_location": "L6",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_to_spec_workflow_to_spec",
-      "community": 23,
+      "id": "agents_workflows_to_spec_workflow_to_spec",
+      "community": 16,
       "community_name": "to-spec.md",
       "norm_label": "workflow: to-spec"
     },
@@ -2308,8 +2297,8 @@
       "source_file": ".agents/workflows/to-ticket.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_to_ticket_md",
-      "community": 24,
+      "id": "agents_workflows_to_ticket",
+      "community": 17,
       "community_name": "to-ticket.md",
       "norm_label": "to-ticket.md"
     },
@@ -2319,8 +2308,8 @@
       "source_file": ".agents/workflows/to-ticket.md",
       "source_location": "L6",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_to_ticket_workflow_to_ticket",
-      "community": 24,
+      "id": "agents_workflows_to_ticket_workflow_to_ticket",
+      "community": 17,
       "community_name": "to-ticket.md",
       "norm_label": "workflow: to-ticket"
     },
@@ -2330,9 +2319,9 @@
       "source_file": "HANDOFF.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_handoff_md",
-      "community": 9,
-      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
+      "id": "handoff",
+      "community": 19,
+      "community_name": "Project Handoff Document: SSES T2 Sparepart Management (\"Masih Berapa\")",
       "norm_label": "handoff.md"
     },
     {
@@ -2341,9 +2330,9 @@
       "source_file": "HANDOFF.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
-      "community": 9,
-      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
+      "id": "handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
+      "community": 19,
+      "community_name": "Project Handoff Document: SSES T2 Sparepart Management (\"Masih Berapa\")",
       "norm_label": "project handoff document: sses t2 sparepart management (\"masih berapa\")"
     },
     {
@@ -2352,9 +2341,9 @@
       "source_file": "HANDOFF.md",
       "source_location": "L10",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_handoff_1_executive_summary",
-      "community": 9,
-      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
+      "id": "handoff_1_executive_summary",
+      "community": 19,
+      "community_name": "Project Handoff Document: SSES T2 Sparepart Management (\"Masih Berapa\")",
       "norm_label": "1. executive summary"
     },
     {
@@ -2363,9 +2352,9 @@
       "source_file": "HANDOFF.md",
       "source_location": "L15",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_handoff_2_technical_stack_architecture",
-      "community": 9,
-      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
+      "id": "handoff_2_technical_stack_architecture",
+      "community": 19,
+      "community_name": "Project Handoff Document: SSES T2 Sparepart Management (\"Masih Berapa\")",
       "norm_label": "2. technical stack & architecture"
     },
     {
@@ -2374,9 +2363,9 @@
       "source_file": "HANDOFF.md",
       "source_location": "L24",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_handoff_3_completed_modules_features",
-      "community": 9,
-      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
+      "id": "handoff_3_completed_modules_features",
+      "community": 19,
+      "community_name": "Project Handoff Document: SSES T2 Sparepart Management (\"Masih Berapa\")",
       "norm_label": "3. completed modules & features"
     },
     {
@@ -2385,9 +2374,9 @@
       "source_file": "HANDOFF.md",
       "source_location": "L38",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_handoff_4_key_project_files_summary",
-      "community": 9,
-      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
+      "id": "handoff_4_key_project_files_summary",
+      "community": 19,
+      "community_name": "Project Handoff Document: SSES T2 Sparepart Management (\"Masih Berapa\")",
       "norm_label": "4. key project files summary"
     },
     {
@@ -2396,9 +2385,9 @@
       "source_file": "HANDOFF.md",
       "source_location": "L53",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_handoff_5_empirical_verification_status",
-      "community": 9,
-      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
+      "id": "handoff_5_empirical_verification_status",
+      "community": 19,
+      "community_name": "Project Handoff Document: SSES T2 Sparepart Management (\"Masih Berapa\")",
       "norm_label": "5. empirical verification status"
     },
     {
@@ -2407,9 +2396,9 @@
       "source_file": "HANDOFF.md",
       "source_location": "L60",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_handoff_6_actionable_next_steps_backlog_for_next_session",
-      "community": 9,
-      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
+      "id": "handoff_6_actionable_next_steps_backlog_for_next_session",
+      "community": 19,
+      "community_name": "Project Handoff Document: SSES T2 Sparepart Management (\"Masih Berapa\")",
       "norm_label": "6. actionable next steps (backlog for next session)"
     },
     {
@@ -2418,120 +2407,10 @@
       "source_file": "HANDOFF.md",
       "source_location": "L67",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_handoff_7_how_to_resume_work",
-      "community": 9,
-      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
+      "id": "handoff_7_how_to_resume_work",
+      "community": 19,
+      "community_name": "Project Handoff Document: SSES T2 Sparepart Management (\"Masih Berapa\")",
       "norm_label": "7. how to resume work"
-    },
-    {
-      "label": "README.md",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "readme",
-      "community": 7,
-      "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
-      "norm_label": "readme.md"
-    },
-    {
-      "label": "SSES T2 Sparepart Management (\"Masih Berapa\") \ud83d\udee0\ufe0f\ud83d\udce6",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "readme_sses_t2_sparepart_management_masih_berapa",
-      "community": 7,
-      "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
-      "norm_label": "sses t2 sparepart management (\"masih berapa\") \ud83d\udee0\ufe0f\ud83d\udce6"
-    },
-    {
-      "label": "\ud83d\udccc Features & Key Modules",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L14",
-      "_origin": "ast",
-      "id": "readme_features_key_modules",
-      "community": 7,
-      "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
-      "norm_label": "\ud83d\udccc features & key modules"
-    },
-    {
-      "label": "\ud83d\udee0\ufe0f Tech Stack",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L28",
-      "_origin": "ast",
-      "id": "readme_tech_stack",
-      "community": 7,
-      "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
-      "norm_label": "\ud83d\udee0\ufe0f tech stack"
-    },
-    {
-      "label": "\ud83d\ude80 Getting Started",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L38",
-      "_origin": "ast",
-      "id": "readme_getting_started",
-      "community": 7,
-      "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
-      "norm_label": "\ud83d\ude80 getting started"
-    },
-    {
-      "label": "Prerequisites",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "_origin": "ast",
-      "id": "readme_prerequisites",
-      "community": 7,
-      "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
-      "norm_label": "prerequisites"
-    },
-    {
-      "label": "Installation",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L45",
-      "_origin": "ast",
-      "id": "readme_installation",
-      "community": 7,
-      "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
-      "norm_label": "installation"
-    },
-    {
-      "label": "\ud83d\udcc2 Project Structure",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L71",
-      "_origin": "ast",
-      "id": "readme_project_structure",
-      "community": 7,
-      "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
-      "norm_label": "\ud83d\udcc2 project structure"
-    },
-    {
-      "label": "\ud83d\uddc4\ufe0f Database Schema & Supabase",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L93",
-      "_origin": "ast",
-      "id": "readme_database_schema_supabase",
-      "community": 7,
-      "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
-      "norm_label": "\ud83d\uddc4\ufe0f database schema & supabase"
-    },
-    {
-      "label": "\ud83d\udcc4 License",
-      "file_type": "document",
-      "source_file": "README.md",
-      "source_location": "L102",
-      "_origin": "ast",
-      "id": "readme_license",
-      "community": 7,
-      "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
-      "norm_label": "\ud83d\udcc4 license"
     },
     {
       "label": "masih_berapa_spec.md",
@@ -2539,8 +2418,8 @@
       "source_file": "docs/specs/masih_berapa_spec.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_md",
-      "community": 8,
+      "id": "docs_specs_masih_berapa_spec",
+      "community": 7,
       "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
       "norm_label": "masih_berapa_spec.md"
     },
@@ -2550,8 +2429,8 @@
       "source_file": "docs/specs/masih_berapa_spec.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_technical_specification_sses_t2_sparepart_management_masih_berapa_v1_0_0",
-      "community": 8,
+      "id": "docs_specs_masih_berapa_spec_technical_specification_sses_t2_sparepart_management_masih_berapa_v1_0_0",
+      "community": 7,
       "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
       "norm_label": "technical specification: sses t2 sparepart management - \"masih berapa\" (v1.0.0)"
     },
@@ -2561,8 +2440,8 @@
       "source_file": "docs/specs/masih_berapa_spec.md",
       "source_location": "L3",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_1_overview_objectives",
-      "community": 8,
+      "id": "docs_specs_masih_berapa_spec_1_overview_objectives",
+      "community": 7,
       "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
       "norm_label": "1. overview & objectives"
     },
@@ -2572,8 +2451,8 @@
       "source_file": "docs/specs/masih_berapa_spec.md",
       "source_location": "L8",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_core_goals",
-      "community": 8,
+      "id": "docs_specs_masih_berapa_spec_core_goals",
+      "community": 7,
       "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
       "norm_label": "core goals"
     },
@@ -2583,8 +2462,8 @@
       "source_file": "docs/specs/masih_berapa_spec.md",
       "source_location": "L17",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_2_architecture_data_model",
-      "community": 8,
+      "id": "docs_specs_masih_berapa_spec_2_architecture_data_model",
+      "community": 7,
       "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
       "norm_label": "2. architecture & data model"
     },
@@ -2594,8 +2473,8 @@
       "source_file": "docs/specs/masih_berapa_spec.md",
       "source_location": "L19",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_2_1_database_schema_supabase_postgresql",
-      "community": 8,
+      "id": "docs_specs_masih_berapa_spec_2_1_database_schema_supabase_postgresql",
+      "community": 7,
       "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
       "norm_label": "2.1 database schema (supabase postgresql)"
     },
@@ -2605,8 +2484,8 @@
       "source_file": "docs/specs/masih_berapa_spec.md",
       "source_location": "L63",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_2_2_application_state_context_architecture",
-      "community": 8,
+      "id": "docs_specs_masih_berapa_spec_2_2_application_state_context_architecture",
+      "community": 7,
       "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
       "norm_label": "2.2 application state & context architecture"
     },
@@ -2616,8 +2495,8 @@
       "source_file": "docs/specs/masih_berapa_spec.md",
       "source_location": "L70",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_3_detailed_route_feature_modules",
-      "community": 8,
+      "id": "docs_specs_masih_berapa_spec_3_detailed_route_feature_modules",
+      "community": 7,
       "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
       "norm_label": "3. detailed route & feature modules"
     },
@@ -2627,109 +2506,10 @@
       "source_file": "docs/specs/masih_berapa_spec.md",
       "source_location": "L87",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_4_verification_testing_boundaries",
-      "community": 8,
+      "id": "docs_specs_masih_berapa_spec_4_verification_testing_boundaries",
+      "community": 7,
       "community_name": "Technical Specification: SSES T2 Sparepart Management - \"Masih Berapa\" (v1.0.0)",
       "norm_label": "4. verification & testing boundaries"
-    },
-    {
-      "label": "schema_alignment_spec.md",
-      "file_type": "document",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_specs_schema_alignment_spec",
-      "community": 10,
-      "community_name": "graphify.md",
-      "norm_label": "schema_alignment_spec.md"
-    },
-    {
-      "label": "Technical Specification: Schema Alignment & Multi-Compatibility Support",
-      "file_type": "document",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_specs_schema_alignment_spec_technical_specification_schema_alignment_multi_compatibility_support",
-      "community": 10,
-      "community_name": "graphify.md",
-      "norm_label": "technical specification: schema alignment & multi-compatibility support"
-    },
-    {
-      "label": "1. Overview & Objective",
-      "file_type": "document",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L3",
-      "_origin": "ast",
-      "id": "docs_specs_schema_alignment_spec_1_overview_objective",
-      "community": 10,
-      "community_name": "graphify.md",
-      "norm_label": "1. overview & objective"
-    },
-    {
-      "label": "2. User Stories & Capabilities",
-      "file_type": "document",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L10",
-      "_origin": "ast",
-      "id": "docs_specs_schema_alignment_spec_2_user_stories_capabilities",
-      "community": 10,
-      "community_name": "graphify.md",
-      "norm_label": "2. user stories & capabilities"
-    },
-    {
-      "label": "3. Architecture & Technical Design",
-      "file_type": "document",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L15",
-      "_origin": "ast",
-      "id": "docs_specs_schema_alignment_spec_3_architecture_technical_design",
-      "community": 10,
-      "community_name": "graphify.md",
-      "norm_label": "3. architecture & technical design"
-    },
-    {
-      "label": "4. Edge Cases & Error Handling",
-      "file_type": "document",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L32",
-      "_origin": "ast",
-      "id": "docs_specs_schema_alignment_spec_4_edge_cases_error_handling",
-      "community": 10,
-      "community_name": "graphify.md",
-      "norm_label": "4. edge cases & error handling"
-    },
-    {
-      "label": "5. Non-Functional Requirements",
-      "file_type": "document",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L37",
-      "_origin": "ast",
-      "id": "docs_specs_schema_alignment_spec_5_non_functional_requirements",
-      "community": 10,
-      "community_name": "graphify.md",
-      "norm_label": "5. non-functional requirements"
-    },
-    {
-      "label": "6. Verification & Test Strategy",
-      "file_type": "document",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L41",
-      "_origin": "ast",
-      "id": "docs_specs_schema_alignment_spec_6_verification_test_strategy",
-      "community": 10,
-      "community_name": "graphify.md",
-      "norm_label": "6. verification & test strategy"
-    },
-    {
-      "label": "7. Out of Scope",
-      "file_type": "document",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L46",
-      "_origin": "ast",
-      "id": "docs_specs_schema_alignment_spec_7_out_of_scope",
-      "community": 10,
-      "community_name": "graphify.md",
-      "norm_label": "7. out of scope"
     },
     {
       "label": "sparepart_management_dashboard_spec.md",
@@ -2737,9 +2517,9 @@
       "source_file": "docs/specs/sparepart_management_dashboard_spec.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_md",
-      "community": 11,
-      "community_name": "idea-orchestrator.md",
+      "id": "docs_specs_sparepart_management_dashboard_spec",
+      "community": 9,
+      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
       "norm_label": "sparepart_management_dashboard_spec.md"
     },
     {
@@ -2748,9 +2528,9 @@
       "source_file": "docs/specs/sparepart_management_dashboard_spec.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_specification_dashboard_manajemen_sparepart_physical_quantity_stock_health_focus",
-      "community": 11,
-      "community_name": "idea-orchestrator.md",
+      "id": "docs_specs_sparepart_management_dashboard_spec_specification_dashboard_manajemen_sparepart_physical_quantity_stock_health_focus",
+      "community": 9,
+      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
       "norm_label": "specification: dashboard manajemen sparepart (physical quantity & stock health focus)"
     },
     {
@@ -2759,9 +2539,9 @@
       "source_file": "docs/specs/sparepart_management_dashboard_spec.md",
       "source_location": "L3",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_1_problem_statement_executive_summary",
-      "community": 11,
-      "community_name": "idea-orchestrator.md",
+      "id": "docs_specs_sparepart_management_dashboard_spec_1_problem_statement_executive_summary",
+      "community": 9,
+      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
       "norm_label": "1. problem statement & executive summary"
     },
     {
@@ -2770,9 +2550,9 @@
       "source_file": "docs/specs/sparepart_management_dashboard_spec.md",
       "source_location": "L10",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_2_user_stories",
-      "community": 11,
-      "community_name": "idea-orchestrator.md",
+      "id": "docs_specs_sparepart_management_dashboard_spec_2_user_stories",
+      "community": 9,
+      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
       "norm_label": "2. user stories"
     },
     {
@@ -2781,9 +2561,9 @@
       "source_file": "docs/specs/sparepart_management_dashboard_spec.md",
       "source_location": "L15",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_3_architecture_interfaces_data_models",
-      "community": 11,
-      "community_name": "idea-orchestrator.md",
+      "id": "docs_specs_sparepart_management_dashboard_spec_3_architecture_interfaces_data_models",
+      "community": 9,
+      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
       "norm_label": "3. architecture, interfaces & data models"
     },
     {
@@ -2792,9 +2572,9 @@
       "source_file": "docs/specs/sparepart_management_dashboard_spec.md",
       "source_location": "L17",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_3_1_data_model_physical_sparepart_management_metrics",
-      "community": 11,
-      "community_name": "idea-orchestrator.md",
+      "id": "docs_specs_sparepart_management_dashboard_spec_3_1_data_model_physical_sparepart_management_metrics",
+      "community": 9,
+      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
       "norm_label": "3.1 data model (physical sparepart management metrics)"
     },
     {
@@ -2803,9 +2583,9 @@
       "source_file": "docs/specs/sparepart_management_dashboard_spec.md",
       "source_location": "L62",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_3_2_ui_component_architecture",
-      "community": 11,
-      "community_name": "idea-orchestrator.md",
+      "id": "docs_specs_sparepart_management_dashboard_spec_3_2_ui_component_architecture",
+      "community": 9,
+      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
       "norm_label": "3.2 ui component architecture"
     },
     {
@@ -2814,9 +2594,9 @@
       "source_file": "docs/specs/sparepart_management_dashboard_spec.md",
       "source_location": "L83",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_4_verification_test_strategy",
-      "community": 11,
-      "community_name": "idea-orchestrator.md",
+      "id": "docs_specs_sparepart_management_dashboard_spec_4_verification_test_strategy",
+      "community": 9,
+      "community_name": "Specification: Dashboard Manajemen Sparepart (Financial & Inventory Health Focus)",
       "norm_label": "4. verification & test strategy"
     },
     {
@@ -2825,7 +2605,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_md",
+      "id": "docs_tickets_masih_berapa_tickets",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "masih_berapa_tickets.md"
@@ -2836,7 +2616,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_development_tickets_sses_t2_sparepart_management_masih_berapa",
+      "id": "docs_tickets_masih_berapa_tickets_development_tickets_sses_t2_sparepart_management_masih_berapa",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "development tickets: sses t2 sparepart management - \"masih berapa\""
@@ -2847,7 +2627,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L3",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "id": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "task dependency hierarchy"
@@ -2858,7 +2638,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L26",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_1_project_scaffold_tech_stack_setup",
+      "id": "docs_tickets_masih_berapa_tickets_ticket_1_project_scaffold_tech_stack_setup",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "[ticket-1]: project scaffold & tech stack setup"
@@ -2869,7 +2649,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L34",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_2_data_types_supabase_database_layer",
+      "id": "docs_tickets_masih_berapa_tickets_ticket_2_data_types_supabase_database_layer",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "[ticket-2]: data types & supabase database layer"
@@ -2880,7 +2660,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L41",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_3_app_layout_sidebar_toast_notification_context",
+      "id": "docs_tickets_masih_berapa_tickets_ticket_3_app_layout_sidebar_toast_notification_context",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "[ticket-3]: app layout, sidebar & toast notification context"
@@ -2891,7 +2671,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L48",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_4_dashboard_component_visual_analytics",
+      "id": "docs_tickets_masih_berapa_tickets_ticket_4_dashboard_component_visual_analytics",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "[ticket-4]: dashboard component & visual analytics (`/`)"
@@ -2902,7 +2682,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L55",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_5_sparepart_master_catalog_catalog",
+      "id": "docs_tickets_masih_berapa_tickets_ticket_5_sparepart_master_catalog_catalog",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "[ticket-5]: sparepart master catalog (`/catalog`)"
@@ -2913,7 +2693,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L62",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_6_stock_mutation_form_input_sparepart",
+      "id": "docs_tickets_masih_berapa_tickets_ticket_6_stock_mutation_form_input_sparepart",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "[ticket-6]: stock mutation form (`/input-sparepart`)"
@@ -2924,7 +2704,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L69",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_7_audit_log_history_history",
+      "id": "docs_tickets_masih_berapa_tickets_ticket_7_audit_log_history_history",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "[ticket-7]: audit log history (`/history`)"
@@ -2935,7 +2715,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L76",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_8_mobile_camera_qr_scanner_verification_scanner",
+      "id": "docs_tickets_masih_berapa_tickets_ticket_8_mobile_camera_qr_scanner_verification_scanner",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "[ticket-8]: mobile camera qr scanner & verification (`/scanner`)"
@@ -2946,7 +2726,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L83",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_9_thermal_label_generator_pdf_print_print",
+      "id": "docs_tickets_masih_berapa_tickets_ticket_9_thermal_label_generator_pdf_print_print",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "[ticket-9]: thermal label generator & pdf print (`/print`)"
@@ -2957,7 +2737,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L90",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_10_predictive_alerts_mtbf_demand_planning_alerts_needs",
+      "id": "docs_tickets_masih_berapa_tickets_ticket_10_predictive_alerts_mtbf_demand_planning_alerts_needs",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "[ticket-10]: predictive alerts (mtbf) & demand planning (`/alerts`, `/needs`)"
@@ -2968,7 +2748,7 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L97",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_11_inventory_analytics_cost_valuation_reports",
+      "id": "docs_tickets_masih_berapa_tickets_ticket_11_inventory_analytics_cost_valuation_reports",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "[ticket-11]: inventory analytics & cost valuation (`/reports`)"
@@ -2979,87 +2759,10 @@
       "source_file": "docs/tickets/masih_berapa_tickets.md",
       "source_location": "L104",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_12_system_settings_supabase_config_database_seed_settings",
+      "id": "docs_tickets_masih_berapa_tickets_ticket_12_system_settings_supabase_config_database_seed_settings",
       "community": 5,
       "community_name": "Task Dependency Hierarchy",
       "norm_label": "[ticket-12]: system settings, supabase config & database seed (`/settings`)"
-    },
-    {
-      "label": "schema_alignment_tickets.md",
-      "file_type": "document",
-      "source_file": "docs/tickets/schema_alignment_tickets.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_tickets_schema_alignment_tickets",
-      "community": 12,
-      "community_name": "code-review.md",
-      "norm_label": "schema_alignment_tickets.md"
-    },
-    {
-      "label": "Ticket Decomposition: Schema Alignment & Multi-Compatibility Support",
-      "file_type": "document",
-      "source_file": "docs/tickets/schema_alignment_tickets.md",
-      "source_location": "L1",
-      "_origin": "ast",
-      "id": "docs_tickets_schema_alignment_tickets_ticket_decomposition_schema_alignment_multi_compatibility_support",
-      "community": 12,
-      "community_name": "code-review.md",
-      "norm_label": "ticket decomposition: schema alignment & multi-compatibility support"
-    },
-    {
-      "label": "Dependency Map",
-      "file_type": "document",
-      "source_file": "docs/tickets/schema_alignment_tickets.md",
-      "source_location": "L3",
-      "_origin": "ast",
-      "id": "docs_tickets_schema_alignment_tickets_dependency_map",
-      "community": 12,
-      "community_name": "code-review.md",
-      "norm_label": "dependency map"
-    },
-    {
-      "label": "[TICKET-1]: Data Models, Seed Data & Supabase 13-Table Client Alignment",
-      "file_type": "document",
-      "source_file": "docs/tickets/schema_alignment_tickets.md",
-      "source_location": "L11",
-      "_origin": "ast",
-      "id": "docs_tickets_schema_alignment_tickets_ticket_1_data_models_seed_data_supabase_13_table_client_alignment",
-      "community": 12,
-      "community_name": "code-review.md",
-      "norm_label": "[ticket-1]: data models, seed data & supabase 13-table client alignment"
-    },
-    {
-      "label": "[TICKET-2]: Inventory Context & State Management Update",
-      "file_type": "document",
-      "source_file": "docs/tickets/schema_alignment_tickets.md",
-      "source_location": "L24",
-      "_origin": "ast",
-      "id": "docs_tickets_schema_alignment_tickets_ticket_2_inventory_context_state_management_update",
-      "community": 12,
-      "community_name": "code-review.md",
-      "norm_label": "[ticket-2]: inventory context & state management update"
-    },
-    {
-      "label": "[TICKET-3]: UI Components & Forms Alignment",
-      "file_type": "document",
-      "source_file": "docs/tickets/schema_alignment_tickets.md",
-      "source_location": "L36",
-      "_origin": "ast",
-      "id": "docs_tickets_schema_alignment_tickets_ticket_3_ui_components_forms_alignment",
-      "community": 12,
-      "community_name": "code-review.md",
-      "norm_label": "[ticket-3]: ui components & forms alignment"
-    },
-    {
-      "label": "[TICKET-4]: Build & Knowledge Graph Empirical Verification",
-      "file_type": "document",
-      "source_file": "docs/tickets/schema_alignment_tickets.md",
-      "source_location": "L49",
-      "_origin": "ast",
-      "id": "docs_tickets_schema_alignment_tickets_ticket_4_build_knowledge_graph_empirical_verification",
-      "community": 12,
-      "community_name": "code-review.md",
-      "norm_label": "[ticket-4]: build & knowledge graph empirical verification"
     },
     {
       "label": "sparepart_dashboard_tickets.md",
@@ -3067,9 +2770,9 @@
       "source_file": "docs/tickets/sparepart_dashboard_tickets.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_sparepart_dashboard_tickets_md",
-      "community": 13,
-      "community_name": "graphify.md",
+      "id": "docs_tickets_sparepart_dashboard_tickets",
+      "community": 20,
+      "community_name": "Implementation Tickets: Dashboard Manajemen Sparepart",
       "norm_label": "sparepart_dashboard_tickets.md"
     },
     {
@@ -3078,9 +2781,9 @@
       "source_file": "docs/tickets/sparepart_dashboard_tickets.md",
       "source_location": "L1",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_sparepart_dashboard_tickets_implementation_tickets_dashboard_manajemen_sparepart_non_finansial_physical_focus",
-      "community": 13,
-      "community_name": "graphify.md",
+      "id": "docs_tickets_sparepart_dashboard_tickets_implementation_tickets_dashboard_manajemen_sparepart_non_finansial_physical_focus",
+      "community": 20,
+      "community_name": "Implementation Tickets: Dashboard Manajemen Sparepart",
       "norm_label": "implementation tickets: dashboard manajemen sparepart (non-finansial & physical focus)"
     },
     {
@@ -3089,9 +2792,9 @@
       "source_file": "docs/tickets/sparepart_dashboard_tickets.md",
       "source_location": "L3",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_sparepart_dashboard_tickets_ticket_1_physical_sparepart_analytics_engine_refactoring",
-      "community": 13,
-      "community_name": "graphify.md",
+      "id": "docs_tickets_sparepart_dashboard_tickets_ticket_1_physical_sparepart_analytics_engine_refactoring",
+      "community": 20,
+      "community_name": "Implementation Tickets: Dashboard Manajemen Sparepart",
       "norm_label": "ticket 1: physical sparepart analytics engine refactoring"
     },
     {
@@ -3100,9 +2803,9 @@
       "source_file": "docs/tickets/sparepart_dashboard_tickets.md",
       "source_location": "L8",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_sparepart_dashboard_tickets_ticket_2_non_financial_dashboard_components_update",
-      "community": 13,
-      "community_name": "graphify.md",
+      "id": "docs_tickets_sparepart_dashboard_tickets_ticket_2_non_financial_dashboard_components_update",
+      "community": 20,
+      "community_name": "Implementation Tickets: Dashboard Manajemen Sparepart",
       "norm_label": "ticket 2: non-financial dashboard components update"
     },
     {
@@ -3111,9 +2814,9 @@
       "source_file": "docs/tickets/sparepart_dashboard_tickets.md",
       "source_location": "L18",
       "_origin": "ast",
-      "id": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_sparepart_dashboard_tickets_ticket_3_export_report_clean_up_build_verification",
-      "community": 13,
-      "community_name": "graphify.md",
+      "id": "docs_tickets_sparepart_dashboard_tickets_ticket_3_export_report_clean_up_build_verification",
+      "community": 20,
+      "community_name": "Implementation Tickets: Dashboard Manajemen Sparepart",
       "norm_label": "ticket 3: export report clean-up & build verification"
     }
   ],
@@ -3125,8 +2828,8 @@
       "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_json",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
+      "source": "package",
+      "target": "package_dependencies",
       "confidence_score": 1.0
     },
     {
@@ -3136,8 +2839,8 @@
       "source_location": "L28",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_json",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies",
+      "source": "package",
+      "target": "package_devdependencies",
       "confidence_score": 1.0
     },
     {
@@ -3147,8 +2850,8 @@
       "source_location": "L2",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_json",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_name",
+      "source": "package",
+      "target": "package_name",
       "confidence_score": 1.0
     },
     {
@@ -3158,8 +2861,8 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_json",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_private",
+      "source": "package",
+      "target": "package_private",
       "confidence_score": 1.0
     },
     {
@@ -3169,8 +2872,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_json",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_scripts",
+      "source": "package",
+      "target": "package_scripts",
       "confidence_score": 1.0
     },
     {
@@ -3180,8 +2883,8 @@
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_json",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_type",
+      "source": "package",
+      "target": "package_type",
       "confidence_score": 1.0
     },
     {
@@ -3191,8 +2894,8 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_json",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_version",
+      "source": "package",
+      "target": "package_version",
       "confidence_score": 1.0
     },
     {
@@ -3202,8 +2905,8 @@
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_scripts",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_scripts_build",
+      "source": "package_scripts",
+      "target": "package_scripts_build",
       "confidence_score": 1.0
     },
     {
@@ -3213,8 +2916,8 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_scripts",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_scripts_dev",
+      "source": "package_scripts",
+      "target": "package_scripts_dev",
       "confidence_score": 1.0
     },
     {
@@ -3224,8 +2927,8 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_scripts",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_scripts_preview",
+      "source": "package_scripts",
+      "target": "package_scripts_preview",
       "confidence_score": 1.0
     },
     {
@@ -3235,8 +2938,8 @@
       "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_clsx",
+      "source": "package_dependencies",
+      "target": "package_dependencies_clsx",
       "confidence_score": 1.0
     },
     {
@@ -3246,8 +2949,8 @@
       "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_core_js",
+      "source": "package_dependencies",
+      "target": "package_dependencies_core_js",
       "confidence_score": 1.0
     },
     {
@@ -3257,8 +2960,8 @@
       "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_html2canvas",
+      "source": "package_dependencies",
+      "target": "package_dependencies_html2canvas",
       "confidence_score": 1.0
     },
     {
@@ -3268,8 +2971,8 @@
       "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_html5_qrcode",
+      "source": "package_dependencies",
+      "target": "package_dependencies_html5_qrcode",
       "confidence_score": 1.0
     },
     {
@@ -3279,8 +2982,8 @@
       "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_jspdf",
+      "source": "package_dependencies",
+      "target": "package_dependencies_jspdf",
       "confidence_score": 1.0
     },
     {
@@ -3290,8 +2993,8 @@
       "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_lucide_react",
+      "source": "package_dependencies",
+      "target": "package_dependencies_lucide_react",
       "confidence_score": 1.0
     },
     {
@@ -3301,8 +3004,8 @@
       "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_motion",
+      "source": "package_dependencies",
+      "target": "package_dependencies_motion",
       "confidence_score": 1.0
     },
     {
@@ -3312,8 +3015,8 @@
       "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_qrcode_react",
+      "source": "package_dependencies",
+      "target": "package_dependencies_qrcode_react",
       "confidence_score": 1.0
     },
     {
@@ -3323,8 +3026,8 @@
       "source_location": "L21",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_react",
+      "source": "package_dependencies",
+      "target": "package_dependencies_react",
       "confidence_score": 1.0
     },
     {
@@ -3334,8 +3037,8 @@
       "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_react_dom",
+      "source": "package_dependencies",
+      "target": "package_dependencies_react_dom",
       "confidence_score": 1.0
     },
     {
@@ -3345,8 +3048,8 @@
       "source_location": "L23",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_react_router_dom",
+      "source": "package_dependencies",
+      "target": "package_dependencies_react_router_dom",
       "confidence_score": 1.0
     },
     {
@@ -3356,8 +3059,8 @@
       "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_recharts",
+      "source": "package_dependencies",
+      "target": "package_dependencies_recharts",
       "confidence_score": 1.0
     },
     {
@@ -3367,8 +3070,8 @@
       "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_supabase_supabase_js",
+      "source": "package_dependencies",
+      "target": "package_dependencies_supabase_supabase_js",
       "confidence_score": 1.0
     },
     {
@@ -3378,8 +3081,8 @@
       "source_location": "L25",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_tailwind_merge",
+      "source": "package_dependencies",
+      "target": "package_dependencies_tailwind_merge",
       "confidence_score": 1.0
     },
     {
@@ -3389,8 +3092,8 @@
       "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_xlsx",
+      "source": "package_dependencies",
+      "target": "package_dependencies_xlsx",
       "confidence_score": 1.0
     },
     {
@@ -3401,7 +3104,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_supabase_supabase_js",
+      "source": "package_dependencies_supabase_supabase_js",
       "target": "supabase_supabase_js",
       "confidence_score": 1.0
     },
@@ -3413,7 +3116,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_clsx",
+      "source": "package_dependencies_clsx",
       "target": "clsx",
       "confidence_score": 1.0
     },
@@ -3425,7 +3128,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_core_js",
+      "source": "package_dependencies_core_js",
       "target": "core_js",
       "confidence_score": 1.0
     },
@@ -3437,7 +3140,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_html2canvas",
+      "source": "package_dependencies_html2canvas",
       "target": "html2canvas",
       "confidence_score": 1.0
     },
@@ -3449,7 +3152,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_html5_qrcode",
+      "source": "package_dependencies_html5_qrcode",
       "target": "html5_qrcode",
       "confidence_score": 1.0
     },
@@ -3461,7 +3164,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_jspdf",
+      "source": "package_dependencies_jspdf",
       "target": "jspdf",
       "confidence_score": 1.0
     },
@@ -3475,7 +3178,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_pages_dashboardpage_dashboardpage",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_jspdf"
+      "target": "package_dependencies_jspdf"
     },
     {
       "relation": "references",
@@ -3487,7 +3190,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_pages_printlabelpage_printlabelpage",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_jspdf"
+      "target": "package_dependencies_jspdf"
     },
     {
       "relation": "imports",
@@ -3497,7 +3200,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_lucide_react",
+      "source": "package_dependencies_lucide_react",
       "target": "lucide_react",
       "confidence_score": 1.0
     },
@@ -3509,7 +3212,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_motion",
+      "source": "package_dependencies_motion",
       "target": "motion",
       "confidence_score": 1.0
     },
@@ -3521,7 +3224,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_qrcode_react",
+      "source": "package_dependencies_qrcode_react",
       "target": "qrcode_react",
       "confidence_score": 1.0
     },
@@ -3533,7 +3236,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_react",
+      "source": "package_dependencies_react",
       "target": "react",
       "confidence_score": 1.0
     },
@@ -3545,7 +3248,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_react_dom",
+      "source": "package_dependencies_react_dom",
       "target": "react_dom",
       "confidence_score": 1.0
     },
@@ -3557,7 +3260,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_react_router_dom",
+      "source": "package_dependencies_react_router_dom",
       "target": "react_router_dom",
       "confidence_score": 1.0
     },
@@ -3569,7 +3272,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_recharts",
+      "source": "package_dependencies_recharts",
       "target": "recharts",
       "confidence_score": 1.0
     },
@@ -3581,7 +3284,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_tailwind_merge",
+      "source": "package_dependencies_tailwind_merge",
       "target": "tailwind_merge",
       "confidence_score": 1.0
     },
@@ -3593,7 +3296,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_xlsx",
+      "source": "package_dependencies_xlsx",
       "target": "xlsx",
       "confidence_score": 1.0
     },
@@ -3607,7 +3310,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_pages_dashboardpage_dashboardpage",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_xlsx"
+      "target": "package_dependencies_xlsx"
     },
     {
       "relation": "references",
@@ -3619,7 +3322,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_pages_historypage_historypage",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_xlsx"
+      "target": "package_dependencies_xlsx"
     },
     {
       "relation": "references",
@@ -3631,7 +3334,7 @@
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_pages_predictiveneedspage_predictiveneedspage",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_dependencies_xlsx"
+      "target": "package_dependencies_xlsx"
     },
     {
       "relation": "contains",
@@ -3640,8 +3343,8 @@
       "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_autoprefixer",
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_autoprefixer",
       "confidence_score": 1.0
     },
     {
@@ -3651,8 +3354,8 @@
       "source_location": "L35",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_postcss",
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_postcss",
       "confidence_score": 1.0
     },
     {
@@ -3662,8 +3365,8 @@
       "source_location": "L36",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_tailwindcss",
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_tailwindcss",
       "confidence_score": 1.0
     },
     {
@@ -3673,8 +3376,8 @@
       "source_location": "L29",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_tailwindcss_vite",
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_tailwindcss_vite",
       "confidence_score": 1.0
     },
     {
@@ -3684,8 +3387,8 @@
       "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_types_node",
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_types_node",
       "confidence_score": 1.0
     },
     {
@@ -3695,8 +3398,8 @@
       "source_location": "L31",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_types_react",
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_types_react",
       "confidence_score": 1.0
     },
     {
@@ -3706,8 +3409,8 @@
       "source_location": "L32",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_types_react_dom",
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_types_react_dom",
       "confidence_score": 1.0
     },
     {
@@ -3717,8 +3420,8 @@
       "source_location": "L37",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_typescript",
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_typescript",
       "confidence_score": 1.0
     },
     {
@@ -3728,8 +3431,8 @@
       "source_location": "L38",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_vite",
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_vite",
       "confidence_score": 1.0
     },
     {
@@ -3739,8 +3442,8 @@
       "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_vitejs_plugin_react",
+      "source": "package_devdependencies",
+      "target": "package_devdependencies_vitejs_plugin_react",
       "confidence_score": 1.0
     },
     {
@@ -3751,7 +3454,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_tailwindcss_vite",
+      "source": "package_devdependencies_tailwindcss_vite",
       "target": "tailwindcss_vite",
       "confidence_score": 1.0
     },
@@ -3763,7 +3466,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_types_node",
+      "source": "package_devdependencies_types_node",
       "target": "types_node",
       "confidence_score": 1.0
     },
@@ -3775,7 +3478,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_types_react",
+      "source": "package_devdependencies_types_react",
       "target": "types_react",
       "confidence_score": 1.0
     },
@@ -3787,7 +3490,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_types_react_dom",
+      "source": "package_devdependencies_types_react_dom",
       "target": "types_react_dom",
       "confidence_score": 1.0
     },
@@ -3799,7 +3502,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_vitejs_plugin_react",
+      "source": "package_devdependencies_vitejs_plugin_react",
       "target": "vitejs_plugin_react",
       "confidence_score": 1.0
     },
@@ -3811,7 +3514,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_autoprefixer",
+      "source": "package_devdependencies_autoprefixer",
       "target": "autoprefixer",
       "confidence_score": 1.0
     },
@@ -3823,7 +3526,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_postcss",
+      "source": "package_devdependencies_postcss",
       "target": "postcss",
       "confidence_score": 1.0
     },
@@ -3835,7 +3538,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_tailwindcss",
+      "source": "package_devdependencies_tailwindcss",
       "target": "tailwindcss",
       "confidence_score": 1.0
     },
@@ -3847,7 +3550,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_typescript",
+      "source": "package_devdependencies_typescript",
       "target": "typescript",
       "confidence_score": 1.0
     },
@@ -3859,7 +3562,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_package_devdependencies_vite",
+      "source": "package_devdependencies_vite",
       "target": "vite",
       "confidence_score": 1.0
     },
@@ -4729,7 +4432,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L78",
+      "source_location": "L76",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext",
@@ -4740,7 +4443,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L27",
+      "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext",
@@ -4751,7 +4454,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L80",
+      "source_location": "L78",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext",
@@ -4762,7 +4465,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext",
@@ -4773,7 +4476,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L583",
+      "source_location": "L574",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext",
@@ -4785,7 +4488,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L21",
+      "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext",
@@ -4797,7 +4500,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L21",
+      "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext",
@@ -4809,7 +4512,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L20",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext",
@@ -4821,7 +4524,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L20",
+      "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext",
@@ -4958,18 +4661,6 @@
       "_origin": "ast",
       "source": "src_context_inventorycontext",
       "target": "src_types_index_sparepart",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L2",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_context_inventorycontext",
-      "target": "src_types_index_sparepartcompatibility",
       "confidence_score": 1.0
     },
     {
@@ -5157,7 +4848,7 @@
       "context": "type",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L23",
+      "source_location": "L22",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_ondutypersonel",
@@ -5169,7 +4860,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L74",
+      "source_location": "L72",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5181,7 +4872,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L54",
+      "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5193,7 +4884,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L47",
+      "source_location": "L45",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5205,7 +4896,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L49",
+      "source_location": "L47",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5217,7 +4908,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L38",
+      "source_location": "L37",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5229,7 +4920,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L60",
+      "source_location": "L58",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5241,7 +4932,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L34",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5253,7 +4944,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L53",
+      "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5265,7 +4956,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L73",
+      "source_location": "L71",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5277,7 +4968,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L56",
+      "source_location": "L54",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5289,19 +4980,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L41",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_context_inventorycontext_inventorycontexttype",
-      "target": "src_types_index_sparepartcompatibility",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "references",
-      "context": "field",
-      "confidence": "EXTRACTED",
-      "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L40",
+      "source_location": "L39",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5313,7 +4992,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L48",
+      "source_location": "L46",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5325,7 +5004,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L50",
+      "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5337,7 +5016,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L35",
+      "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5349,7 +5028,7 @@
       "context": "generic_arg",
       "confidence": "EXTRACTED",
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L51",
+      "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventorycontexttype",
@@ -5362,7 +5041,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L81",
+      "source_location": "L79",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventoryprovider",
@@ -5374,7 +5053,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/context/InventoryContext.tsx",
-      "source_location": "L103",
+      "source_location": "L100",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_context_inventorycontext_inventoryprovider",
@@ -5726,7 +5405,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L212",
+      "source_location": "L211",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_data_mockseeddata",
@@ -5737,7 +5416,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L17",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_data_mockseeddata",
@@ -5748,7 +5427,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L34",
+      "source_location": "L33",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_data_mockseeddata",
@@ -5759,7 +5438,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L247",
+      "source_location": "L246",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_data_mockseeddata",
@@ -5770,7 +5449,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L404",
+      "source_location": "L403",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_data_mockseeddata",
@@ -5781,7 +5460,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L123",
+      "source_location": "L122",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_data_mockseeddata",
@@ -5792,7 +5471,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L169",
+      "source_location": "L168",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_data_mockseeddata",
@@ -5803,18 +5482,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L455",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_data_mockseeddata",
-      "target": "src_data_mockseeddata_initial_sparepart_compatibility",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L261",
+      "source_location": "L260",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_data_mockseeddata",
@@ -5825,7 +5493,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L25",
+      "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_data_mockseeddata",
@@ -5836,7 +5504,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L42",
+      "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_data_mockseeddata",
@@ -5847,7 +5515,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L162",
+      "source_location": "L161",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_data_mockseeddata",
@@ -5858,7 +5526,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L50",
+      "source_location": "L49",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_data_mockseeddata",
@@ -5959,18 +5627,6 @@
       "_origin": "ast",
       "source": "src_data_mockseeddata",
       "target": "src_types_index_sparepart",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/data/mockSeedData.ts",
-      "source_location": "L1",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_data_mockseeddata",
-      "target": "src_types_index_sparepartcompatibility",
       "confidence_score": 1.0
     },
     {
@@ -6190,18 +5846,6 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/supabase.ts",
-      "source_location": "L2",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_lib_supabase",
-      "target": "src_data_mockseeddata_initial_sparepart_compatibility",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sparepartAnalytics.ts",
@@ -6227,7 +5871,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sparepartAnalytics.ts",
-      "source_location": "L84",
+      "source_location": "L83",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_sparepartanalytics",
@@ -6238,7 +5882,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sparepartAnalytics.ts",
-      "source_location": "L177",
+      "source_location": "L176",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_sparepartanalytics",
@@ -6249,7 +5893,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sparepartAnalytics.ts",
-      "source_location": "L233",
+      "source_location": "L232",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_sparepartanalytics",
@@ -6282,7 +5926,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/sparepartAnalytics.ts",
-      "source_location": "L256",
+      "source_location": "L255",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_sparepartanalytics",
@@ -6506,7 +6150,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L21",
+      "source_location": "L20",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_supabase",
@@ -6517,7 +6161,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L35",
+      "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_supabase",
@@ -6528,7 +6172,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L27",
+      "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_supabase",
@@ -6539,7 +6183,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L52",
+      "source_location": "L51",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_supabase",
@@ -6563,7 +6207,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L36",
+      "source_location": "L35",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_supabase_getsupabaseclient",
@@ -6623,7 +6267,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L53",
+      "source_location": "L52",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_supabase_seedsupabasedatabase",
@@ -7100,8 +6744,8 @@
       "source_location": "L2",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_json",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
+      "source": "tsconfig",
+      "target": "tsconfig_compileroptions",
       "confidence_score": 1.0
     },
     {
@@ -7111,8 +6755,8 @@
       "source_location": "L23",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_json",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_include",
+      "source": "tsconfig",
+      "target": "tsconfig_include",
       "confidence_score": 1.0
     },
     {
@@ -7122,8 +6766,8 @@
       "source_location": "L9",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_allowimportingtsextensions",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_allowimportingtsextensions",
       "confidence_score": 1.0
     },
     {
@@ -7133,8 +6777,8 @@
       "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_baseurl",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_baseurl",
       "confidence_score": 1.0
     },
     {
@@ -7144,8 +6788,8 @@
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_isolatedmodules",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_isolatedmodules",
       "confidence_score": 1.0
     },
     {
@@ -7155,8 +6799,8 @@
       "source_location": "L13",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_jsx",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_jsx",
       "confidence_score": 1.0
     },
     {
@@ -7166,8 +6810,8 @@
       "source_location": "L5",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_lib",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_lib",
       "confidence_score": 1.0
     },
     {
@@ -7177,8 +6821,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_module",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_module",
       "confidence_score": 1.0
     },
     {
@@ -7188,8 +6832,8 @@
       "source_location": "L11",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_moduledetection",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_moduledetection",
       "confidence_score": 1.0
     },
     {
@@ -7199,8 +6843,8 @@
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_moduleresolution",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_moduleresolution",
       "confidence_score": 1.0
     },
     {
@@ -7210,8 +6854,8 @@
       "source_location": "L12",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_noemit",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_noemit",
       "confidence_score": 1.0
     },
     {
@@ -7221,8 +6865,8 @@
       "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_noimplicitreturns",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_noimplicitreturns",
       "confidence_score": 1.0
     },
     {
@@ -7232,8 +6876,8 @@
       "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_nounusedlocals",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_nounusedlocals",
       "confidence_score": 1.0
     },
     {
@@ -7243,8 +6887,8 @@
       "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_nounusedparameters",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_nounusedparameters",
       "confidence_score": 1.0
     },
     {
@@ -7254,8 +6898,8 @@
       "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_paths",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_paths",
       "confidence_score": 1.0
     },
     {
@@ -7265,8 +6909,8 @@
       "source_location": "L7",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_skiplibcheck",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_skiplibcheck",
       "confidence_score": 1.0
     },
     {
@@ -7276,8 +6920,8 @@
       "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_strict",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_strict",
       "confidence_score": 1.0
     },
     {
@@ -7287,8 +6931,8 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_target",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_target",
       "confidence_score": 1.0
     },
     {
@@ -7298,8 +6942,8 @@
       "source_location": "L4",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_usedefineforclassfields",
+      "source": "tsconfig_compileroptions",
+      "target": "tsconfig_compileroptions_usedefineforclassfields",
       "confidence_score": 1.0
     },
     {
@@ -7310,7 +6954,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_lib",
+      "source": "tsconfig_compileroptions_lib",
       "target": "ref_dom",
       "confidence_score": 1.0
     },
@@ -7322,7 +6966,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_lib",
+      "source": "tsconfig_compileroptions_lib",
       "target": "ref_dom_iterable",
       "confidence_score": 1.0
     },
@@ -7334,7 +6978,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_compileroptions_lib",
+      "source": "tsconfig_compileroptions_lib",
       "target": "ref_es2022",
       "confidence_score": 1.0
     },
@@ -7346,7 +6990,7 @@
       "weight": 1.0,
       "context": "import",
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_tsconfig_include",
+      "source": "tsconfig_include",
       "target": "ref_src",
       "confidence_score": 1.0
     },
@@ -7357,8 +7001,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_agents_rules_graphify_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_agents_rules_graphify_graphify",
+      "source": "agents_rules_graphify",
+      "target": "agents_rules_graphify_graphify",
       "confidence_score": 1.0
     },
     {
@@ -7368,8 +7012,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_agents_rules_idea_orchestrator_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_agents_rules_idea_orchestrator_idea_orchestrator_rule",
+      "source": "agents_rules_idea_orchestrator",
+      "target": "agents_rules_idea_orchestrator_idea_orchestrator_rule",
       "confidence_score": 1.0
     },
     {
@@ -7379,8 +7023,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_code_review_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_code_review_workflow_code_review",
+      "source": "agents_workflows_code_review",
+      "target": "agents_workflows_code_review_workflow_code_review",
       "confidence_score": 1.0
     },
     {
@@ -7390,8 +7034,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_graphify_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_graphify_workflow_graphify",
+      "source": "agents_workflows_graphify",
+      "target": "agents_workflows_graphify_workflow_graphify",
       "confidence_score": 1.0
     },
     {
@@ -7401,8 +7045,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_handoff_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_handoff_workflow_handoff",
+      "source": "agents_workflows_handoff",
+      "target": "agents_workflows_handoff_workflow_handoff",
       "confidence_score": 1.0
     },
     {
@@ -7412,8 +7056,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_idea_orchestrator_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_idea_orchestrator_workflow_idea_orchestrator",
+      "source": "agents_workflows_idea_orchestrator",
+      "target": "agents_workflows_idea_orchestrator_workflow_idea_orchestrator",
       "confidence_score": 1.0
     },
     {
@@ -7423,8 +7067,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_implement_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_implement_workflow_implement",
+      "source": "agents_workflows_implement",
+      "target": "agents_workflows_implement_workflow_implement",
       "confidence_score": 1.0
     },
     {
@@ -7434,8 +7078,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_to_spec_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_to_spec_workflow_to_spec",
+      "source": "agents_workflows_to_spec",
+      "target": "agents_workflows_to_spec_workflow_to_spec",
       "confidence_score": 1.0
     },
     {
@@ -7445,8 +7089,8 @@
       "source_location": "L6",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_to_ticket_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_to_ticket_workflow_to_ticket",
+      "source": "agents_workflows_to_ticket",
+      "target": "agents_workflows_to_ticket_workflow_to_ticket",
       "confidence_score": 1.0
     },
     {
@@ -7456,8 +7100,8 @@
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_handoff_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
+      "source": "handoff",
+      "target": "handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
       "confidence_score": 1.0
     },
     {
@@ -7467,8 +7111,8 @@
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_handoff_1_executive_summary",
+      "source": "handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
+      "target": "handoff_1_executive_summary",
       "confidence_score": 1.0
     },
     {
@@ -7478,8 +7122,8 @@
       "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_handoff_2_technical_stack_architecture",
+      "source": "handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
+      "target": "handoff_2_technical_stack_architecture",
       "confidence_score": 1.0
     },
     {
@@ -7489,8 +7133,8 @@
       "source_location": "L24",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_handoff_3_completed_modules_features",
+      "source": "handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
+      "target": "handoff_3_completed_modules_features",
       "confidence_score": 1.0
     },
     {
@@ -7500,8 +7144,8 @@
       "source_location": "L38",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_handoff_4_key_project_files_summary",
+      "source": "handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
+      "target": "handoff_4_key_project_files_summary",
       "confidence_score": 1.0
     },
     {
@@ -7511,8 +7155,8 @@
       "source_location": "L53",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_handoff_5_empirical_verification_status",
+      "source": "handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
+      "target": "handoff_5_empirical_verification_status",
       "confidence_score": 1.0
     },
     {
@@ -7522,8 +7166,8 @@
       "source_location": "L60",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_handoff_6_actionable_next_steps_backlog_for_next_session",
+      "source": "handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
+      "target": "handoff_6_actionable_next_steps_backlog_for_next_session",
       "confidence_score": 1.0
     },
     {
@@ -7533,107 +7177,8 @@
       "source_location": "L67",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_handoff_7_how_to_resume_work",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L1",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "readme",
-      "target": "readme_sses_t2_sparepart_management_masih_berapa",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L93",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "readme_sses_t2_sparepart_management_masih_berapa",
-      "target": "readme_database_schema_supabase",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L14",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "readme_sses_t2_sparepart_management_masih_berapa",
-      "target": "readme_features_key_modules",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L38",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "readme_sses_t2_sparepart_management_masih_berapa",
-      "target": "readme_getting_started",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L102",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "readme_sses_t2_sparepart_management_masih_berapa",
-      "target": "readme_license",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L71",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "readme_sses_t2_sparepart_management_masih_berapa",
-      "target": "readme_project_structure",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L28",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "readme_sses_t2_sparepart_management_masih_berapa",
-      "target": "readme_tech_stack",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L45",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "readme_getting_started",
-      "target": "readme_installation",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "README.md",
-      "source_location": "L40",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "readme_getting_started",
-      "target": "readme_prerequisites",
+      "source": "handoff_project_handoff_document_sses_t2_sparepart_management_masih_berapa",
+      "target": "handoff_7_how_to_resume_work",
       "confidence_score": 1.0
     },
     {
@@ -7643,8 +7188,8 @@
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_technical_specification_sses_t2_sparepart_management_masih_berapa_v1_0_0",
+      "source": "docs_specs_masih_berapa_spec",
+      "target": "docs_specs_masih_berapa_spec_technical_specification_sses_t2_sparepart_management_masih_berapa_v1_0_0",
       "confidence_score": 1.0
     },
     {
@@ -7654,8 +7199,8 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_technical_specification_sses_t2_sparepart_management_masih_berapa_v1_0_0",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_1_overview_objectives",
+      "source": "docs_specs_masih_berapa_spec_technical_specification_sses_t2_sparepart_management_masih_berapa_v1_0_0",
+      "target": "docs_specs_masih_berapa_spec_1_overview_objectives",
       "confidence_score": 1.0
     },
     {
@@ -7665,8 +7210,8 @@
       "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_technical_specification_sses_t2_sparepart_management_masih_berapa_v1_0_0",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_2_architecture_data_model",
+      "source": "docs_specs_masih_berapa_spec_technical_specification_sses_t2_sparepart_management_masih_berapa_v1_0_0",
+      "target": "docs_specs_masih_berapa_spec_2_architecture_data_model",
       "confidence_score": 1.0
     },
     {
@@ -7676,8 +7221,8 @@
       "source_location": "L70",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_technical_specification_sses_t2_sparepart_management_masih_berapa_v1_0_0",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_3_detailed_route_feature_modules",
+      "source": "docs_specs_masih_berapa_spec_technical_specification_sses_t2_sparepart_management_masih_berapa_v1_0_0",
+      "target": "docs_specs_masih_berapa_spec_3_detailed_route_feature_modules",
       "confidence_score": 1.0
     },
     {
@@ -7687,8 +7232,8 @@
       "source_location": "L87",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_technical_specification_sses_t2_sparepart_management_masih_berapa_v1_0_0",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_4_verification_testing_boundaries",
+      "source": "docs_specs_masih_berapa_spec_technical_specification_sses_t2_sparepart_management_masih_berapa_v1_0_0",
+      "target": "docs_specs_masih_berapa_spec_4_verification_testing_boundaries",
       "confidence_score": 1.0
     },
     {
@@ -7698,8 +7243,8 @@
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_1_overview_objectives",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_core_goals",
+      "source": "docs_specs_masih_berapa_spec_1_overview_objectives",
+      "target": "docs_specs_masih_berapa_spec_core_goals",
       "confidence_score": 1.0
     },
     {
@@ -7709,8 +7254,8 @@
       "source_location": "L19",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_2_architecture_data_model",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_2_1_database_schema_supabase_postgresql",
+      "source": "docs_specs_masih_berapa_spec_2_architecture_data_model",
+      "target": "docs_specs_masih_berapa_spec_2_1_database_schema_supabase_postgresql",
       "confidence_score": 1.0
     },
     {
@@ -7720,96 +7265,8 @@
       "source_location": "L63",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_2_architecture_data_model",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_masih_berapa_spec_2_2_application_state_context_architecture",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L1",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_specs_schema_alignment_spec",
-      "target": "docs_specs_schema_alignment_spec_technical_specification_schema_alignment_multi_compatibility_support",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_specs_schema_alignment_spec_technical_specification_schema_alignment_multi_compatibility_support",
-      "target": "docs_specs_schema_alignment_spec_1_overview_objective",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L10",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_specs_schema_alignment_spec_technical_specification_schema_alignment_multi_compatibility_support",
-      "target": "docs_specs_schema_alignment_spec_2_user_stories_capabilities",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L15",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_specs_schema_alignment_spec_technical_specification_schema_alignment_multi_compatibility_support",
-      "target": "docs_specs_schema_alignment_spec_3_architecture_technical_design",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L32",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_specs_schema_alignment_spec_technical_specification_schema_alignment_multi_compatibility_support",
-      "target": "docs_specs_schema_alignment_spec_4_edge_cases_error_handling",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L37",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_specs_schema_alignment_spec_technical_specification_schema_alignment_multi_compatibility_support",
-      "target": "docs_specs_schema_alignment_spec_5_non_functional_requirements",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L41",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_specs_schema_alignment_spec_technical_specification_schema_alignment_multi_compatibility_support",
-      "target": "docs_specs_schema_alignment_spec_6_verification_test_strategy",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/specs/schema_alignment_spec.md",
-      "source_location": "L46",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_specs_schema_alignment_spec_technical_specification_schema_alignment_multi_compatibility_support",
-      "target": "docs_specs_schema_alignment_spec_7_out_of_scope",
+      "source": "docs_specs_masih_berapa_spec_2_architecture_data_model",
+      "target": "docs_specs_masih_berapa_spec_2_2_application_state_context_architecture",
       "confidence_score": 1.0
     },
     {
@@ -7819,8 +7276,8 @@
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_specification_dashboard_manajemen_sparepart_physical_quantity_stock_health_focus",
+      "source": "docs_specs_sparepart_management_dashboard_spec",
+      "target": "docs_specs_sparepart_management_dashboard_spec_specification_dashboard_manajemen_sparepart_physical_quantity_stock_health_focus",
       "confidence_score": 1.0
     },
     {
@@ -7830,8 +7287,8 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_specification_dashboard_manajemen_sparepart_physical_quantity_stock_health_focus",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_1_problem_statement_executive_summary",
+      "source": "docs_specs_sparepart_management_dashboard_spec_specification_dashboard_manajemen_sparepart_physical_quantity_stock_health_focus",
+      "target": "docs_specs_sparepart_management_dashboard_spec_1_problem_statement_executive_summary",
       "confidence_score": 1.0
     },
     {
@@ -7841,8 +7298,8 @@
       "source_location": "L10",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_specification_dashboard_manajemen_sparepart_physical_quantity_stock_health_focus",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_2_user_stories",
+      "source": "docs_specs_sparepart_management_dashboard_spec_specification_dashboard_manajemen_sparepart_physical_quantity_stock_health_focus",
+      "target": "docs_specs_sparepart_management_dashboard_spec_2_user_stories",
       "confidence_score": 1.0
     },
     {
@@ -7852,8 +7309,8 @@
       "source_location": "L15",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_specification_dashboard_manajemen_sparepart_physical_quantity_stock_health_focus",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_3_architecture_interfaces_data_models",
+      "source": "docs_specs_sparepart_management_dashboard_spec_specification_dashboard_manajemen_sparepart_physical_quantity_stock_health_focus",
+      "target": "docs_specs_sparepart_management_dashboard_spec_3_architecture_interfaces_data_models",
       "confidence_score": 1.0
     },
     {
@@ -7863,8 +7320,8 @@
       "source_location": "L83",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_specification_dashboard_manajemen_sparepart_physical_quantity_stock_health_focus",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_4_verification_test_strategy",
+      "source": "docs_specs_sparepart_management_dashboard_spec_specification_dashboard_manajemen_sparepart_physical_quantity_stock_health_focus",
+      "target": "docs_specs_sparepart_management_dashboard_spec_4_verification_test_strategy",
       "confidence_score": 1.0
     },
     {
@@ -7874,8 +7331,8 @@
       "source_location": "L17",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_3_architecture_interfaces_data_models",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_3_1_data_model_physical_sparepart_management_metrics",
+      "source": "docs_specs_sparepart_management_dashboard_spec_3_architecture_interfaces_data_models",
+      "target": "docs_specs_sparepart_management_dashboard_spec_3_1_data_model_physical_sparepart_management_metrics",
       "confidence_score": 1.0
     },
     {
@@ -7885,8 +7342,8 @@
       "source_location": "L62",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_3_architecture_interfaces_data_models",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_specs_sparepart_management_dashboard_spec_3_2_ui_component_architecture",
+      "source": "docs_specs_sparepart_management_dashboard_spec_3_architecture_interfaces_data_models",
+      "target": "docs_specs_sparepart_management_dashboard_spec_3_2_ui_component_architecture",
       "confidence_score": 1.0
     },
     {
@@ -7896,8 +7353,8 @@
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_development_tickets_sses_t2_sparepart_management_masih_berapa",
+      "source": "docs_tickets_masih_berapa_tickets",
+      "target": "docs_tickets_masih_berapa_tickets_development_tickets_sses_t2_sparepart_management_masih_berapa",
       "confidence_score": 1.0
     },
     {
@@ -7907,8 +7364,8 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_development_tickets_sses_t2_sparepart_management_masih_berapa",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "source": "docs_tickets_masih_berapa_tickets_development_tickets_sses_t2_sparepart_management_masih_berapa",
+      "target": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
       "confidence_score": 1.0
     },
     {
@@ -7918,8 +7375,8 @@
       "source_location": "L90",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_10_predictive_alerts_mtbf_demand_planning_alerts_needs",
+      "source": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "target": "docs_tickets_masih_berapa_tickets_ticket_10_predictive_alerts_mtbf_demand_planning_alerts_needs",
       "confidence_score": 1.0
     },
     {
@@ -7929,8 +7386,8 @@
       "source_location": "L97",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_11_inventory_analytics_cost_valuation_reports",
+      "source": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "target": "docs_tickets_masih_berapa_tickets_ticket_11_inventory_analytics_cost_valuation_reports",
       "confidence_score": 1.0
     },
     {
@@ -7940,8 +7397,8 @@
       "source_location": "L104",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_12_system_settings_supabase_config_database_seed_settings",
+      "source": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "target": "docs_tickets_masih_berapa_tickets_ticket_12_system_settings_supabase_config_database_seed_settings",
       "confidence_score": 1.0
     },
     {
@@ -7951,8 +7408,8 @@
       "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_1_project_scaffold_tech_stack_setup",
+      "source": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "target": "docs_tickets_masih_berapa_tickets_ticket_1_project_scaffold_tech_stack_setup",
       "confidence_score": 1.0
     },
     {
@@ -7962,8 +7419,8 @@
       "source_location": "L34",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_2_data_types_supabase_database_layer",
+      "source": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "target": "docs_tickets_masih_berapa_tickets_ticket_2_data_types_supabase_database_layer",
       "confidence_score": 1.0
     },
     {
@@ -7973,8 +7430,8 @@
       "source_location": "L41",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_3_app_layout_sidebar_toast_notification_context",
+      "source": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "target": "docs_tickets_masih_berapa_tickets_ticket_3_app_layout_sidebar_toast_notification_context",
       "confidence_score": 1.0
     },
     {
@@ -7984,8 +7441,8 @@
       "source_location": "L48",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_4_dashboard_component_visual_analytics",
+      "source": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "target": "docs_tickets_masih_berapa_tickets_ticket_4_dashboard_component_visual_analytics",
       "confidence_score": 1.0
     },
     {
@@ -7995,8 +7452,8 @@
       "source_location": "L55",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_5_sparepart_master_catalog_catalog",
+      "source": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "target": "docs_tickets_masih_berapa_tickets_ticket_5_sparepart_master_catalog_catalog",
       "confidence_score": 1.0
     },
     {
@@ -8006,8 +7463,8 @@
       "source_location": "L62",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_6_stock_mutation_form_input_sparepart",
+      "source": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "target": "docs_tickets_masih_berapa_tickets_ticket_6_stock_mutation_form_input_sparepart",
       "confidence_score": 1.0
     },
     {
@@ -8017,8 +7474,8 @@
       "source_location": "L69",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_7_audit_log_history_history",
+      "source": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "target": "docs_tickets_masih_berapa_tickets_ticket_7_audit_log_history_history",
       "confidence_score": 1.0
     },
     {
@@ -8028,8 +7485,8 @@
       "source_location": "L76",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_8_mobile_camera_qr_scanner_verification_scanner",
+      "source": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "target": "docs_tickets_masih_berapa_tickets_ticket_8_mobile_camera_qr_scanner_verification_scanner",
       "confidence_score": 1.0
     },
     {
@@ -8039,74 +7496,8 @@
       "source_location": "L83",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_masih_berapa_tickets_ticket_9_thermal_label_generator_pdf_print_print",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/tickets/schema_alignment_tickets.md",
-      "source_location": "L1",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_tickets_schema_alignment_tickets",
-      "target": "docs_tickets_schema_alignment_tickets_ticket_decomposition_schema_alignment_multi_compatibility_support",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/tickets/schema_alignment_tickets.md",
-      "source_location": "L3",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_tickets_schema_alignment_tickets_ticket_decomposition_schema_alignment_multi_compatibility_support",
-      "target": "docs_tickets_schema_alignment_tickets_dependency_map",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/tickets/schema_alignment_tickets.md",
-      "source_location": "L11",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_tickets_schema_alignment_tickets_dependency_map",
-      "target": "docs_tickets_schema_alignment_tickets_ticket_1_data_models_seed_data_supabase_13_table_client_alignment",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/tickets/schema_alignment_tickets.md",
-      "source_location": "L24",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_tickets_schema_alignment_tickets_dependency_map",
-      "target": "docs_tickets_schema_alignment_tickets_ticket_2_inventory_context_state_management_update",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/tickets/schema_alignment_tickets.md",
-      "source_location": "L36",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_tickets_schema_alignment_tickets_dependency_map",
-      "target": "docs_tickets_schema_alignment_tickets_ticket_3_ui_components_forms_alignment",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "docs/tickets/schema_alignment_tickets.md",
-      "source_location": "L49",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "docs_tickets_schema_alignment_tickets_dependency_map",
-      "target": "docs_tickets_schema_alignment_tickets_ticket_4_build_knowledge_graph_empirical_verification",
+      "source": "docs_tickets_masih_berapa_tickets_task_dependency_hierarchy",
+      "target": "docs_tickets_masih_berapa_tickets_ticket_9_thermal_label_generator_pdf_print_print",
       "confidence_score": 1.0
     },
     {
@@ -8116,8 +7507,8 @@
       "source_location": "L1",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_sparepart_dashboard_tickets_md",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_sparepart_dashboard_tickets_implementation_tickets_dashboard_manajemen_sparepart_non_finansial_physical_focus",
+      "source": "docs_tickets_sparepart_dashboard_tickets",
+      "target": "docs_tickets_sparepart_dashboard_tickets_implementation_tickets_dashboard_manajemen_sparepart_non_finansial_physical_focus",
       "confidence_score": 1.0
     },
     {
@@ -8127,8 +7518,8 @@
       "source_location": "L3",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_sparepart_dashboard_tickets_implementation_tickets_dashboard_manajemen_sparepart_non_finansial_physical_focus",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_sparepart_dashboard_tickets_ticket_1_physical_sparepart_analytics_engine_refactoring",
+      "source": "docs_tickets_sparepart_dashboard_tickets_implementation_tickets_dashboard_manajemen_sparepart_non_finansial_physical_focus",
+      "target": "docs_tickets_sparepart_dashboard_tickets_ticket_1_physical_sparepart_analytics_engine_refactoring",
       "confidence_score": 1.0
     },
     {
@@ -8138,8 +7529,8 @@
       "source_location": "L8",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_sparepart_dashboard_tickets_implementation_tickets_dashboard_manajemen_sparepart_non_finansial_physical_focus",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_sparepart_dashboard_tickets_ticket_2_non_financial_dashboard_components_update",
+      "source": "docs_tickets_sparepart_dashboard_tickets_implementation_tickets_dashboard_manajemen_sparepart_non_finansial_physical_focus",
+      "target": "docs_tickets_sparepart_dashboard_tickets_ticket_2_non_financial_dashboard_components_update",
       "confidence_score": 1.0
     },
     {
@@ -8149,11 +7540,10 @@
       "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
-      "source": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_sparepart_dashboard_tickets_implementation_tickets_dashboard_manajemen_sparepart_non_finansial_physical_focus",
-      "target": "c_users_yuli_syarif_antigravity_sparepart_docs_tickets_sparepart_dashboard_tickets_ticket_3_export_report_clean_up_build_verification",
+      "source": "docs_tickets_sparepart_dashboard_tickets_implementation_tickets_dashboard_manajemen_sparepart_non_finansial_physical_focus",
+      "target": "docs_tickets_sparepart_dashboard_tickets_ticket_3_export_report_clean_up_build_verification",
       "confidence_score": 1.0
     }
   ],
-  "hyperedges": [],
-  "built_at_commit": "6f02341c8b3d9a55c0d02332bb7b819619cb358a"
+  "hyperedges": []
 }
