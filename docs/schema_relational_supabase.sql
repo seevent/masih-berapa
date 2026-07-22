@@ -1,7 +1,10 @@
 -- ====================================================================
 -- SKEMA SUPABASE POSTGRESQL RELASIONAL (100% PURIFIED UUID PRIMARY KEYS)
--- Semua Primary Key (PK) & Foreign Key (FK) menggunakan tipe data UUID
+-- Aplikasi: SSES T2 Sparepart Management ("Masih Berapa")
 -- ====================================================================
+
+-- Enable UUID extension (biasanya default aktif di Supabase)
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- 1. Master Jenis Peralatan
 CREATE TABLE IF NOT EXISTS public.jenis_peralatan (
@@ -40,7 +43,7 @@ CREATE TABLE IF NOT EXISTS public.unit_peralatan (
     no_sertifikasi VARCHAR(255),
     tahun_instalasi INT,
     milik VARCHAR(255),
-    status VARCHAR(50) CHECK (status IN ('operasi', 'standby', 'gudang', 'rusak')),
+    status VARCHAR(50) DEFAULT 'operasi' CHECK (status IN ('operasi', 'standby', 'gudang', 'rusak')),
     catatan TEXT,
     foto_url TEXT,
     ampere VARCHAR(50),
@@ -95,31 +98,25 @@ CREATE TABLE IF NOT EXISTS public.master_configs (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- ====================================================================
--- TABEL MODUL MANAJEMEN SPAREPART (EXACT USER SPECIFICATION)
--- ====================================================================
-
 -- 9. Master Inventaris Sparepart
 CREATE TABLE IF NOT EXISTS public.spareparts (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  sku character varying NOT NULL UNIQUE,
-  name character varying NOT NULL,
-  description text,
-  id_tipe uuid NOT NULL,
-  id_jenis uuid NOT NULL,
-  unit character varying DEFAULT 'PCS'::character varying,
-  stok_aktual integer NOT NULL DEFAULT 0 CHECK (stok_aktual >= 0),
-  stok_bekas integer NOT NULL DEFAULT 0 CHECK (stok_bekas >= 0),
-  minimum_stok integer NOT NULL DEFAULT 1 CHECK (minimum_stok >= 0),
-  location character varying,
-  rack character varying,
-  mtbf_days integer DEFAULT 180,
-  last_replaced_at timestamp with time zone,
-  created_at timestamp with time zone DEFAULT now(),
-  updated_at timestamp with time zone DEFAULT now(),
-  CONSTRAINT spareparts_pkey PRIMARY KEY (id),
-  CONSTRAINT spareparts_id_tipe_fkey FOREIGN KEY (id_tipe) REFERENCES public.tipe_peralatan(id),
-  CONSTRAINT spareparts_id_jenis_fkey FOREIGN KEY (id_jenis) REFERENCES public.jenis_peralatan(id)
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    sku VARCHAR(255) UNIQUE NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    id_tipe UUID REFERENCES public.tipe_peralatan(id) ON DELETE CASCADE,
+    id_jenis UUID REFERENCES public.jenis_peralatan(id) ON DELETE CASCADE,
+    unit VARCHAR(50) DEFAULT 'PCS',
+    stok_aktual INT NOT NULL DEFAULT 0 CHECK (stok_aktual >= 0),
+    stok_bekas INT NOT NULL DEFAULT 0 CHECK (stok_bekas >= 0),
+    minimum_stok INT NOT NULL DEFAULT 1 CHECK (minimum_stok >= 0),
+    location VARCHAR(255),
+    rack VARCHAR(255),
+    supplier_type VARCHAR(50) DEFAULT 'LOKAL' CHECK (supplier_type IN ('LOKAL', 'IMPOR')),
+    mtbf_days INT DEFAULT 180,
+    last_replaced_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
 CREATE INDEX IF NOT EXISTS idx_spareparts_sku ON public.spareparts(sku);
@@ -167,3 +164,23 @@ CREATE TABLE IF NOT EXISTS public.purchase_requisitions (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
+
+-- ====================================================================
+-- HAK AKSES ANON / PUBLIC ROW LEVEL SECURITY (RLS) POLICIES
+-- Memungkinkan akses Read/Write via Anon Public Key dari aplikasi React
+-- ====================================================================
+
+ALTER TABLE public.jenis_peralatan DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.tipe_peralatan DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.lokasi DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.titik_lokasi DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.unit_peralatan DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.penempatan_peralatan DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.unit_kerja DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.personel DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.jadwal_shift DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.master_configs DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.spareparts DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.stock_mutations DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.sparepart_compatibility DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.purchase_requisitions DISABLE ROW LEVEL SECURITY;

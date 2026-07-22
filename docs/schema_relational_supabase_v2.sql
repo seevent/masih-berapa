@@ -66,3 +66,7 @@ ALTER TABLE public.spareparts ADD CONSTRAINT spareparts_id_jenis_fkey FOREIGN KE
 ALTER TABLE public.stock_mutations ADD CONSTRAINT stock_mutations_sparepart_id_fkey FOREIGN KEY (sparepart_id) REFERENCES public.spareparts(id) ON DELETE CASCADE;
 ALTER TABLE public.stock_mutations ADD CONSTRAINT stock_mutations_unit_id_fkey FOREIGN KEY (unit_id) REFERENCES public.unit_peralatan(id) ON DELETE SET NULL;
 ALTER TABLE public.stock_mutations ADD CONSTRAINT stock_mutations_personel_id_fkey FOREIGN KEY (personel_id) REFERENCES public.personel(id) ON DELETE SET NULL;
+
+-- 6. Tambahkan kolom supplier_type jika belum ada:
+ALTER TABLE public.spareparts ADD COLUMN IF NOT EXISTS supplier_type VARCHAR(50) DEFAULT 'LOKAL';
+
