@@ -50,8 +50,8 @@
     "semantic_hash": ""
   },
   "src/pages/CatalogPage.tsx": {
-    "mtime": 1784718016.901457,
-    "ast_hash": "6ae8cf5029d1f2b759b3badd7379570a",
+    "mtime": 1784751187.0681677,
+    "ast_hash": "47532066d7aeea7442072be9cab2027b",
     "semantic_hash": ""
   },
   "src/pages/DashboardPage.tsx": {
@@ -60,13 +60,13 @@
     "semantic_hash": ""
   },
   "src/pages/HistoryPage.tsx": {
-    "mtime": 1784718001.280419,
-    "ast_hash": "2c342e23cb68468e8ecc2f5ea2ea2485",
+    "mtime": 1784751557.0365098,
+    "ast_hash": "bbc4c100eb3dfa7e0154e4eaef603ab0",
     "semantic_hash": ""
   },
   "src/pages/MutationPage.tsx": {
-    "mtime": 1784717989.6071124,
-    "ast_hash": "c0508eb83c8c91ddb1d94df3f8ff6e22",
+    "mtime": 1784751543.2786257,
+    "ast_hash": "09dc4b5ce60043cfec5a5c779c198165",
     "semantic_hash": ""
   },
   "src/pages/PredictiveAlertsPage.tsx": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "src/pages/SettingsPage.tsx": {
-    "mtime": 1784746674.1622145,
-    "ast_hash": "8877babfb2f67794d157caaa3926933c",
+    "mtime": 1784751573.9771287,
+    "ast_hash": "622b35fd5c55d96209c9756796f466e3",
     "semantic_hash": ""
   },
   "src/types/index.ts": {

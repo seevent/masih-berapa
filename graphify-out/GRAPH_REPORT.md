@@ -1,16 +1,16 @@
 # Graph Report - masih-berapa  (2026-07-23)
 
 ## Corpus Check
-- 48 files · ~24,363 words
+- 48 files · ~26,009 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 282 nodes · 426 edges · 26 communities (17 shown, 9 thin omitted)
+- 282 nodes · 425 edges · 26 communities (17 shown, 9 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ea5199ef`
+- Built from commit: `ca2ca47b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -83,8 +83,8 @@ Cohesion: 0.08
 Nodes (23): compilerOptions, allowImportingTsExtensions, baseUrl, isolatedModules, jsx, lib, module, moduleDetection (+15 more)
 
 ### Community 3 - "App.tsx"
-Cohesion: 0.13
-Nodes (18): xlsx, AppLayout(), HeaderStats(), HeaderStatsProps, Sidebar(), SidebarProps, useInventory(), CatalogPage() (+10 more)
+Cohesion: 0.14
+Nodes (17): xlsx, AppLayout(), HeaderStats(), HeaderStatsProps, Sidebar(), SidebarProps, useInventory(), CatalogPage() (+9 more)
 
 ### Community 4 - "devDependencies"
 Cohesion: 0.07
@@ -127,15 +127,15 @@ Cohesion: 0.40
 Nodes (4): Implementation Tickets: Dashboard Manajemen Sparepart (Non-Finansial & Physical Focus), Ticket 1: Physical Sparepart Analytics Engine Refactoring, Ticket 2: Non-Financial Dashboard Components Update, Ticket 3: Export Report Clean-up & Build Verification
 
 ### Community 22 - "mockSeedData.ts"
-Cohesion: 0.20
-Nodes (21): InventoryContext, InventoryContextType, OnDutyPersonel, AnnualNeed, JadwalShift, JenisPeralatan, Lokasi, MasterConfig (+13 more)
+Cohesion: 0.18
+Nodes (22): InventoryContext, InventoryContextType, OnDutyPersonel, AnnualNeed, JadwalShift, JenisPeralatan, Lokasi, MasterConfig (+14 more)
 
 ### Community 25 - "NotificationContext.tsx"
 Cohesion: 0.25
 Nodes (7): InventoryProvider(), NotificationContext, NotificationContextType, NotificationProvider(), ToastMessage, ToastType, useNotification()
 
 ## Knowledge Gaps
-- **121 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+116 more)
+- **122 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+117 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **9 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -145,14 +145,14 @@ _Questions this graph is uniquely positioned to answer:_
 - **Why does `dependencies` connect `dependencies` to `App.tsx`, `devDependencies`?**
   _High betweenness centrality (0.184) - this node is a cross-community bridge._
 - **Why does `xlsx` connect `App.tsx` to `dependencies`, `InventoryContext.tsx`?**
-  _High betweenness centrality (0.097) - this node is a cross-community bridge._
+  _High betweenness centrality (0.098) - this node is a cross-community bridge._
 - **Why does `DashboardPage()` connect `InventoryContext.tsx` to `dependencies`, `App.tsx`?**
-  _High betweenness centrality (0.084) - this node is a cross-community bridge._
+  _High betweenness centrality (0.083) - this node is a cross-community bridge._
 - **What connects `name`, `private`, `version` to the rest of the system?**
-  _121 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _122 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.06896551724137931 - nodes in this community are weakly interconnected._
 - **Should `compilerOptions` be split into smaller, more focused modules?**
   _Cohesion score 0.08333333333333333 - nodes in this community are weakly interconnected._
 - **Should `App.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.1310344827586207 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1402116402116402 - nodes in this community are weakly interconnected._

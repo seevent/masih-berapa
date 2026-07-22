@@ -144,7 +144,7 @@ export const DashboardPage: React.FC = () => {
             </span>
           </div>
           <h1 className="text-2xl lg:text-3xl font-black text-white tracking-tight mt-2">
-            Dashboard Manajemen Sparepart
+            Dashboard
           </h1>
           <p className="text-xs lg:text-sm text-slate-400 mt-1">
             Monitoring kuantitas fisik, rotasi frekuensi pemakaian (Pareto ABC), dan prioritas reorder safety stock.
@@ -155,7 +155,7 @@ export const DashboardPage: React.FC = () => {
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={handleExportExcel}
-            className="px-4 py-2.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 font-semibold text-xs flex items-center gap-2 shadow-lg transition-all"
+            className="px-4 py-2.5 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-400 border border-emerald-500/30 font-semibold text-xs flex items-center gap-2 shadow-lg transition-all cursor-pointer"
           >
             <FileSpreadsheet className="w-4 h-4" />
             <span>Ekspor Data Excel</span>
@@ -164,7 +164,7 @@ export const DashboardPage: React.FC = () => {
           <button
             onClick={handleExportPDF}
             disabled={isExporting}
-            className="px-4 py-2.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 font-semibold text-xs flex items-center gap-2 shadow-lg transition-all disabled:opacity-50"
+            className="px-4 py-2.5 rounded-xl bg-blue-600/20 hover:bg-blue-600/30 text-blue-400 border border-blue-500/30 font-semibold text-xs flex items-center gap-2 shadow-lg transition-all disabled:opacity-50 cursor-pointer"
           >
             {isExporting ? (
               <RefreshCw className="w-4 h-4 animate-spin" />
@@ -203,7 +203,7 @@ export const DashboardPage: React.FC = () => {
 
           {/* Lokasi Rak Filter */}
           <div className="flex items-center gap-2 bg-slate-950 px-3 py-2 rounded-xl border border-slate-800 flex-1 sm:flex-none">
-            <span className="text-slate-400 font-semibold">Lokasi Rak:</span>
+            <span className="text-slate-400 font-semibold">Lokasi & Rak:</span>
             <select
               value={selectedRack}
               onChange={(e) => setSelectedRack(e.target.value)}
@@ -240,7 +240,7 @@ export const DashboardPage: React.FC = () => {
                 setSelectedRack('ALL');
                 setSelectedPeriod(12);
               }}
-              className="px-3 py-2 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 font-semibold transition-colors flex items-center gap-1"
+              className="px-3 py-2 rounded-xl bg-rose-500/10 text-rose-400 hover:bg-rose-500/20 border border-rose-500/20 font-semibold transition-colors flex items-center gap-1 cursor-pointer"
             >
               <RefreshCw className="w-3.5 h-3.5" />
               <span>Reset</span>
@@ -258,16 +258,9 @@ export const DashboardPage: React.FC = () => {
         avgTurnoverRatio={3.8}
       />
 
-      {/* Analytics Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* ABC Pareto Analysis (Physical Volume) */}
+      {/* ABC Pareto Analysis (Physical Volume) */}
+      <div className="w-full">
         <ABCAnalysisChart abcData={abcAnalysisData} />
-
-        {/* Physical Unit Movement Trend & Category Distribution */}
-        <PhysicalMovementChart
-          physicalTrend={physicalTrendData}
-          categoryBreakdown={categoryBreakdownData}
-        />
       </div>
 
       {/* Reorder Point & Safety Stock Priority Table */}

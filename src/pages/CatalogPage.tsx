@@ -64,9 +64,9 @@ export const CatalogPage: React.FC = () => {
       stok_aktual: 0,
       stok_bekas: 0,
       minimum_stok: 5,
-      location: 'Gudang Utility Chiller T2',
-      rack: 'RAK-A1-01',
-      supplier_type: 'LOKAL',
+      location: '',
+      rack: '',
+      supplier_type: '',
       mtbf_days: 180,
       last_replaced_at: new Date().toISOString().split('T')[0]
     });
@@ -439,7 +439,7 @@ export const CatalogPage: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder="Contoh: Bearing SKF 6205-2Z"
+                  placeholder="Contoh: OCP/Control Panel Rapiscan"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
@@ -504,7 +504,7 @@ export const CatalogPage: React.FC = () => {
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Gudang</label>
                   <input
                     type="text"
-                    placeholder="Contoh: Gudang Utility Chiller T2"
+                    placeholder=""
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs"

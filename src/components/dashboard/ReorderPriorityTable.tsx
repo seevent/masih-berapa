@@ -62,14 +62,6 @@ export const ReorderPriorityTable: React.FC<ReorderPriorityTableProps> = ({ reor
               {totalSuggestedUnits} Unit
             </span>
           </div>
-
-          <Link
-            to="/input-sparepart"
-            className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-semibold text-xs flex items-center gap-2 shadow-lg shadow-blue-500/20 transition-all"
-          >
-            <ShoppingCart className="w-4 h-4" />
-            <span>Buat Input Transaksi</span>
-          </Link>
         </div>
       </div>
 
@@ -130,7 +122,7 @@ export const ReorderPriorityTable: React.FC<ReorderPriorityTableProps> = ({ reor
               <th className="px-4 py-3 text-center">Stok Aktual vs Min/Safety</th>
               <th className="px-4 py-3 text-center">Rekomendasi Reorder</th>
               <th className="px-4 py-3 text-center">Lead Time Supplier</th>
-              <th className="px-4 py-3 text-center">Lokasi Rak</th>
+              <th className="px-4 py-3 text-center">Lokasi & Rak</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-800 bg-slate-900/40">

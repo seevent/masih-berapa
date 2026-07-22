@@ -64,13 +64,13 @@ export const MutationPage: React.FC = () => {
   const activeShiftCode = currentHour >= 8 && currentHour < 20 ? 'PS' : 'M';
   const activeShiftLabel = activeShiftCode === 'PS' ? 'Dinas Pagi / Siang (08.00 - 20.00)' : 'Dinas Malam (20.00 - 08.00)';
 
-  // Filter Personel by Shift Time & format [Unit] Nama
+  // Filter Personel by Shift Time & format [Unit] Nama (Only active duty shift)
   const filteredPersonelOptions = personelList.map((p) => {
     const unitObj = unitKerjaList.find((u) => u.id === p.unit_id);
     const unitPrefix = unitObj ? `[${unitObj.nama}] ` : '[TEK] ';
     const formattedName = `${unitPrefix}${p.nama}`;
 
-    // Check shift record
+    // Check shift record for current shift time (PS or M)
     const hasShift = jadwalShiftList.some((s) => s.personel_id === p.id && s.shift.includes(activeShiftCode));
 
     return {
@@ -80,12 +80,9 @@ export const MutationPage: React.FC = () => {
     };
   });
 
-  // Sort: Active shift personnel first
-  const sortedPersonelList = [...filteredPersonelOptions].sort((a, b) => {
-    if (a.isDutyActive && !b.isDutyActive) return -1;
-    if (!a.isDutyActive && b.isDutyActive) return 1;
-    return a.nama.localeCompare(b.nama);
-  });
+  // ONLY include active shift personnel (fallback to all if schedule empty)
+  const activeDutyOnly = filteredPersonelOptions.filter((p) => p.isDutyActive);
+  const sortedPersonelList = activeDutyOnly.length > 0 ? activeDutyOnly : filteredPersonelOptions;
 
   // Default select first available personnel
   useEffect(() => {

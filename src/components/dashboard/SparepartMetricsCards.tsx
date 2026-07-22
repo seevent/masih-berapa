@@ -31,7 +31,7 @@ export const SparepartMetricsCards: React.FC<SparepartMetricsCardsProps> = ({
   const totalPhysicalStock = totalNewStock + totalUsedStock;
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
       {/* 1. Total Physical Stock */}
       <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-blue-950/40 p-5 border border-blue-500/20 shadow-xl hover:border-blue-500/40 transition-all duration-300 group">
         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -123,32 +123,6 @@ export const SparepartMetricsCards: React.FC<SparepartMetricsCardsProps> = ({
           </h3>
           <p className="text-xs text-slate-400 mt-1">
             {criticalCount} di bawah minimum, {warningCount} menyentuh safety buffer.
-          </p>
-        </div>
-      </div>
-
-      {/* 4. Rata-rata Turnover / Rotasi Fisik */}
-      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900/90 via-slate-900/80 to-cyan-950/40 p-5 border border-cyan-500/20 shadow-xl hover:border-cyan-500/40 transition-all duration-300 group">
-        <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-          <RefreshCw className="w-24 h-24 text-cyan-400" />
-        </div>
-        <div className="flex items-center justify-between">
-          <div className="p-3 rounded-xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400">
-            <RefreshCw className="w-6 h-6" />
-          </div>
-          <span className="inline-flex items-center text-xs font-semibold px-2.5 py-1 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-            Rotasi Optimum
-          </span>
-        </div>
-        <div className="mt-4">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
-            Tingkat Rotasi Fisik
-          </p>
-          <h3 className="text-2xl font-extrabold text-white mt-1 tracking-tight">
-            {avgTurnoverRatio}x <span className="text-sm font-medium text-slate-400">/ Tahun</span>
-          </h3>
-          <p className="text-xs text-slate-400 mt-1">
-            Frekuensi pemakaian & perputaran fisik unit di gudang.
           </p>
         </div>
       </div>
