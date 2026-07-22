@@ -71,6 +71,12 @@ export const DashboardPage: React.FC = () => {
     [filteredSpareparts]
   );
 
+  const avgTurnoverRatio = useMemo(() => {
+    if (categoryBreakdownData.length === 0) return 0;
+    const sum = categoryBreakdownData.reduce((s, c) => s + c.rotationRatio, 0);
+    return Math.round((sum / categoryBreakdownData.length) * 10) / 10;
+  }, [categoryBreakdownData]);
+
   // Unique Location Racks
   const availableRacks = useMemo(() => {
     const racks = Array.from(new Set(spareparts.map((p) => p.location_rack))).filter(Boolean);
@@ -255,7 +261,7 @@ export const DashboardPage: React.FC = () => {
         totalNewStock={totalNewStock}
         totalUsedStock={totalUsedStock}
         reorderItems={reorderPriorityItems}
-        avgTurnoverRatio={3.8}
+        avgTurnoverRatio={avgTurnoverRatio}
       />
 
       {/* Analytics Charts Grid */}

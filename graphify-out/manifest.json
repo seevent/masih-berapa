@@ -55,8 +55,8 @@
     "semantic_hash": ""
   },
   "src/pages/DashboardPage.tsx": {
-    "mtime": 1784752728.40878,
-    "ast_hash": "ddeb46c547125cfb04a2c09e6863c091",
+    "mtime": 1784753097.4916565,
+    "ast_hash": "fcd3e2bc8fabfc5a6c82c0129e642644",
     "semantic_hash": ""
   },
   "src/pages/HistoryPage.tsx": {
@@ -185,8 +185,8 @@
     "semantic_hash": ""
   },
   "src/lib/sparepartAnalytics.ts": {
-    "mtime": 1784718258.513605,
-    "ast_hash": "a061fe4e4538abae664826077aaae8a7",
+    "mtime": 1784753084.5931296,
+    "ast_hash": "5243cac7a8eaa1a5e34c1446047481b3",
     "semantic_hash": ""
   },
   ".agents/workflows/handoff.md": {
@@ -210,8 +210,8 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/PhysicalMovementChart.tsx": {
-    "mtime": 1784703727.050508,
-    "ast_hash": "458e2e8aec799594f12ecd36fb35b507",
+    "mtime": 1784753092.0035822,
+    "ast_hash": "41da2a92d4a240e5a1cd2e807c5099ae",
     "semantic_hash": ""
   },
   "docs/schema_relational_supabase.sql": {
