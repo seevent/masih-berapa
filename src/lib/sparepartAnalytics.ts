@@ -228,24 +228,48 @@ export const calculateCategoryPhysicalBreakdown = (
 };
 
 /**
- * Calculates Monthly Physical Movement Trend (Inflow vs Outflow Unit count).
+ * Calculates Monthly Physical Movement Trend (Inflow vs Outflow Unit count) based strictly on real mutations.
  */
 export const calculateMonthlyPhysicalTrend = (
   spareparts: Sparepart[],
   mutations: StockMutation[]
 ): MonthlyPhysicalTrend[] => {
-  const months = ['Sep 25', 'Okt 25', 'Nov 25', 'Des 25', 'Jan 26', 'Feb 26'];
-  const baseInflows = [45, 68, 32, 85, 54, 48];
-  const baseOutflows = [38, 52, 40, 72, 49, 44];
+  const monthsMap: Record<string, { month: string; inflowUnit: number; outflowUnit: number }> = {};
+  const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
 
-  return months.map((month, idx) => {
-    const inflow = baseInflows[idx];
-    const outflow = baseOutflows[idx];
+  // Initialize last 6 months
+  const now = new Date();
+  const monthKeys: string[] = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    const label = `${monthNames[d.getMonth()]} ${d.getFullYear().toString().slice(-2)}`;
+    const key = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}`;
+    monthKeys.push(key);
+    monthsMap[key] = { month: label, inflowUnit: 0, outflowUnit: 0 };
+  }
+
+  // Aggregate mutations by created_at timestamp
+  mutations.forEach((m) => {
+    if (!m.created_at) return;
+    const date = new Date(m.created_at);
+    if (isNaN(date.getTime())) return;
+    const key = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+    if (monthsMap[key]) {
+      if (m.mutation_type === 'Masuk') {
+        monthsMap[key].inflowUnit += m.qty;
+      } else if (m.mutation_type === 'Pakai' || m.mutation_type === 'Rusak') {
+        monthsMap[key].outflowUnit += m.qty;
+      }
+    }
+  });
+
+  return monthKeys.map((key) => {
+    const item = monthsMap[key];
     return {
-      month,
-      inflowUnit: inflow,
-      outflowUnit: outflow,
-      netStockChange: inflow - outflow
+      month: item.month,
+      inflowUnit: item.inflowUnit,
+      outflowUnit: item.outflowUnit,
+      netStockChange: item.inflowUnit - item.outflowUnit
     };
   });
 };

@@ -105,20 +105,33 @@ export const PhysicalMovementChart: React.FC<PhysicalMovementChartProps> = ({
             </ResponsiveContainer>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
-            <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-              <span className="text-slate-400">Rata-rata Masuk Bulanan:</span>
-              <span className="font-bold text-emerald-400">55 Unit</span>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-              <span className="text-slate-400">Rata-rata Pakai Bulanan:</span>
-              <span className="font-bold text-rose-400">49 Unit</span>
-            </div>
-            <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
-              <span className="text-slate-400">Net Unit Change:</span>
-              <span className="font-bold text-cyan-400">+ 6 Unit / bln</span>
-            </div>
-          </div>
+          {/* Dynamic Monthly Averages */}
+          {(() => {
+            const totalInflow = physicalTrend.reduce((sum, item) => sum + item.inflowUnit, 0);
+            const totalOutflow = physicalTrend.reduce((sum, item) => sum + item.outflowUnit, 0);
+            const avgInflow = physicalTrend.length > 0 ? Math.round(totalInflow / physicalTrend.length) : 0;
+            const avgOutflow = physicalTrend.length > 0 ? Math.round(totalOutflow / physicalTrend.length) : 0;
+            const netChange = avgInflow - avgOutflow;
+
+            return (
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2 text-xs">
+                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                  <span className="text-slate-400">Rata-rata Masuk Bulanan:</span>
+                  <span className="font-bold text-emerald-400">{avgInflow} Unit</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                  <span className="text-slate-400">Rata-rata Pakai Bulanan:</span>
+                  <span className="font-bold text-rose-400">{avgOutflow} Unit</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800 flex items-center justify-between">
+                  <span className="text-slate-400">Net Unit Change:</span>
+                  <span className={`font-bold ${netChange >= 0 ? 'text-cyan-400' : 'text-rose-400'}`}>
+                    {netChange >= 0 ? `+ ${netChange}` : netChange} Unit / bln
+                  </span>
+                </div>
+              </div>
+            );
+          })()}
         </div>
       ) : (
         <div className="space-y-4">

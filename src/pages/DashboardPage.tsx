@@ -258,9 +258,16 @@ export const DashboardPage: React.FC = () => {
         avgTurnoverRatio={3.8}
       />
 
-      {/* ABC Pareto Analysis (Physical Volume) */}
-      <div className="w-full">
+      {/* Analytics Charts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* ABC Pareto Analysis (Physical Volume) */}
         <ABCAnalysisChart abcData={abcAnalysisData} />
+
+        {/* Physical Unit Movement Trend & Category Distribution */}
+        <PhysicalMovementChart
+          physicalTrend={physicalTrendData}
+          categoryBreakdown={categoryBreakdownData}
+        />
       </div>
 
       {/* Reorder Point & Safety Stock Priority Table */}

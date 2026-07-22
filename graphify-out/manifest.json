@@ -50,13 +50,13 @@
     "semantic_hash": ""
   },
   "src/pages/CatalogPage.tsx": {
-    "mtime": 1784751187.0681677,
-    "ast_hash": "47532066d7aeea7442072be9cab2027b",
+    "mtime": 1784752768.7133834,
+    "ast_hash": "9ac133a05f5d5dcc749e35acfcfdc112",
     "semantic_hash": ""
   },
   "src/pages/DashboardPage.tsx": {
-    "mtime": 1784697607.9128768,
-    "ast_hash": "5540c32067ad18a8b934655a9bfcaefe",
+    "mtime": 1784752728.40878,
+    "ast_hash": "ddeb46c547125cfb04a2c09e6863c091",
     "semantic_hash": ""
   },
   "src/pages/HistoryPage.tsx": {
@@ -65,8 +65,8 @@
     "semantic_hash": ""
   },
   "src/pages/MutationPage.tsx": {
-    "mtime": 1784751543.2786257,
-    "ast_hash": "09dc4b5ce60043cfec5a5c779c198165",
+    "mtime": 1784752776.2024856,
+    "ast_hash": "f4ac095439cb4f9d072ce31891813b4c",
     "semantic_hash": ""
   },
   "src/pages/PredictiveAlertsPage.tsx": {
@@ -175,13 +175,13 @@
     "semantic_hash": ""
   },
   "src/components/dashboard/ReorderPriorityTable.tsx": {
-    "mtime": 1784697603.0292292,
-    "ast_hash": "28d3004ae65feaa0c7f7fa139190ac77",
+    "mtime": 1784752743.7058628,
+    "ast_hash": "ae0ed2f7939b38e55d21e987cb5e26b1",
     "semantic_hash": ""
   },
   "src/components/dashboard/SparepartMetricsCards.tsx": {
-    "mtime": 1784703738.3608131,
-    "ast_hash": "fd3fd41245818f930a586352648b1c8d",
+    "mtime": 1784752736.1953857,
+    "ast_hash": "9eeef6894bf97e7c0dc0d6ad7c82714c",
     "semantic_hash": ""
   },
   "src/lib/sparepartAnalytics.ts": {
