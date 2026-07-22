@@ -1,175 +1,170 @@
 -- ====================================================================
--- SKEMA SUPABASE POSTGRESQL RELASIONAL (100% PURIFIED UUID PRIMARY KEYS)
+-- SKEMA SUPABASE POSTGRESQL (EXACT MATCH DENGAN DATABASE SUPABASE SAAT INI)
 -- Aplikasi: SSES T2 Sparepart Management ("Masih Berapa")
 -- ====================================================================
 
--- Enable UUID extension (biasanya default aktif di Supabase)
-CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
-
 -- 1. Master Jenis Peralatan
 CREATE TABLE IF NOT EXISTS public.jenis_peralatan (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nama VARCHAR(255) NOT NULL,
-    tampil_di_kalibrasi BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  nama character varying NOT NULL UNIQUE,
+  tampil_di_kalibrasi boolean DEFAULT false,
+  CONSTRAINT jenis_peralatan_pkey PRIMARY KEY (id)
 );
 
 -- 2. Master Tipe Peralatan
 CREATE TABLE IF NOT EXISTS public.tipe_peralatan (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    id_jenis UUID REFERENCES public.jenis_peralatan(id) ON DELETE CASCADE,
-    nama VARCHAR(255) NOT NULL,
-    varian VARCHAR(255),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  id_jenis uuid,
+  nama character varying NOT NULL UNIQUE,
+  varian text,
+  CONSTRAINT tipe_peralatan_pkey PRIMARY KEY (id),
+  CONSTRAINT tipe_peralatan_id_jenis_fkey FOREIGN KEY (id_jenis) REFERENCES public.jenis_peralatan(id)
 );
 
 -- 3. Master Lokasi & Titik Lokasi
 CREATE TABLE IF NOT EXISTS public.lokasi (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nama VARCHAR(255) NOT NULL
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  nama character varying NOT NULL UNIQUE,
+  CONSTRAINT lokasi_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.titik_lokasi (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    id_lokasi UUID REFERENCES public.lokasi(id) ON DELETE CASCADE,
-    nomor VARCHAR(255) NOT NULL
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  id_lokasi uuid,
+  nomor character varying NOT NULL,
+  CONSTRAINT titik_lokasi_pkey PRIMARY KEY (id),
+  CONSTRAINT titik_lokasi_id_lokasi_fkey FOREIGN KEY (id_lokasi) REFERENCES public.lokasi(id)
 );
 
 -- 4. Unit Peralatan Fisik
 CREATE TABLE IF NOT EXISTS public.unit_peralatan (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    id_tipe UUID REFERENCES public.tipe_peralatan(id) ON DELETE SET NULL,
-    serial_number VARCHAR(255),
-    no_sertifikasi VARCHAR(255),
-    tahun_instalasi INT,
-    milik VARCHAR(255),
-    status VARCHAR(50) DEFAULT 'operasi' CHECK (status IN ('operasi', 'standby', 'gudang', 'rusak')),
-    catatan TEXT,
-    foto_url TEXT,
-    ampere VARCHAR(50),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  id_tipe uuid NOT NULL,
+  serial_number character varying,
+  no_sertifikasi character varying,
+  tahun_instalasi integer,
+  milik character varying DEFAULT 'Injourney / AP2'::character varying,
+  status character varying NOT NULL DEFAULT 'operasi'::character varying CHECK (status::text = ANY (ARRAY['operasi'::character varying, 'standby'::character varying, 'gudang'::character varying, 'rusak'::character varying]::text[])),
+  catatan text,
+  foto_url text,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  ampere character varying,
+  CONSTRAINT unit_peralatan_pkey PRIMARY KEY (id),
+  CONSTRAINT unit_peralatan_id_tipe_fkey FOREIGN KEY (id_tipe) REFERENCES public.tipe_peralatan(id)
 );
 
 -- 5. Penempatan Unit Peralatan
 CREATE TABLE IF NOT EXISTS public.penempatan_peralatan (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    id_unit UUID REFERENCES public.unit_peralatan(id) ON DELETE CASCADE,
-    id_tipe UUID REFERENCES public.tipe_peralatan(id) ON DELETE SET NULL,
-    id_lokasi UUID REFERENCES public.lokasi(id) ON DELETE SET NULL,
-    id_titik UUID REFERENCES public.titik_lokasi(id) ON DELETE SET NULL,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  id_tipe uuid,
+  id_lokasi uuid,
+  id_titik uuid,
+  is_active boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT timezone('utc'::text, now()),
+  id_unit uuid,
+  CONSTRAINT penempatan_peralatan_pkey PRIMARY KEY (id),
+  CONSTRAINT penempatan_peralatan_id_tipe_fkey FOREIGN KEY (id_tipe) REFERENCES public.tipe_peralatan(id),
+  CONSTRAINT penempatan_peralatan_id_lokasi_fkey FOREIGN KEY (id_lokasi) REFERENCES public.lokasi(id),
+  CONSTRAINT penempatan_peralatan_id_titik_fkey FOREIGN KEY (id_titik) REFERENCES public.titik_lokasi(id),
+  CONSTRAINT penempatan_peralatan_id_unit_fkey FOREIGN KEY (id_unit) REFERENCES public.unit_peralatan(id)
 );
 
 -- 6. Unit Kerja & Personel
 CREATE TABLE IF NOT EXISTS public.unit_kerja (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nama VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  nama text NOT NULL UNIQUE,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT unit_kerja_pkey PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS public.personel (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    nik VARCHAR(100) UNIQUE NOT NULL,
-    nama VARCHAR(255) NOT NULL,
-    no_hp VARCHAR(50),
-    unit_id UUID REFERENCES public.unit_kerja(id) ON DELETE SET NULL,
-    jabatan VARCHAR(255),
-    urutan INT DEFAULT 0,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  nik text NOT NULL UNIQUE,
+  nama text NOT NULL,
+  no_hp text,
+  unit_id uuid,
+  created_at timestamp with time zone DEFAULT now(),
+  jabatan character varying,
+  urutan integer,
+  CONSTRAINT personel_pkey PRIMARY KEY (id),
+  CONSTRAINT personel_unit_id_fkey FOREIGN KEY (unit_id) REFERENCES public.unit_kerja(id)
 );
 
 -- 7. Jadwal Shift
 CREATE TABLE IF NOT EXISTS public.jadwal_shift (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    personel_id UUID REFERENCES public.personel(id) ON DELETE CASCADE,
-    tanggal DATE NOT NULL,
-    shift VARCHAR(50) CHECK (shift IN ('Pagi', 'Siang', 'Malam', 'Off')),
-    status_kehadiran VARCHAR(100) DEFAULT 'Hadir',
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  personel_id uuid,
+  tanggal date NOT NULL,
+  shift text NOT NULL,
+  status_kehadiran text DEFAULT 'Hadir'::text,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT jadwal_shift_pkey PRIMARY KEY (id),
+  CONSTRAINT jadwal_shift_personel_id_fkey FOREIGN KEY (personel_id) REFERENCES public.personel(id)
 );
 
 -- 8. Master Configs
 CREATE TABLE IF NOT EXISTS public.master_configs (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    key VARCHAR(255) UNIQUE NOT NULL,
-    value JSONB,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  key text NOT NULL UNIQUE,
+  value jsonb NOT NULL,
+  updated_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT master_configs_pkey PRIMARY KEY (id)
 );
 
 -- 9. Master Inventaris Sparepart
 CREATE TABLE IF NOT EXISTS public.spareparts (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    sku VARCHAR(255) UNIQUE NOT NULL,
-    name VARCHAR(255) NOT NULL,
-    description TEXT,
-    id_tipe UUID REFERENCES public.tipe_peralatan(id) ON DELETE CASCADE,
-    id_jenis UUID REFERENCES public.jenis_peralatan(id) ON DELETE CASCADE,
-    unit VARCHAR(50) DEFAULT 'PCS',
-    stok_aktual INT NOT NULL DEFAULT 0 CHECK (stok_aktual >= 0),
-    stok_bekas INT NOT NULL DEFAULT 0 CHECK (stok_bekas >= 0),
-    minimum_stok INT NOT NULL DEFAULT 1 CHECK (minimum_stok >= 0),
-    location VARCHAR(255),
-    rack VARCHAR(255),
-    supplier_type VARCHAR(50) DEFAULT 'LOKAL' CHECK (supplier_type IN ('LOKAL', 'IMPOR')),
-    mtbf_days INT DEFAULT 180,
-    last_replaced_at TIMESTAMP WITH TIME ZONE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  sku character varying NOT NULL UNIQUE,
+  name character varying NOT NULL,
+  description text,
+  id_tipe uuid,
+  id_jenis uuid,
+  unit character varying DEFAULT 'PCS'::character varying,
+  stok_aktual integer NOT NULL DEFAULT 0 CHECK (stok_aktual >= 0),
+  stok_bekas integer NOT NULL DEFAULT 0 CHECK (stok_bekas >= 0),
+  minimum_stok integer NOT NULL DEFAULT 1 CHECK (minimum_stok >= 0),
+  lokasi character varying,
+  sumber character varying DEFAULT 'LOKAL'::character varying CHECK (sumber::text = ANY (ARRAY['LOKAL'::character varying, 'IMPOR'::character varying]::text[])),
+  mtbf_days integer DEFAULT 180,
+  last_replaced_at timestamp with time zone,
+  created_at timestamp with time zone DEFAULT now(),
+  updated_at timestamp with time zone DEFAULT now(),
+  rack character varying,
+  CONSTRAINT spareparts_pkey PRIMARY KEY (id),
+  CONSTRAINT spareparts_id_tipe_fkey FOREIGN KEY (id_tipe) REFERENCES public.tipe_peralatan(id),
+  CONSTRAINT spareparts_id_jenis_fkey FOREIGN KEY (id_jenis) REFERENCES public.jenis_peralatan(id)
 );
-
-CREATE INDEX IF NOT EXISTS idx_spareparts_sku ON public.spareparts(sku);
-CREATE INDEX IF NOT EXISTS idx_spareparts_tipe ON public.spareparts(id_tipe);
-CREATE INDEX IF NOT EXISTS idx_spareparts_jenis ON public.spareparts(id_jenis);
-CREATE INDEX IF NOT EXISTS idx_spareparts_rack ON public.spareparts(rack);
 
 -- 10. Transaksi Mutasi Stok
 CREATE TABLE IF NOT EXISTS public.stock_mutations (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    sparepart_id UUID NOT NULL REFERENCES public.spareparts(id) ON DELETE CASCADE,
-    unit_id UUID REFERENCES public.unit_peralatan(id) ON DELETE SET NULL,
-    personel_id UUID REFERENCES public.personel(id) ON DELETE SET NULL,
-    mutation_type VARCHAR(50) NOT NULL CHECK (mutation_type IN ('INBOUND', 'OUTBOUND', 'ROTABLE_RETURN', 'SCRAP')),
-    qty INT NOT NULL CHECK (qty > 0),
-    operator_name VARCHAR(255) NOT NULL,
-    reference_no VARCHAR(100),
-    notes TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  sparepart_id uuid NOT NULL,
+  unit_id uuid,
+  personel_id uuid,
+  mutation_type character varying NOT NULL CHECK (mutation_type::text = ANY (ARRAY['Masuk'::character varying, 'Pakai'::character varying, 'Bekas'::character varying, 'Rusak'::character varying]::text[])),
+  qty integer NOT NULL CHECK (qty > 0),
+  notes text,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT stock_mutations_pkey PRIMARY KEY (id),
+  CONSTRAINT stock_mutations_sparepart_id_fkey FOREIGN KEY (sparepart_id) REFERENCES public.spareparts(id),
+  CONSTRAINT stock_mutations_unit_id_fkey FOREIGN KEY (unit_id) REFERENCES public.unit_peralatan(id),
+  CONSTRAINT stock_mutations_personel_id_fkey FOREIGN KEY (personel_id) REFERENCES public.personel(id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_mutations_sparepart ON public.stock_mutations(sparepart_id);
-CREATE INDEX IF NOT EXISTS idx_mutations_created ON public.stock_mutations(created_at DESC);
-
--- 11. Kompatibilitas Sparepart (Many-to-Many Sparepart <-> Tipe Peralatan)
+-- 11. Kompatibilitas Sparepart
 CREATE TABLE IF NOT EXISTS public.sparepart_compatibility (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    sparepart_id UUID NOT NULL REFERENCES public.spareparts(id) ON DELETE CASCADE,
-    id_tipe UUID NOT NULL REFERENCES public.tipe_peralatan(id) ON DELETE CASCADE,
-    is_primary BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    UNIQUE(sparepart_id, id_tipe)
+  id uuid NOT NULL DEFAULT gen_random_uuid(),
+  sparepart_id uuid NOT NULL,
+  id_tipe uuid NOT NULL,
+  is_primary boolean DEFAULT true,
+  created_at timestamp with time zone DEFAULT now(),
+  CONSTRAINT sparepart_compatibility_pkey PRIMARY KEY (id),
+  CONSTRAINT sparepart_compatibility_sparepart_id_fkey FOREIGN KEY (sparepart_id) REFERENCES public.spareparts(id),
+  CONSTRAINT sparepart_compatibility_id_tipe_fkey FOREIGN KEY (id_tipe) REFERENCES public.tipe_peralatan(id)
 );
 
--- 12. Pengajuan Reorder Kuantitas Fisik (Purchase Requisitions)
-CREATE TABLE IF NOT EXISTS public.purchase_requisitions (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    pr_number VARCHAR(100) UNIQUE NOT NULL,
-    sparepart_id UUID NOT NULL REFERENCES public.spareparts(id) ON DELETE CASCADE,
-    requested_by UUID REFERENCES public.personel(id) ON DELETE SET NULL,
-    requested_qty INT NOT NULL CHECK (requested_qty > 0),
-    urgency VARCHAR(50) DEFAULT 'WARNING' CHECK (urgency IN ('CRITICAL', 'WARNING', 'ROUTINE')),
-    status VARCHAR(50) DEFAULT 'DRAFT' CHECK (status IN ('DRAFT', 'SUBMITTED', 'APPROVED', 'RECEIVED', 'CANCELLED')),
-    notes TEXT,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-
--- ====================================================================
--- HAK AKSES ANON / PUBLIC ROW LEVEL SECURITY (RLS) POLICIES
--- Memungkinkan akses Read/Write via Anon Public Key dari aplikasi React
--- ====================================================================
-
+-- Disable Row Level Security (RLS) untuk akses ANON/Public API yang seamless
 ALTER TABLE public.jenis_peralatan DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.tipe_peralatan DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.lokasi DISABLE ROW LEVEL SECURITY;
@@ -183,4 +178,3 @@ ALTER TABLE public.master_configs DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.spareparts DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.stock_mutations DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.sparepart_compatibility DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.purchase_requisitions DISABLE ROW LEVEL SECURITY;

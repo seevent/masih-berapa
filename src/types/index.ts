@@ -110,9 +110,11 @@ export interface Sparepart {
   stok_bekas: number;
   minimum_stok: number;
   location?: string;
+  lokasi?: string;
   rack?: string;
   location_rack?: string; // backwards compatibility helper
   supplier_type?: SupplierType;
+  sumber?: SupplierType;
   mtbf_days?: number;
   last_replaced_at?: string;
   created_at?: string;

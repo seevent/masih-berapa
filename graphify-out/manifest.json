@@ -215,13 +215,13 @@
     "semantic_hash": ""
   },
   "docs/schema_relational_supabase.sql": {
-    "mtime": 1784706175.397982,
-    "ast_hash": "d2e6dee7e53d0136b1370450f681f7a2",
+    "mtime": 1784747064.521407,
+    "ast_hash": "d61f81b8b984cf3efee3938f261154cb",
     "semantic_hash": ""
   },
   "docs/schema_relational_supabase_v2.sql": {
-    "mtime": 1784704971.0139637,
-    "ast_hash": "b0a4c5a9488fbbb657fdb817be9bd69c",
+    "mtime": 1784747068.7451336,
+    "ast_hash": "c6c729b5b35b3f44a89b3306ddcf0418",
     "semantic_hash": ""
   },
   "docs/migration_spareparts_schema.sql": {
