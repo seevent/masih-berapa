@@ -1,16 +1,16 @@
 # Graph Report - masih-berapa  (2026-07-23)
 
 ## Corpus Check
-- 49 files · ~24,655 words
+- 48 files · ~24,294 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 283 nodes · 437 edges · 25 communities (16 shown, 9 thin omitted)
+- 282 nodes · 426 edges · 26 communities (17 shown, 9 thin omitted)
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6f02341c`
+- Built from commit: `e8ef05e7`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -39,6 +39,7 @@
 - mockSeedData.ts
 - to-spec.md
 - to-ticket.md
+- NotificationContext.tsx
 
 ## God Nodes (most connected - your core abstractions)
 1. `useInventory()` - 25 edges
@@ -49,8 +50,8 @@
 6. `Sparepart` - 8 edges
 7. `Project Handoff Document: SSES T2 Sparepart Management ("Masih Berapa")` - 8 edges
 8. `Technical Specification: Schema Alignment & Multi-Compatibility Support` - 8 edges
-9. `SettingsPage()` - 7 edges
-10. `SSES T2 Sparepart Management ("Masih Berapa") 🛠️📦` - 7 edges
+9. `SSES T2 Sparepart Management ("Masih Berapa") 🛠️📦` - 7 edges
+10. `MutationType` - 6 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `DashboardPage()` --references--> `jspdf`  [EXTRACTED]
@@ -67,7 +68,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (25 total, 9 thin omitted)
+## Communities (26 total, 9 thin omitted)
 
 ### Community 0 - "dependencies"
 Cohesion: 0.07
@@ -82,8 +83,8 @@ Cohesion: 0.08
 Nodes (23): compilerOptions, allowImportingTsExtensions, baseUrl, isolatedModules, jsx, lib, module, moduleDetection (+15 more)
 
 ### Community 3 - "App.tsx"
-Cohesion: 0.14
-Nodes (17): xlsx, AppLayout(), HeaderStats(), HeaderStatsProps, Sidebar(), SidebarProps, useInventory(), CatalogPage() (+9 more)
+Cohesion: 0.13
+Nodes (18): xlsx, AppLayout(), HeaderStats(), HeaderStatsProps, Sidebar(), SidebarProps, useInventory(), CatalogPage() (+10 more)
 
 ### Community 4 - "devDependencies"
 Cohesion: 0.07
@@ -94,8 +95,8 @@ Cohesion: 0.13
 Nodes (14): Development Tickets: SSES T2 Sparepart Management - "Masih Berapa", Task Dependency Hierarchy, [TICKET-10]: Predictive Alerts (MTBF) & Demand Planning (`/alerts`, `/needs`), [TICKET-11]: Inventory Analytics & Cost Valuation (`/reports`), [TICKET-12]: System Settings, Supabase Config & Database Seed (`/settings`), [TICKET-1]: Project Scaffold & Tech Stack Setup, [TICKET-2]: Data Types & Supabase Database Layer, [TICKET-3]: App Layout, Sidebar & Toast Notification Context (+6 more)
 
 ### Community 6 - "SettingsPage.tsx"
-Cohesion: 0.13
-Nodes (25): InventoryProvider(), NotificationContext, NotificationContextType, NotificationProvider(), ToastMessage, ToastType, useNotification(), INITIAL_JADWAL_SHIFT (+17 more)
+Cohesion: 0.21
+Nodes (16): INITIAL_JADWAL_SHIFT, INITIAL_JENIS_PERALATAN, INITIAL_LOKASI, INITIAL_MASTER_CONFIGS, INITIAL_MUTATIONS, INITIAL_PENEMPATAN_PERALATAN, INITIAL_PERSONEL, INITIAL_SPAREPART_COMPATIBILITY (+8 more)
 
 ### Community 7 - "Technical Specification: SSES T2 Sparepart Management - "Masih Berapa" (v1.0.0)"
 Cohesion: 0.20
@@ -129,6 +130,10 @@ Nodes (4): Implementation Tickets: Dashboard Manajemen Sparepart (Non-Finansial 
 Cohesion: 0.20
 Nodes (21): InventoryContext, InventoryContextType, OnDutyPersonel, AnnualNeed, JadwalShift, JenisPeralatan, Lokasi, MasterConfig (+13 more)
 
+### Community 25 - "NotificationContext.tsx"
+Cohesion: 0.25
+Nodes (7): InventoryProvider(), NotificationContext, NotificationContextType, NotificationProvider(), ToastMessage, ToastType, useNotification()
+
 ## Knowledge Gaps
 - **121 isolated node(s):** `name`, `private`, `version`, `type`, `dev` (+116 more)
   These have ≤1 connection - possible missing edges or undocumented components.
@@ -138,7 +143,7 @@ Nodes (21): InventoryContext, InventoryContextType, OnDutyPersonel, AnnualNeed, 
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `dependencies` connect `dependencies` to `App.tsx`, `devDependencies`?**
-  _High betweenness centrality (0.185) - this node is a cross-community bridge._
+  _High betweenness centrality (0.184) - this node is a cross-community bridge._
 - **Why does `xlsx` connect `App.tsx` to `dependencies`, `InventoryContext.tsx`?**
   _High betweenness centrality (0.097) - this node is a cross-community bridge._
 - **Why does `DashboardPage()` connect `InventoryContext.tsx` to `dependencies`, `App.tsx`?**
@@ -150,4 +155,4 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `compilerOptions` be split into smaller, more focused modules?**
   _Cohesion score 0.08333333333333333 - nodes in this community are weakly interconnected._
 - **Should `App.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.13756613756613756 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.1310344827586207 - nodes in this community are weakly interconnected._

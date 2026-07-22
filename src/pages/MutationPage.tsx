@@ -8,56 +8,165 @@ import {
   Trash2,
   CheckCircle2,
   UserCheck,
-  FileText,
   MessageSquare,
   Cpu,
   Clock,
-  AlertTriangle
+  Search,
+  Filter,
+  MapPin,
+  Building2
 } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
 import { MutationType } from '../types';
 
 export const MutationPage: React.FC = () => {
-  const { spareparts, unitPeralatanList, getOnDutyPersonel, addMutation } = useInventory();
+  const {
+    spareparts,
+    jenisPeralatan,
+    tipePeralatan,
+    lokasiList,
+    titikLokasiList,
+    unitPeralatanList,
+    penempatanList,
+    unitKerjaList,
+    personelList,
+    jadwalShiftList,
+    sparepartCompatibility,
+    addMutation
+  } = useInventory();
+
   const navigate = useNavigate();
 
-  const onDutyList = getOnDutyPersonel();
-
-  const [selectedSparepartId, setSelectedSparepartId] = useState('');
-  const [selectedUnitId, setSelectedUnitId] = useState('');
-  const [selectedPersonelId, setSelectedPersonelId] = useState('');
+  // 1. Mutation Type State
   const [mutationType, setMutationType] = useState<MutationType>('Masuk');
+
+  // 2. Sparepart Search & Filter State
+  const [sparepartSearch, setSparepartSearch] = useState('');
+  const [selectedJenisFilter, setSelectedJenisFilter] = useState('');
+  const [selectedTipeFilter, setSelectedTipeFilter] = useState('');
+  const [selectedSparepartId, setSelectedSparepartId] = useState('');
+
+  // 3. Personel State
+  const [selectedPersonelId, setSelectedPersonelId] = useState('');
+
+  // 4. Conditional Location & Equipment Unit State (Only for 'Pakai' & 'Bekas')
+  const [selectedLokasiId, setSelectedLokasiId] = useState('');
+  const [selectedTitikId, setSelectedTitikId] = useState('');
+  const [selectedUnitId, setSelectedUnitId] = useState('');
+
+  // 5. Quantity & Notes
   const [qty, setQty] = useState<number>(1);
-  const [referenceNo, setReferenceNo] = useState('WO-2026-001');
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Default select first on-duty personnel
+  // --- Calculate Shift Time (PS: 08.00-20.00 | M: 20.00-08.00) ---
+  const currentHour = new Date().getHours();
+  const activeShiftCode = currentHour >= 8 && currentHour < 20 ? 'PS' : 'M';
+  const activeShiftLabel = activeShiftCode === 'PS' ? 'Dinas Pagi / Siang (08.00 - 20.00)' : 'Dinas Malam (20.00 - 08.00)';
+
+  // Filter Personel by Shift Time & format [Unit] Nama
+  const filteredPersonelOptions = personelList.map((p) => {
+    const unitObj = unitKerjaList.find((u) => u.id === p.unit_id);
+    const unitPrefix = unitObj ? `[${unitObj.nama}] ` : '[TEK] ';
+    const formattedName = `${unitPrefix}${p.nama}`;
+
+    // Check shift record
+    const hasShift = jadwalShiftList.some((s) => s.personel_id === p.id && s.shift.includes(activeShiftCode));
+
+    return {
+      ...p,
+      formattedName,
+      isDutyActive: hasShift
+    };
+  });
+
+  // Sort: Active shift personnel first
+  const sortedPersonelList = [...filteredPersonelOptions].sort((a, b) => {
+    if (a.isDutyActive && !b.isDutyActive) return -1;
+    if (!a.isDutyActive && b.isDutyActive) return 1;
+    return a.nama.localeCompare(b.nama);
+  });
+
+  // Default select first available personnel
   useEffect(() => {
-    if (onDutyList.length > 0 && !selectedPersonelId) {
-      setSelectedPersonelId(onDutyList[0].id);
+    if (sortedPersonelList.length > 0 && !selectedPersonelId) {
+      setSelectedPersonelId(sortedPersonelList[0].id);
     }
-  }, [onDutyList, selectedPersonelId]);
+  }, [sortedPersonelList, selectedPersonelId]);
+
+  // Available Tipe filter options based on selected Jenis filter
+  const availableTipesForFilter = selectedJenisFilter
+    ? tipePeralatan.filter((t) => t.id_jenis === selectedJenisFilter)
+    : tipePeralatan;
+
+  // Filtered Spareparts List
+  const filteredSpareparts = spareparts.filter((sp) => {
+    const matchesSearch =
+      sp.name.toLowerCase().includes(sparepartSearch.toLowerCase()) ||
+      sp.sku.toLowerCase().includes(sparepartSearch.toLowerCase());
+
+    const matchesJenis = !selectedJenisFilter || sp.id_jenis === selectedJenisFilter;
+    const matchesTipe = !selectedTipeFilter || sp.id_tipe === selectedTipeFilter;
+
+    return matchesSearch && matchesJenis && matchesTipe;
+  });
 
   const selectedPart = spareparts.find((p) => p.id === selectedSparepartId);
-  const selectedPersonel = onDutyList.find((p) => p.id === selectedPersonelId) || onDutyList[0];
+
+  // --- Compatible Locations & Equipment Units for Selected Sparepart ---
+  const compatTypeIds = selectedPart
+    ? Array.from(
+        new Set([
+          selectedPart.id_tipe,
+          ...sparepartCompatibility
+            .filter((c) => c.sparepart_id === selectedPart.id)
+            .map((c) => c.id_tipe)
+        ])
+      ).filter(Boolean)
+    : [];
+
+  // Find penempatan records for units with compatible tipe
+  const compatPenempatan = penempatanList.filter((pen) => pen.is_active && compatTypeIds.includes(pen.id_tipe || ''));
+  const compatLokasiIds = Array.from(new Set(compatPenempatan.map((p) => p.id_lokasi).filter(Boolean)));
+
+  // Compatible locations list + fallback for all locations
+  const compatibleLokasiList = lokasiList.filter((lok) => compatLokasiIds.includes(lok.id));
+
+  // Available Titik for selected Lokasi
+  const availableTitikList = selectedLokasiId
+    ? titikLokasiList.filter((t) => t.id_lokasi === selectedLokasiId)
+    : [];
+
+  // Available Units at selected Lokasi & Titik compatible with selected sparepart
+  const availableUnitsForLocation = unitPeralatanList.filter((unit) => {
+    const isCompatType = compatTypeIds.includes(unit.id_tipe);
+    if (!isCompatType) return false;
+
+    if (selectedLokasiId) {
+      const pen = penempatanList.find((p) => p.id_unit === unit.id && p.is_active);
+      if (!pen || pen.id_lokasi !== selectedLokasiId) return false;
+      if (selectedTitikId && pen.id_titik !== selectedTitikId) return false;
+    }
+    return true;
+  });
+
+  const selectedPersonelObj = sortedPersonelList.find((p) => p.id === selectedPersonelId) || sortedPersonelList[0];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedSparepartId || qty <= 0 || !selectedPersonel) return;
+    if (!selectedSparepartId || qty <= 0 || !selectedPersonelObj) return;
 
     setIsSubmitting(true);
-    const operatorName = `${selectedPersonel.nama} (${selectedPersonel.jabatan || 'Teknisi'})`;
+    const operatorName = selectedPersonelObj.formattedName;
 
     const success = await addMutation({
       sparepart_id: selectedSparepartId,
-      unit_id: selectedUnitId || undefined,
-      personel_id: selectedPersonel.id,
+      unit_id: mutationType === 'Pakai' || mutationType === 'Bekas' ? selectedUnitId || undefined : undefined,
+      personel_id: selectedPersonelObj.id,
       mutation_type: mutationType,
       qty,
       operator_name: operatorName,
-      reference_no: referenceNo,
-      notes
+      notes: notes.trim()
     });
 
     setIsSubmitting(false);
@@ -77,7 +186,7 @@ export const MutationPage: React.FC = () => {
     {
       type: 'Pakai' as MutationType,
       label: 'Pakai',
-      desc: 'Pengeluaran stok untuk pemakaian perbaikan unit / Work Order',
+      desc: 'Pengeluaran stok untuk pemakaian perbaikan unit',
       icon: ArrowUpRight,
       color: 'border-blue-500/40 bg-blue-500/10 text-blue-300'
     },
@@ -122,7 +231,7 @@ export const MutationPage: React.FC = () => {
                     key={m.type}
                     type="button"
                     onClick={() => setMutationType(m.type)}
-                    className={`p-4 rounded-xl border text-left transition-all flex flex-col justify-between ${
+                    className={`p-4 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
                       isSelected
                         ? `${m.color} ring-2 ring-cyan-500/50 shadow-lg`
                         : 'border-slate-800 bg-slate-950/60 text-slate-400 hover:border-slate-700'
@@ -139,21 +248,75 @@ export const MutationPage: React.FC = () => {
             </div>
           </div>
 
-          {/* 2. Select Sparepart Item */}
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-2">
+          {/* 2. Select Sparepart Item with Search & Filter */}
+          <div className="space-y-3">
+            <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider">
               2. Pilih Sparepart Master
             </label>
+
+            {/* Filter Controls for Search Results */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="relative">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Cari Sparepart / SKU..."
+                  value={sparepartSearch}
+                  onChange={(e) => setSparepartSearch(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl pl-9 pr-3 py-2 text-xs text-white placeholder-slate-500 focus:border-cyan-500"
+                />
+              </div>
+
+              <div>
+                <select
+                  value={selectedJenisFilter}
+                  onChange={(e) => {
+                    setSelectedJenisFilter(e.target.value);
+                    setSelectedTipeFilter('');
+                  }}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-300 focus:border-cyan-500 cursor-pointer"
+                >
+                  <option value="">Filter Jenis Peralatan</option>
+                  {jenisPeralatan.map((j) => (
+                    <option key={j.id} value={j.id}>
+                      {j.nama}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <select
+                  value={selectedTipeFilter}
+                  onChange={(e) => setSelectedTipeFilter(e.target.value)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-300 focus:border-cyan-500 cursor-pointer"
+                >
+                  <option value="">Filter Tipe Peralatan</option>
+                  {availableTipesForFilter.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.nama}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Sparepart Select Box */}
             <select
               required
               value={selectedSparepartId}
-              onChange={(e) => setSelectedSparepartId(e.target.value)}
+              onChange={(e) => {
+                setSelectedSparepartId(e.target.value);
+                setSelectedLokasiId('');
+                setSelectedTitikId('');
+                setSelectedUnitId('');
+              }}
               className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-cyan-500 cursor-pointer font-medium"
             >
-              <option value="">-- Pilih Sparepart berdasarkan SKU / Nama --</option>
-              {spareparts.map((sp) => (
+              <option value="">-- Pilih Sparepart berdasarkan SKU / Nama ({filteredSpareparts.length} item) --</option>
+              {filteredSpareparts.map((sp) => (
                 <option key={sp.id} value={sp.id}>
-                  [{sp.sku}] {sp.name} — Stok Baru: {sp.stok_aktual} {sp.unit} | Bekas: {sp.stok_bekas} {sp.unit} (Rak: {sp.location_rack})
+                  [{sp.sku}] {sp.name} — Stok Baru: {sp.stok_aktual} {sp.unit || 'PCS'} | Bekas: {sp.stok_bekas} {sp.unit || 'PCS'}
                 </option>
               ))}
             </select>
@@ -165,91 +328,144 @@ export const MutationPage: React.FC = () => {
               <div>
                 <span className="font-mono text-cyan-400 font-bold">{selectedPart.sku}</span>
                 <h4 className="text-sm font-bold text-white mt-0.5">{selectedPart.name}</h4>
-                <p className="text-slate-400 mt-1">Peralatan: {selectedPart.equipment_type_name} | Lokasi: {selectedPart.location_rack}</p>
+                <p className="text-slate-400 mt-1">Gudang: {selectedPart.location || selectedPart.lokasi || 'Gudang Utama T2'} | Rak: {selectedPart.rack || selectedPart.location_rack || 'RAK-A1'}</p>
               </div>
               <div className="flex items-center gap-4 bg-slate-900 px-4 py-2.5 rounded-lg border border-slate-800">
                 <div>
                   <span className="text-[10px] text-slate-400 block uppercase">Stok Baru</span>
-                  <span className="font-bold text-emerald-400 text-sm">{selectedPart.stok_aktual} {selectedPart.unit}</span>
+                  <span className="font-bold text-emerald-400 text-sm">{selectedPart.stok_aktual} {selectedPart.unit || 'PCS'}</span>
                 </div>
                 <div className="w-px h-8 bg-slate-800" />
                 <div>
                   <span className="text-[10px] text-slate-400 block uppercase">Stok Bekas</span>
-                  <span className="font-bold text-amber-400 text-sm">{selectedPart.stok_bekas} {selectedPart.unit}</span>
+                  <span className="font-bold text-amber-400 text-sm">{selectedPart.stok_bekas} {selectedPart.unit || 'PCS'}</span>
                 </div>
               </div>
             </div>
           )}
 
-          {/* 3. Operator/Personel Berdinas */}
-          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
+          {/* 3. Dynamic Location & Compatible Equipment Dropdowns (Only for Pakai & Bekas) */}
+          {(mutationType === 'Pakai' || mutationType === 'Bekas') && (
+            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
+              <div className="flex items-center justify-between">
+                <label className="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                  <Building2 className="w-4 h-4 text-cyan-400" />
+                  <span>3. Penempatan Lokasi & Peralatan Kompatibel</span>
+                </label>
+                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                  Trans: {mutationType}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                {/* Select Lokasi */}
+                <div>
+                  <label className="block font-semibold text-slate-300 mb-1">Lokasi Area</label>
+                  <select
+                    value={selectedLokasiId}
+                    onChange={(e) => {
+                      setSelectedLokasiId(e.target.value);
+                      setSelectedTitikId('');
+                      setSelectedUnitId('');
+                    }}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white cursor-pointer"
+                  >
+                    <option value="">-- Semua Lokasi / Pilih Lokasi --</option>
+
+                    {compatibleLokasiList.length > 0 && (
+                      <optgroup label="✨ Lokasi Kompatibel">
+                        {compatibleLokasiList.map((lok) => (
+                          <option key={lok.id} value={lok.id}>
+                            {lok.nama}
+                          </option>
+                        ))}
+                      </optgroup>
+                    )}
+
+                    <optgroup label="📍 Semua Lokasi Lain">
+                      {lokasiList.map((lok) => (
+                        <option key={lok.id} value={lok.id}>
+                          {lok.nama}
+                        </option>
+                      ))}
+                    </optgroup>
+                  </select>
+                </div>
+
+                {/* Select Titik Lokasi */}
+                <div>
+                  <label className="block font-semibold text-slate-300 mb-1">Titik Lokasi</label>
+                  <select
+                    value={selectedTitikId}
+                    onChange={(e) => {
+                      setSelectedTitikId(e.target.value);
+                      setSelectedUnitId('');
+                    }}
+                    disabled={!selectedLokasiId}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white cursor-pointer disabled:opacity-50"
+                  >
+                    <option value="">-- Semua Titik --</option>
+                    {availableTitikList.map((t) => (
+                      <option key={t.id} value={t.id}>
+                        Titik {t.nomor}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Select Unit Peralatan */}
+                <div>
+                  <label className="block font-semibold text-slate-300 mb-1">Unit Peralatan Kompatibel</label>
+                  <select
+                    value={selectedUnitId}
+                    onChange={(e) => setSelectedUnitId(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white cursor-pointer"
+                  >
+                    <option value="">-- Tanpa Unit Spesifik --</option>
+                    {availableUnitsForLocation.map((u) => {
+                      const tp = tipePeralatan.find((t) => t.id === u.id_tipe);
+                      return (
+                        <option key={u.id} value={u.id}>
+                          [{tp?.nama || 'Unit'}] {u.serial_number || u.id} ({u.status})
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 4. Personel Operator Berdinas */}
+          <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
             <div className="flex items-center justify-between">
               <label className="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-2">
                 <UserCheck className="w-4 h-4 text-emerald-400" />
-                <span>3. Personel Operator Berdinas (Sesuai Jadwal Shift)</span>
+                <span>Personel Berdinas</span>
               </label>
               <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-                <Clock className="w-3 h-3" /> Shift Active Only
+                <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                <span>{activeShiftLabel}</span>
               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1">
-                  Pilih Teknisi / Personel Berdinas
-                </label>
-                <select
-                  required
-                  value={selectedPersonelId}
-                  onChange={(e) => setSelectedPersonelId(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-cyan-500 cursor-pointer font-semibold"
-                >
-                  {onDutyList.length === 0 ? (
-                    <option value="">Tidak ada personel berdinas saat ini</option>
-                  ) : (
-                    onDutyList.map((p) => (
-                      <option key={p.id} value={p.id}>
-                        [{p.current_shift || 'Shift Active'}] {p.nama} — NIK: {p.nik} ({p.jabatan || 'Teknisi'})
-                      </option>
-                    ))
-                  )}
-                </select>
-              </div>
-
-              {/* Target Equipment Unit Selection */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 mb-1 flex items-center gap-1">
-                  <Cpu className="w-3.5 h-3.5 text-slate-400" />
-                  Target Unit Peralatan (Opsional)
-                </label>
-                <select
-                  value={selectedUnitId}
-                  onChange={(e) => setSelectedUnitId(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-cyan-500 cursor-pointer"
-                >
-                  <option value="">-- Tanpa Unit Spesifik / Gudang Umum --</option>
-                  {unitPeralatanList.map((u) => (
-                    <option key={u.id} value={u.id}>
-                      {u.serial_number || u.id} — Status: {u.status} ({u.catatan || 'Unit Asset'})
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div>
+              <select
+                required
+                value={selectedPersonelId}
+                onChange={(e) => setSelectedPersonelId(e.target.value)}
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-cyan-500 cursor-pointer font-bold"
+              >
+                {sortedPersonelList.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.formattedName} {p.isDutyActive ? ' (Dinas Aktif)' : ''}
+                  </option>
+                ))}
+              </select>
             </div>
-
-            {selectedPersonel && (
-              <div className="text-xs text-slate-400 bg-slate-900/60 p-3 rounded-lg border border-slate-800 flex items-center justify-between">
-                <div>
-                  Operator Terpilih: <span className="font-bold text-white">{selectedPersonel.nama}</span> (NIK: {selectedPersonel.nik})
-                </div>
-                <span className="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-mono text-[10px] font-bold">
-                  {selectedPersonel.current_shift || 'Berdinas'}
-                </span>
-              </div>
-            )}
           </div>
 
-          {/* 4. Transaction Quantity & References */}
+          {/* 5. Transaction Quantity & Notes */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">
@@ -267,31 +483,17 @@ export const MutationPage: React.FC = () => {
 
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1 flex items-center gap-1">
-                <FileText className="w-3.5 h-3.5 text-slate-400" />
-                No. Referensi (PO / Work Order)
+                <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
+                Catatan Transaksi
               </label>
               <input
                 type="text"
-                value={referenceNo}
-                onChange={(e) => setReferenceNo(e.target.value)}
-                placeholder="Contoh: WO-BFP-9902"
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white font-mono focus:border-cyan-500"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Detail alasan transaksi, kondisi sparepart, atau lokasi unit..."
+                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-cyan-500"
               />
             </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1 flex items-center gap-1">
-              <MessageSquare className="w-3.5 h-3.5 text-slate-400" />
-              Catatan Transaksi
-            </label>
-            <textarea
-              rows={2}
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              placeholder="Detail alasan transaksi, kondisi sparepart, atau lokasi unit..."
-              className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-cyan-500"
-            />
           </div>
 
           {/* Submit Action */}
@@ -299,7 +501,7 @@ export const MutationPage: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting || !selectedSparepartId || !selectedPersonelId}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-xl shadow-cyan-500/25 transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-xl shadow-cyan-500/25 transition-all cursor-pointer disabled:opacity-50"
             >
               <CheckCircle2 className="w-5 h-5" />
               <span>Simpan Transaksi Mutasi</span>

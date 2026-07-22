@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "src/lib/supabase.ts": {
-    "mtime": 1784718267.2589262,
-    "ast_hash": "c8a6e7525d922250a082041957900dbc",
+    "mtime": 1784746666.5671923,
+    "ast_hash": "bfb6221bd36b7ab315ad4e81ed530985",
     "semantic_hash": ""
   },
   "src/main.tsx": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "src/pages/SettingsPage.tsx": {
-    "mtime": 1784696139.0841496,
-    "ast_hash": "f4dc72f3471996441214f4dacac3995e",
+    "mtime": 1784746674.1622145,
+    "ast_hash": "8877babfb2f67794d157caaa3926933c",
     "semantic_hash": ""
   },
   "src/types/index.ts": {
@@ -215,13 +215,13 @@
     "semantic_hash": ""
   },
   "docs/schema_relational_supabase.sql": {
-    "mtime": 1784706175.397982,
-    "ast_hash": "d2e6dee7e53d0136b1370450f681f7a2",
+    "mtime": 1784747064.521407,
+    "ast_hash": "d61f81b8b984cf3efee3938f261154cb",
     "semantic_hash": ""
   },
   "docs/schema_relational_supabase_v2.sql": {
-    "mtime": 1784704971.0139637,
-    "ast_hash": "b0a4c5a9488fbbb657fdb817be9bd69c",
+    "mtime": 1784747068.7451336,
+    "ast_hash": "c6c729b5b35b3f44a89b3306ddcf0418",
     "semantic_hash": ""
   },
   "docs/migration_spareparts_schema.sql": {

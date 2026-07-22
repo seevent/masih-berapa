@@ -16,16 +16,56 @@ import { useInventory } from '../context/InventoryContext';
 import { MutationType } from '../types';
 
 export const HistoryPage: React.FC = () => {
-  const { mutations } = useInventory();
+  const {
+    mutations,
+    spareparts,
+    unitPeralatanList,
+    tipePeralatan,
+    penempatanList,
+    lokasiList,
+    titikLokasiList
+  } = useInventory();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<string>('');
 
-  const filteredMutations = mutations.filter((m) => {
+  const enrichedMutations = mutations.map((m) => {
+    const sp = spareparts.find((s) => s.id === m.sparepart_id);
+    const unit = unitPeralatanList.find((u) => u.id === m.unit_id);
+
+    // Determine Tipe Peralatan
+    const tipeId = unit?.id_tipe || sp?.id_tipe;
+    const tipeObj = tipePeralatan.find((t) => t.id === tipeId);
+    const tipeName = tipeObj ? tipeObj.nama : sp?.equipment_type_name || '-';
+
+    // Determine Lokasi & Titik
+    let locationStr = '-';
+    if (unit) {
+      const pen = penempatanList.find((p) => p.id_unit === unit.id && p.is_active);
+      if (pen) {
+        const lok = lokasiList.find((l) => l.id === pen.id_lokasi);
+        const titik = titikLokasiList.find((t) => t.id === pen.id_titik);
+        locationStr = lok ? (titik ? `${lok.nama} (Titik ${titik.nomor})` : lok.nama) : '-';
+      }
+    } else if (sp?.location || sp?.lokasi) {
+      locationStr = sp.location || sp.lokasi || '-';
+    }
+
+    return {
+      ...m,
+      tipeName,
+      locationStr,
+      personelName: m.operator_name
+    };
+  });
+
+  const filteredMutations = enrichedMutations.filter((m) => {
     const matchesSearch =
       (m.sparepart_sku?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
       (m.sparepart_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (m.operator_name.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (m.reference_no?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+      (m.personelName.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (m.tipeName.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      (m.locationStr.toLowerCase() || '').includes(searchTerm.toLowerCase());
 
     const matchesType = !selectedType || m.mutation_type === selectedType;
 
@@ -37,10 +77,11 @@ export const HistoryPage: React.FC = () => {
       Waktu: new Date(m.created_at).toLocaleString('id-ID'),
       SKU: m.sparepart_sku || '-',
       'Nama Sparepart': m.sparepart_name || '-',
+      'Tipe Peralatan': m.tipeName,
       'Tipe Mutasi': m.mutation_type === 'Masuk' ? 'MASUK' : m.mutation_type === 'Pakai' ? 'PAKAI' : m.mutation_type === 'Bekas' ? 'BEKAS' : 'RUSAK',
       Jumlah: m.qty,
-      Operator: m.operator_name,
-      'No. Referensi / PO': m.reference_no || '-',
+      Personel: m.personelName,
+      'Lokasi & Titik': m.locationStr,
       Catatan: m.notes || '-'
     }));
 
@@ -96,7 +137,7 @@ export const HistoryPage: React.FC = () => {
 
         <button
           onClick={handleExportExcel}
-          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-lg shadow-emerald-600/25 transition-all"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm shadow-lg shadow-emerald-600/25 transition-all cursor-pointer"
         >
           <FileSpreadsheet className="w-4 h-4" />
           <span>Ekspor Excel (.xlsx)</span>
@@ -109,7 +150,7 @@ export const HistoryPage: React.FC = () => {
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
-            placeholder="Cari SKU, Nama Sparepart, Operator, atau No. WO/PO..."
+            placeholder="Cari SKU, Nama Sparepart, Personel, Tipe Peralatan, atau Lokasi..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full bg-slate-950/80 border border-slate-700/80 rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
@@ -140,16 +181,17 @@ export const HistoryPage: React.FC = () => {
                 <th className="py-3.5 px-4">Waktu Transaksi</th>
                 <th className="py-3.5 px-4">Tipe Mutasi</th>
                 <th className="py-3.5 px-4">SKU & Sparepart</th>
+                <th className="py-3.5 px-4">Tipe Peralatan</th>
                 <th className="py-3.5 px-4 text-center">Jumlah (Qty)</th>
-                <th className="py-3.5 px-4">Operator</th>
-                <th className="py-3.5 px-4">No. Ref (PO/WO)</th>
+                <th className="py-3.5 px-4">Personel</th>
+                <th className="py-3.5 px-4">Lokasi & Titik</th>
                 <th className="py-3.5 px-4">Catatan</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-xs">
               {filteredMutations.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-8 text-center text-slate-500">
+                  <td colSpan={8} className="py-8 text-center text-slate-500">
                     Belum ada riwayat mutasi yang cocok.
                   </td>
                 </tr>
@@ -172,14 +214,17 @@ export const HistoryPage: React.FC = () => {
                       <div className="font-mono text-cyan-400 font-bold">{m.sparepart_sku}</div>
                       <div className="text-white font-medium text-xs">{m.sparepart_name}</div>
                     </td>
+                    <td className="py-3.5 px-4 font-semibold text-slate-300 whitespace-nowrap">
+                      {m.tipeName}
+                    </td>
                     <td className="py-3.5 px-4 text-center font-bold text-sm text-white">
                       {m.qty}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-300 font-medium">
-                      {m.operator_name}
+                    <td className="py-3.5 px-4 text-slate-200 font-medium">
+                      {m.personelName}
                     </td>
-                    <td className="py-3.5 px-4 font-mono text-slate-400">
-                      {m.reference_no || '-'}
+                    <td className="py-3.5 px-4 text-cyan-300 font-medium whitespace-nowrap">
+                      {m.locationStr}
                     </td>
                     <td className="py-3.5 px-4 text-slate-400 max-w-xs truncate">
                       {m.notes || '-'}

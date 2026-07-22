@@ -13,10 +13,11 @@ import {
   Tag,
   Cpu,
   Layers,
-  Building2
+  Building2,
+  Check
 } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
-import { Sparepart, SupplierType } from '../types';
+import { Sparepart } from '../types';
 
 export const CatalogPage: React.FC = () => {
   const { spareparts, tipePeralatan, jenisPeralatan, sparepartCompatibility, addSparepart, updateSparepart, deleteSparepart } = useInventory();
@@ -25,18 +26,16 @@ export const CatalogPage: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedJenis, setSelectedJenis] = useState('');
   const [selectedTipe, setSelectedTipe] = useState('');
-  const [selectedSupplier, setSelectedSupplier] = useState('');
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  // Form State matching exact Supabase Schema
+  // Form State
   const [formData, setFormData] = useState({
     sku: '',
     name: '',
     description: '',
-    id_tipe: '',
     id_jenis: '',
     unit: 'PCS',
     stok_aktual: 0,
@@ -44,20 +43,23 @@ export const CatalogPage: React.FC = () => {
     minimum_stok: 5,
     location: 'Gudang Utility Chiller T2',
     rack: 'RAK-A1-01',
-    supplier_type: 'LOKAL' as SupplierType,
+    supplier_type: 'LOKAL',
     mtbf_days: 180,
     last_replaced_at: new Date().toISOString().split('T')[0]
   });
 
+  const [selectedTipeIds, setSelectedTipeIds] = useState<string[]>([]);
+
   const handleOpenAddModal = () => {
     setEditingId(null);
-    const defaultTipe = tipePeralatan[0];
+    const defaultJenis = jenisPeralatan[0];
+    const defaultTipes = defaultJenis ? tipePeralatan.filter(t => t.id_jenis === defaultJenis.id) : [];
+    
     setFormData({
       sku: 'SP-' + Math.floor(1000 + Math.random() * 9000),
       name: '',
       description: '',
-      id_tipe: defaultTipe?.id || '',
-      id_jenis: defaultTipe?.id_jenis || '',
+      id_jenis: defaultJenis?.id || '',
       unit: 'PCS',
       stok_aktual: 0,
       stok_bekas: 0,
@@ -68,37 +70,46 @@ export const CatalogPage: React.FC = () => {
       mtbf_days: 180,
       last_replaced_at: new Date().toISOString().split('T')[0]
     });
+    setSelectedTipeIds(defaultTipes.map(t => t.id));
     setIsModalOpen(true);
   };
 
   const handleOpenEditModal = (sp: Sparepart) => {
     setEditingId(sp.id);
+    const compatList = sparepartCompatibility.filter(c => c.sparepart_id === sp.id).map(c => c.id_tipe);
+    const initialTipeIds = Array.from(new Set([sp.id_tipe, ...compatList])).filter(Boolean);
+
     setFormData({
       sku: sp.sku,
       name: sp.name,
       description: sp.description || '',
-      id_tipe: sp.id_tipe || '',
       id_jenis: sp.id_jenis || '',
       unit: sp.unit || 'PCS',
       stok_aktual: sp.stok_aktual,
       stok_bekas: sp.stok_bekas,
       minimum_stok: sp.minimum_stok,
-      location: sp.location || 'Gudang Utama T2',
+      location: sp.location || sp.lokasi || 'Gudang Utama T2',
       rack: sp.rack || sp.location_rack || 'RAK-A1-01',
-      supplier_type: sp.supplier_type || 'LOKAL',
+      supplier_type: sp.supplier_type || (sp as any).sumber || 'LOKAL',
       mtbf_days: sp.mtbf_days || 180,
       last_replaced_at: sp.last_replaced_at || new Date().toISOString().split('T')[0]
     });
+    setSelectedTipeIds(initialTipeIds);
     setIsModalOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.sku || !formData.id_tipe || !formData.id_jenis) return;
+    if (!formData.name || !formData.sku || !formData.id_jenis) return;
+
+    const primaryTipeId = selectedTipeIds[0] || '';
 
     const payload = {
       ...formData,
-      location_rack: formData.rack // sync helper
+      id_tipe: primaryTipeId,
+      lokasi: formData.location,
+      sumber: formData.supplier_type as any,
+      location_rack: formData.rack
     };
 
     if (editingId) {
@@ -109,6 +120,17 @@ export const CatalogPage: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const toggleTipeSelection = (tipeId: string) => {
+    setSelectedTipeIds(prev => 
+      prev.includes(tipeId) ? prev.filter(id => id !== tipeId) : [...prev, tipeId]
+    );
+  };
+
+  // Filter Tipe options based on selected Jenis
+  const availableTipeFilter = selectedJenis
+    ? tipePeralatan.filter(t => t.id_jenis === selectedJenis)
+    : tipePeralatan;
+
   // Filter Logic
   const filteredSpareparts = spareparts.filter((sp) => {
     const matchesSearch =
@@ -116,11 +138,16 @@ export const CatalogPage: React.FC = () => {
       sp.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (sp.description || '').toLowerCase().includes(searchTerm.toLowerCase());
 
+    const matchesJenis = !selectedJenis || sp.id_jenis === selectedJenis;
     const matchesTipe = !selectedTipe || sp.id_tipe === selectedTipe;
-    const matchesSupplier = !selectedSupplier || sp.supplier_type === selectedSupplier;
 
-    return matchesSearch && matchesTipe && matchesSupplier;
+    return matchesSearch && matchesJenis && matchesTipe;
   });
+
+  // Modal available tipes based on selected id_jenis
+  const modalAvailableTipes = formData.id_jenis
+    ? tipePeralatan.filter(t => t.id_jenis === formData.id_jenis)
+    : tipePeralatan;
 
   return (
     <div className="space-y-6">
@@ -135,7 +162,7 @@ export const CatalogPage: React.FC = () => {
 
         <button
           onClick={handleOpenAddModal}
-          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-xl shadow-cyan-500/25 transition-all"
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-xl shadow-cyan-500/25 transition-all cursor-pointer"
         >
           <Plus className="w-4 h-4" />
           <span>Tambah Sparepart Baru</span>
@@ -156,6 +183,30 @@ export const CatalogPage: React.FC = () => {
         </div>
 
         <div className="flex flex-wrap gap-3">
+          {/* Filter Jenis Peralatan */}
+          <div className="relative">
+            <select
+              value={selectedJenis}
+              onChange={(e) => {
+                const newJenis = e.target.value;
+                setSelectedJenis(newJenis);
+                // Reset selectedTipe if it no longer belongs to new Jenis
+                if (newJenis && selectedTipe) {
+                  const isValid = tipePeralatan.some(t => t.id === selectedTipe && t.id_jenis === newJenis);
+                  if (!isValid) setSelectedTipe('');
+                }
+              }}
+              className="bg-slate-950/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-cyan-500 cursor-pointer font-semibold"
+            >
+              <option value="">Semua Jenis Peralatan</option>
+              {jenisPeralatan.map((jp) => (
+                <option key={jp.id} value={jp.id}>
+                  {jp.nama}
+                </option>
+              ))}
+            </select>
+          </div>
+
           {/* Filter Tipe Peralatan */}
           <div className="relative">
             <select
@@ -164,24 +215,11 @@ export const CatalogPage: React.FC = () => {
               className="bg-slate-950/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-cyan-500 cursor-pointer"
             >
               <option value="">Semua Tipe Peralatan</option>
-              {tipePeralatan.map((tp) => (
+              {availableTipeFilter.map((tp) => (
                 <option key={tp.id} value={tp.id}>
                   {tp.nama}
                 </option>
               ))}
-            </select>
-          </div>
-
-          {/* Filter Supplier */}
-          <div className="relative">
-            <select
-              value={selectedSupplier}
-              onChange={(e) => setSelectedSupplier(e.target.value)}
-              className="bg-slate-950/80 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-slate-200 focus:outline-none focus:border-cyan-500 cursor-pointer"
-            >
-              <option value="">Semua Sumber (Lokal/Impor)</option>
-              <option value="LOKAL">Lokal</option>
-              <option value="IMPOR">Impor</option>
             </select>
           </div>
         </div>
@@ -192,6 +230,7 @@ export const CatalogPage: React.FC = () => {
         {filteredSpareparts.map((sp) => {
           const isCritical = sp.stok_aktual < sp.minimum_stok;
           const tpObj = tipePeralatan.find((t) => t.id === sp.id_tipe);
+          const jpObj = jenisPeralatan.find((j) => j.id === sp.id_jenis);
           const compatRecords = sparepartCompatibility.filter((c) => c.sparepart_id === sp.id);
           const compatTypeNames = compatRecords
             .map((c) => tipePeralatan.find((t) => t.id === c.id_tipe)?.nama)
@@ -203,19 +242,13 @@ export const CatalogPage: React.FC = () => {
               className="glass-panel glass-card-hover rounded-2xl p-5 border border-slate-800 flex flex-col justify-between"
             >
               <div>
-                {/* SKU Badge & Supplier Tag */}
+                {/* SKU Badge & Sumber */}
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <span className="font-mono text-xs font-bold text-cyan-400 bg-cyan-500/10 px-2.5 py-1 rounded-lg border border-cyan-500/20">
                     {sp.sku}
                   </span>
-                  <span
-                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase border ${
-                      sp.supplier_type === 'IMPOR'
-                        ? 'bg-purple-500/10 text-purple-300 border-purple-500/30'
-                        : 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30'
-                    }`}
-                  >
-                    {sp.supplier_type || 'LOKAL'}
+                  <span className="text-[10px] font-bold px-2 py-0.5 rounded-full uppercase bg-slate-800 text-slate-300 border border-slate-700">
+                    {sp.supplier_type || (sp as any).sumber || 'Lokal'}
                   </span>
                 </div>
 
@@ -226,10 +259,18 @@ export const CatalogPage: React.FC = () => {
                 {/* Tipe Peralatan, Location & Rack */}
                 <div className="mt-4 space-y-1.5 text-xs text-slate-300">
                   <div className="flex items-start gap-2">
+                    <Layers className="w-3.5 h-3.5 text-slate-500 mt-0.5 shrink-0" />
+                    <span className="text-slate-400 shrink-0">Jenis:</span>
+                    <span className="font-medium text-cyan-300 line-clamp-1">
+                      {jpObj?.nama || 'Umum'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-start gap-2">
                     <Cpu className="w-3.5 h-3.5 text-slate-500 mt-0.5 shrink-0" />
                     <span className="text-slate-400 shrink-0">Tipe Utama:</span>
                     <span className="font-medium text-white line-clamp-1">
-                      {tpObj?.nama || sp.equipment_type_name}
+                      {tpObj?.nama || sp.equipment_type_name || 'Semua Tipe'}
                     </span>
                   </div>
 
@@ -245,8 +286,8 @@ export const CatalogPage: React.FC = () => {
                   )}
                   <div className="flex items-center gap-2">
                     <Building2 className="w-3.5 h-3.5 text-slate-500" />
-                    <span className="text-slate-400">Gedung / Lokasi:</span>
-                    <span className="font-semibold text-slate-200">{sp.location || 'Gudang Utama T2'}</span>
+                    <span className="text-slate-400">Gudang:</span>
+                    <span className="font-semibold text-slate-200">{sp.location || sp.lokasi || 'Gudang Utama T2'}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPin className="w-3.5 h-3.5 text-slate-500" />
@@ -290,14 +331,14 @@ export const CatalogPage: React.FC = () => {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleOpenEditModal(sp)}
-                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors"
+                    className="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-colors cursor-pointer"
                     title="Edit Item"
                   >
                     <Edit className="w-4 h-4" />
                   </button>
                   <button
                     onClick={() => deleteSparepart(sp.id)}
-                    className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors"
+                    className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer"
                     title="Hapus Item"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -319,7 +360,7 @@ export const CatalogPage: React.FC = () => {
               </h3>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg"
+                className="text-slate-400 hover:text-white p-1 rounded-lg cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -337,28 +378,59 @@ export const CatalogPage: React.FC = () => {
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white font-mono text-xs"
                   />
                 </div>
+
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Tipe Peralatan * (`id_tipe`)</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Jenis Peralatan *</label>
                   <select
                     required
-                    value={formData.id_tipe}
+                    value={formData.id_jenis}
                     onChange={(e) => {
-                      const tp = tipePeralatan.find((t) => t.id === e.target.value);
-                      setFormData({
-                        ...formData,
-                        id_tipe: e.target.value,
-                        id_jenis: tp?.id_jenis || ''
-                      });
+                      const newJenisId = e.target.value;
+                      setFormData({ ...formData, id_jenis: newJenisId });
+                      const newAvailableTipes = tipePeralatan.filter(t => t.id_jenis === newJenisId);
+                      setSelectedTipeIds(newAvailableTipes.map(t => t.id));
                     }}
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs font-semibold"
                   >
-                    <option value="">-- Pilih Tipe Peralatan --</option>
-                    {tipePeralatan.map((tp) => (
-                      <option key={tp.id} value={tp.id}>
-                        {tp.nama}
+                    <option value="">-- Pilih Jenis Peralatan --</option>
+                    {jenisPeralatan.map((jp) => (
+                      <option key={jp.id} value={jp.id}>
+                        {jp.nama}
                       </option>
                     ))}
                   </select>
+                </div>
+              </div>
+
+              {/* Checklist Tipe Peralatan */}
+              <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Tipe Peralatan (Bisa pilih lebih dari satu)
+                </label>
+                <div className="bg-slate-950 border border-slate-700 rounded-xl p-3 max-h-36 overflow-y-auto space-y-2">
+                  {modalAvailableTipes.length === 0 ? (
+                    <span className="text-xs text-slate-500 italic">Pilih Jenis Peralatan terlebih dahulu</span>
+                  ) : (
+                    modalAvailableTipes.map((tp) => {
+                      const isChecked = selectedTipeIds.includes(tp.id);
+                      return (
+                        <label
+                          key={tp.id}
+                          onClick={() => toggleTipeSelection(tp.id)}
+                          className={`flex items-center gap-2 text-xs p-1.5 rounded-lg cursor-pointer transition-colors ${
+                            isChecked ? 'bg-cyan-500/20 text-cyan-300 font-semibold' : 'text-slate-300 hover:bg-slate-900'
+                          }`}
+                        >
+                          <div className={`w-4 h-4 rounded border flex items-center justify-center ${
+                            isChecked ? 'bg-cyan-500 border-cyan-400 text-slate-950' : 'border-slate-700 bg-slate-900'
+                          }`}>
+                            {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
+                          </div>
+                          <span>{tp.nama} {tp.varian ? `(${tp.varian})` : ''}</span>
+                        </label>
+                      );
+                    })
+                  )}
                 </div>
               </div>
 
@@ -429,17 +501,17 @@ export const CatalogPage: React.FC = () => {
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Gedung / Lokasi Area (`location`)</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Gudang</label>
                   <input
                     type="text"
-                    placeholder="Contoh: Terminal 2D Domestik"
+                    placeholder="Contoh: Gudang Utility Chiller T2"
                     value={formData.location}
                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Kode Rak (`rack`)</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Kode Rak</label>
                   <input
                     type="text"
                     placeholder="Contoh: RAK-A1-04"
@@ -461,15 +533,14 @@ export const CatalogPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Sumber Supplier</label>
-                  <select
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Sumber</label>
+                  <input
+                    type="text"
+                    placeholder="Contoh: Lokal PT Mahkota / Impor Germany"
                     value={formData.supplier_type}
-                    onChange={(e) => setFormData({ ...formData, supplier_type: e.target.value as SupplierType })}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs"
-                  >
-                    <option value="LOKAL">Lokal</option>
-                    <option value="IMPOR">Impor</option>
-                  </select>
+                    onChange={(e) => setFormData({ ...formData, supplier_type: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs font-medium"
+                  />
                 </div>
               </div>
 
@@ -477,13 +548,13 @@ export const CatalogPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold"
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold cursor-pointer"
                 >
                   Batal
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold shadow-lg shadow-cyan-500/25"
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold shadow-lg shadow-cyan-500/25 cursor-pointer"
                 >
                   {editingId ? 'Simpan Perubahan' : 'Tambah Sparepart'}
                 </button>
