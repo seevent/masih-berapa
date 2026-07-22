@@ -3,18 +3,15 @@ import {
   Settings,
   Database,
   Plus,
-  Sparkles,
-  Link2,
-  Key,
   Layers,
   MapPin,
   Users,
   Cpu,
-  UserCheck
+  UserCheck,
+  CheckCircle2,
+  AlertCircle
 } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
-import { getStoredSupabaseConfig, saveSupabaseConfig, seedSupabaseDatabase } from '../lib/supabase';
-import { useNotification } from '../context/NotificationContext';
 
 export const SettingsPage: React.FC = () => {
   const {
@@ -29,17 +26,10 @@ export const SettingsPage: React.FC = () => {
     addLokasi,
     addTitikLokasi,
     addPersonel,
-    isSupabaseConnected,
-    refreshData
+    isSupabaseConnected
   } = useInventory();
 
-  const { showToast } = useNotification();
-  const storedConfig = getStoredSupabaseConfig();
-  const [supabaseUrl, setSupabaseUrl] = useState(storedConfig.url);
-  const [supabaseAnonKey, setSupabaseAnonKey] = useState(storedConfig.anonKey);
-  const [isSeeding, setIsSeeding] = useState(false);
-
-  const [activeTab, setActiveTab] = useState<'supabase' | 'jenis' | 'tipe' | 'lokasi' | 'personel'>('supabase');
+  const [activeTab, setActiveTab] = useState<'jenis' | 'tipe' | 'lokasi' | 'personel'>('jenis');
 
   // Form States
   const [jenisNama, setJenisNama] = useState('');
@@ -59,50 +49,38 @@ export const SettingsPage: React.FC = () => {
   const [personelUnitId, setPersonelUnitId] = useState('');
   const [personelJabatan, setPersonelJabatan] = useState('');
 
-  const handleSaveSupabaseConfig = (e: React.FormEvent) => {
-    e.preventDefault();
-    saveSupabaseConfig(supabaseUrl.trim(), supabaseAnonKey.trim());
-    showToast('Konfigurasi Disimpan', 'Konfigurasi Supabase diperbarui. Memuat ulang koneksi...', 'success');
-    refreshData();
-  };
-
-  const handleRunSeed = async () => {
-    setIsSeeding(true);
-    const result = await seedSupabaseDatabase();
-    setIsSeeding(false);
-    showToast(
-      result.success ? 'Seed Database Berhasil' : 'Seed Gagal',
-      result.message,
-      result.success ? 'success' : 'error'
-    );
-    if (result.success) {
-      refreshData();
-    }
-  };
-
   return (
     <div className="max-w-5xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl md:text-3xl font-extrabold text-white">Pengaturan Master System & Database</h1>
-        <p className="text-sm text-slate-400 mt-1">
-          Konektivitas Supabase, 1-Click Database Seed, Master Jenis/Tipe Peralatan, Lokasi, & Personel.
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-extrabold text-white">Pengaturan Master System</h1>
+          <p className="text-sm text-slate-400 mt-1">
+            Pengelolaan Master Jenis/Tipe Peralatan, Lokasi, & Personel Teknisi.
+          </p>
+        </div>
+
+        {/* Status Koneksi Supabase via .env */}
+        <div className={`px-4 py-2 rounded-xl text-xs font-bold border flex items-center gap-2 ${
+          isSupabaseConnected
+            ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-300'
+            : 'bg-slate-900/80 border-slate-700 text-slate-400'
+        }`}>
+          {isSupabaseConnected ? (
+            <>
+              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+              <span>Database: Terkoneksi via .env</span>
+            </>
+          ) : (
+            <>
+              <AlertCircle className="w-4 h-4 text-amber-400" />
+              <span>Database: Local Storage Mode (VITE_SUPABASE_URL di .env kosong)</span>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Navigation Tabs */}
       <div className="flex flex-wrap gap-2 border-b border-slate-800 pb-3">
-        <button
-          onClick={() => setActiveTab('supabase')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
-            activeTab === 'supabase'
-              ? 'bg-cyan-500/20 text-cyan-400 border border-cyan-500/40'
-              : 'bg-slate-900/60 text-slate-400 border border-slate-800'
-          }`}
-        >
-          <Database className="w-4 h-4" />
-          <span>Koneksi Supabase & Seed</span>
-        </button>
-
         <button
           onClick={() => setActiveTab('jenis')}
           className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 ${
@@ -151,83 +129,6 @@ export const SettingsPage: React.FC = () => {
           <span>Personel ({personelList.length})</span>
         </button>
       </div>
-
-      {/* Tab Content: Supabase & Seed */}
-      {activeTab === 'supabase' && (
-        <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-                <Database className="w-5 h-5" />
-              </div>
-              <div>
-                <h3 className="text-base font-bold text-white">Koneksi Database Supabase Cloud</h3>
-                <p className="text-xs text-slate-400">Sesuaikan dengan schema database PostgreSQL Anda</p>
-              </div>
-            </div>
-            <div
-              className={`px-3 py-1 rounded-xl text-xs font-bold border ${
-                isSupabaseConnected
-                  ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-300'
-                  : 'bg-amber-950/80 border-amber-500/40 text-amber-300'
-              }`}
-            >
-              {isSupabaseConnected ? 'Terkoneksi Supabase Direct' : 'Local Storage Mode'}
-            </div>
-          </div>
-
-          <form onSubmit={handleSaveSupabaseConfig} className="space-y-4 text-xs">
-            <div>
-              <label className="block font-semibold text-slate-300 mb-1 flex items-center gap-1">
-                <Link2 className="w-3.5 h-3.5 text-slate-400" />
-                Supabase Project URL
-              </label>
-              <input
-                type="text"
-                placeholder="https://yourproject.supabase.co"
-                value={supabaseUrl}
-                onChange={(e) => setSupabaseUrl(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:border-cyan-500"
-              />
-            </div>
-
-            <div>
-              <label className="block font-semibold text-slate-300 mb-1 flex items-center gap-1">
-                <Key className="w-3.5 h-3.5 text-slate-400" />
-                Supabase Anon Public API Key
-              </label>
-              <input
-                type="password"
-                placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                value={supabaseAnonKey}
-                onChange={(e) => setSupabaseAnonKey(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-white font-mono text-xs focus:border-cyan-500"
-              />
-            </div>
-
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-              <button
-                type="button"
-                onClick={handleRunSeed}
-                disabled={isSeeding}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-purple-600/20 hover:bg-purple-600/30 text-purple-300 border border-purple-500/30 font-semibold text-xs transition-colors flex items-center justify-center gap-2"
-              >
-                <Sparkles className="w-4 h-4 text-purple-400" />
-                <span>{isSeeding ? 'Menginjeksi Seed...' : '1-Click Injeksi Sampel Data ke Supabase'}</span>
-              </button>
-
-              <button
-                type="submit"
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold text-xs shadow-lg shadow-cyan-500/25"
-              >
-                Simpan Konfigurasi Supabase
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {/* Tab Content: Jenis Peralatan */}
       {activeTab === 'jenis' && (
         <div className="glass-panel p-6 rounded-2xl border border-slate-800 space-y-6">
           <h3 className="text-base font-bold text-white">Master Tabel: `jenis_peralatan`</h3>
