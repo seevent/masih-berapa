@@ -40,8 +40,8 @@
     "semantic_hash": ""
   },
   "src/lib/supabase.ts": {
-    "mtime": 1784718267.2589262,
-    "ast_hash": "c8a6e7525d922250a082041957900dbc",
+    "mtime": 1784746666.5671923,
+    "ast_hash": "bfb6221bd36b7ab315ad4e81ed530985",
     "semantic_hash": ""
   },
   "src/main.tsx": {
@@ -95,8 +95,8 @@
     "semantic_hash": ""
   },
   "src/pages/SettingsPage.tsx": {
-    "mtime": 1784696139.0841496,
-    "ast_hash": "f4dc72f3471996441214f4dacac3995e",
+    "mtime": 1784746674.1622145,
+    "ast_hash": "8877babfb2f67794d157caaa3926933c",
     "semantic_hash": ""
   },
   "src/types/index.ts": {

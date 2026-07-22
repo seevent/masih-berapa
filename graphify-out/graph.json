@@ -967,8 +967,8 @@
       "source_location": "L80",
       "_origin": "ast",
       "id": "src_context_inventorycontext_inventoryprovider",
-      "community": 6,
-      "community_name": "SettingsPage.tsx",
+      "community": 25,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "inventoryprovider()"
     },
     {
@@ -989,8 +989,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_context_notificationcontext",
-      "community": 6,
-      "community_name": "SettingsPage.tsx",
+      "community": 25,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "notificationcontext.tsx"
     },
     {
@@ -1000,8 +1000,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_context_notificationcontext_toasttype",
-      "community": 6,
-      "community_name": "SettingsPage.tsx",
+      "community": 25,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "toasttype"
     },
     {
@@ -1011,8 +1011,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_context_notificationcontext_toastmessage",
-      "community": 6,
-      "community_name": "SettingsPage.tsx",
+      "community": 25,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "toastmessage"
     },
     {
@@ -1022,8 +1022,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_context_notificationcontext_notificationcontexttype",
-      "community": 6,
-      "community_name": "SettingsPage.tsx",
+      "community": 25,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "notificationcontexttype"
     },
     {
@@ -1033,8 +1033,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_context_notificationcontext_notificationcontext",
-      "community": 6,
-      "community_name": "SettingsPage.tsx",
+      "community": 25,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "notificationcontext"
     },
     {
@@ -1044,8 +1044,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_context_notificationcontext_notificationprovider",
-      "community": 6,
-      "community_name": "SettingsPage.tsx",
+      "community": 25,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "notificationprovider()"
     },
     {
@@ -1055,8 +1055,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "src_context_notificationcontext_usenotification",
-      "community": 6,
-      "community_name": "SettingsPage.tsx",
+      "community": 25,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "usenotification()"
     },
     {
@@ -1360,7 +1360,7 @@
       "label": "getStoredSupabaseConfig()",
       "file_type": "code",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L21",
+      "source_location": "L18",
       "_origin": "ast",
       "id": "src_lib_supabase_getstoredsupabaseconfig",
       "community": 6,
@@ -1368,21 +1368,10 @@
       "norm_label": "getstoredsupabaseconfig()"
     },
     {
-      "label": "saveSupabaseConfig()",
-      "file_type": "code",
-      "source_file": "src/lib/supabase.ts",
-      "source_location": "L27",
-      "_origin": "ast",
-      "id": "src_lib_supabase_savesupabaseconfig",
-      "community": 6,
-      "community_name": "SettingsPage.tsx",
-      "norm_label": "savesupabaseconfig()"
-    },
-    {
       "label": "getSupabaseClient()",
       "file_type": "code",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L35",
+      "source_location": "L26",
       "_origin": "ast",
       "id": "src_lib_supabase_getsupabaseclient",
       "community": 6,
@@ -1393,7 +1382,7 @@
       "label": "seedSupabaseDatabase()",
       "file_type": "code",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L52",
+      "source_location": "L43",
       "_origin": "ast",
       "id": "src_lib_supabase_seedsupabasedatabase",
       "community": 6,
@@ -1616,19 +1605,19 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_pages_settingspage",
-      "community": 6,
-      "community_name": "SettingsPage.tsx",
+      "community": 3,
+      "community_name": "App.tsx",
       "norm_label": "settingspage.tsx"
     },
     {
       "label": "SettingsPage()",
       "file_type": "code",
       "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L19",
+      "source_location": "L16",
       "_origin": "ast",
       "id": "src_pages_settingspage_settingspage",
-      "community": 6,
-      "community_name": "SettingsPage.tsx",
+      "community": 3,
+      "community_name": "App.tsx",
       "norm_label": "settingspage()"
     },
     {
@@ -5145,7 +5134,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L15",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_pages_settingspage",
@@ -5601,7 +5590,7 @@
       "context": "import",
       "confidence": "EXTRACTED",
       "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L15",
+      "source_location": "L14",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_pages_settingspage",
@@ -5614,7 +5603,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L34",
+      "source_location": "L30",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_pages_settingspage_settingspage",
@@ -5685,42 +5674,6 @@
       "source": "src_context_notificationcontext",
       "target": "src_context_notificationcontext_usenotification",
       "confidence_score": 1.0
-    },
-    {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L17",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_pages_settingspage",
-      "target": "src_context_notificationcontext",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L17",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_pages_settingspage",
-      "target": "src_context_notificationcontext_usenotification",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L36",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_pages_settingspage_settingspage",
-      "target": "src_context_notificationcontext_usenotification"
     },
     {
       "relation": "contains",
@@ -6506,7 +6459,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L21",
+      "source_location": "L18",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_supabase",
@@ -6517,7 +6470,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L35",
+      "source_location": "L26",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_supabase",
@@ -6528,18 +6481,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L27",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_lib_supabase",
-      "target": "src_lib_supabase_savesupabaseconfig",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "contains",
-      "confidence": "EXTRACTED",
-      "source_file": "src/lib/supabase.ts",
-      "source_location": "L52",
+      "source_location": "L43",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_supabase",
@@ -6547,23 +6489,11 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "imports_from",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_pages_settingspage",
-      "target": "src_lib_supabase",
-      "confidence_score": 1.0
-    },
-    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L36",
+      "source_location": "L27",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_supabase_getsupabaseclient",
@@ -6571,88 +6501,16 @@
       "confidence_score": 1.0
     },
     {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_pages_settingspage",
-      "target": "src_lib_supabase_getstoredsupabaseconfig",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L37",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_pages_settingspage_settingspage",
-      "target": "src_lib_supabase_getstoredsupabaseconfig"
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_pages_settingspage",
-      "target": "src_lib_supabase_savesupabaseconfig",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L64",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_pages_settingspage_settingspage",
-      "target": "src_lib_supabase_savesupabaseconfig"
-    },
-    {
       "relation": "calls",
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/lib/supabase.ts",
-      "source_location": "L53",
+      "source_location": "L44",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_lib_supabase_seedsupabasedatabase",
       "target": "src_lib_supabase_getsupabaseclient",
       "confidence_score": 1.0
-    },
-    {
-      "relation": "imports",
-      "context": "import",
-      "confidence": "EXTRACTED",
-      "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L16",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_pages_settingspage",
-      "target": "src_lib_supabase_seedsupabasedatabase",
-      "confidence_score": 1.0
-    },
-    {
-      "relation": "calls",
-      "context": "call",
-      "confidence": "EXTRACTED",
-      "confidence_score": 1.0,
-      "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L71",
-      "weight": 1.0,
-      "_origin": "ast",
-      "source": "src_pages_settingspage_settingspage",
-      "target": "src_lib_supabase_seedsupabasedatabase"
     },
     {
       "relation": "contains",
@@ -6877,7 +6735,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/pages/SettingsPage.tsx",
-      "source_location": "L19",
+      "source_location": "L16",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_pages_settingspage",
@@ -8155,5 +8013,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6f02341c8b3d9a55c0d02332bb7b819619cb358a"
+  "built_at_commit": "e8ef05e746430731fad5b19dc90a77776a988bf6"
 }
