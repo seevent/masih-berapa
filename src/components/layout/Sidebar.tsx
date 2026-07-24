@@ -35,7 +35,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { to: '/input-sparepart', label: 'Input Transaksi', icon: ArrowLeftRight },
     { to: '/history', label: 'History & Audit', icon: History },
     { to: '/scanner', label: 'Mobile QR Scanner', icon: QrCode },
-    { to: '/print', label: 'Cetak Label Thermal', icon: Printer },
+    { to: '/print', label: 'Cetak Label', icon: Printer },
     { to: '/alerts', label: 'Predictive Alerts', icon: AlertTriangle },
     { to: '/needs', label: 'Perencanaan Kebutuhan', icon: TrendingUp },
     { to: '/reports', label: 'Analisis Rotasi Stok', icon: BarChart3 },

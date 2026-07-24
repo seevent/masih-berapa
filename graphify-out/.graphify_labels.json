@@ -217,11 +217,11 @@
   "215": ".test_default_content_paths_vue",
   "216": ".test_add_colors",
   "217": "plan-document-reviewer-prompt.md",
-  "218": "html5-qrcode",
   "219": "format_ascii_box",
   "220": "NotificationContext.tsx",
   "221": "react-dom",
   "222": "@supabase/supabase-js",
   "223": "default",
-  "224": "xl"
+  "224": "xl",
+  "225": "primary"
 }

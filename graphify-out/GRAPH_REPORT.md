@@ -1,16 +1,16 @@
 # Graph Report - masih-berapa  (2026-07-24)
 
 ## Corpus Check
-- 180 files · ~150,195 words
+- 181 files · ~152,107 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2690 nodes · 3097 edges · 225 communities (173 shown, 52 thin omitted)
+- 2699 nodes · 3121 edges · 225 communities (173 shown, 52 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 92 edges (avg confidence: 0.72)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `9964de5e`
+- Built from commit: `d4875106`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -231,13 +231,13 @@
 - .test_default_content_paths_vue
 - .test_add_colors
 - plan-document-reviewer-prompt.md
-- html5-qrcode
 - format_ascii_box
 - NotificationContext.tsx
 - react-dom
 - @supabase/supabase-js
 - default
 - xl
+- primary
 
 ## God Nodes (most connected - your core abstractions)
 1. `TailwindConfigGenerator` - 57 edges
@@ -273,16 +273,16 @@ Cohesion: 0.12
 Nodes (17): dependencies, clsx, core-js, html2canvas, jspdf, motion, qrcode.react, react-router-dom (+9 more)
 
 ### Community 1 - "InventoryContext.tsx"
-Cohesion: 0.12
-Nodes (11): ABCAnalysisChartProps, PhysicalMovementChartProps, ReorderPriorityTableProps, SparepartMetricsCardsProps, ABCItemPhysical, ABCPhysicalBreakdown, CategoryPhysicalBreakdown, MonthlyPhysicalTrend (+3 more)
+Cohesion: 0.11
+Nodes (12): ABCAnalysisChartProps, PhysicalMovementChartProps, ReorderPriorityTableProps, SparepartMetricsCardsProps, ABCItemPhysical, ABCPhysicalBreakdown, CategoryPhysicalBreakdown, MonthlyPhysicalTrend (+4 more)
 
 ### Community 2 - "compilerOptions"
 Cohesion: 0.08
 Nodes (23): compilerOptions, allowImportingTsExtensions, baseUrl, isolatedModules, jsx, lib, module, moduleDetection (+15 more)
 
 ### Community 3 - "App.tsx"
-Cohesion: 0.24
-Nodes (10): $type, $value, $type, $value, primitive, radius, shadow, full (+2 more)
+Cohesion: 0.29
+Nodes (8): $type, $value, $type, $value, radius, default, full, default
 
 ### Community 4 - "devDependencies"
 Cohesion: 0.10
@@ -321,8 +321,8 @@ Cohesion: 0.40
 Nodes (4): Implementation Tickets: Dashboard Manajemen Sparepart (Non-Finansial & Physical Focus), Ticket 1: Physical Sparepart Analytics Engine Refactoring, Ticket 2: Non-Financial Dashboard Components Update, Ticket 3: Export Report Clean-up & Build Verification
 
 ### Community 22 - "mockSeedData.ts"
-Cohesion: 0.16
-Nodes (14): xlsx, useInventory(), CatalogPage(), DashboardPage(), HistoryPage(), MutationPage(), PredictiveAlertsPage(), PredictiveNeedsPage() (+6 more)
+Cohesion: 0.18
+Nodes (13): xlsx, useInventory(), CatalogPage(), DashboardPage(), HistoryPage(), PredictiveAlertsPage(), PredictiveNeedsPage(), LABEL_PRESETS (+5 more)
 
 ### Community 26 - "server.cjs"
 Cohesion: 0.06
@@ -486,11 +486,11 @@ Nodes (18): 1. Wordmark (Logotype), 2. Lettermark (Monogram), 3. Pictorial Mark 
 
 ### Community 66 - "color"
 Cohesion: 0.11
-Nodes (19): $type, $value, background, foreground, muted-foreground, primary, primary-hover, secondary (+11 more)
+Nodes (19): $type, $value, background, destructive-foreground, muted, primary-foreground, secondary, secondary-foreground (+11 more)
 
 ### Community 67 - "design_system.py"
-Cohesion: 0.17
-Nodes (16): _detect_page_type(), format_markdown(), format_master_md(), format_page_override_md(), generate_design_system(), _generate_intelligent_overrides(), persist_design_system(), Format a page-specific override file with intelligent AI-generated content. (+8 more)
+Cohesion: 0.15
+Nodes (18): ansi_ljust(), format_ascii_box(), format_markdown(), format_master_md(), generate_design_system(), hex_to_ansi(), persist_design_system(), Convert hex color to ANSI True Color swatch (██) with fallback. (+10 more)
 
 ### Community 68 - "DesignSystemGenerator"
 Cohesion: 0.14
@@ -577,8 +577,8 @@ Cohesion: 0.13
 Nodes (14): AIDA (Attention-Interest-Desire-Action), Before-After-Bridge, Contrast Patterns, Copywriting Formulas, Core Formulas, Cost of Inaction, FAB (Features-Advantages-Benefits), Formula-to-Slide Mapping (+6 more)
 
 ### Community 89 - "main"
-Cohesion: 0.11
-Nodes (10): main(), Add custom font families.          Args:             fonts: Dict of font_type: [, Add custom spacing values.          Args:             spacing: Dict of name: val, Add custom breakpoints.          Args:             breakpoints: Dict of name: wi, Add plugin requirements.          Args:             plugins: List of plugin name, Get plugin recommendations based on configuration.          Returns:, Generate configuration file content.          Returns:             Configuration, Write configuration to file.          Returns:             Tuple of (success, me (+2 more)
+Cohesion: 0.13
+Nodes (8): main(), Add custom font families.          Args:             fonts: Dict of font_type: [, Add custom spacing values.          Args:             spacing: Dict of name: val, Add custom breakpoints.          Args:             breakpoints: Dict of name: wi, Add plugin requirements.          Args:             plugins: List of plugin name, Get plugin recommendations based on configuration.          Returns:, Validate configuration.          Returns:             Tuple of (valid, message), Add custom colors to theme.          Args:             colors: Dict of color_nam
 
 ### Community 90 - "Testing Skills With Subagents"
 Cohesion: 0.13
@@ -641,8 +641,8 @@ Cohesion: 0.24
 Nodes (11): extensions, formatReport(), fs, getFiles(), main(), parseArgs(), path, patterns (+3 more)
 
 ### Community 105 - "card"
-Cohesion: 0.20
-Nodes (12): $type, $value, bg, bg, padding, shadow, card, bg (+4 more)
+Cohesion: 0.15
+Nodes (17): $type, $value, $type, $value, bg, bg, border, padding (+9 more)
 
 ### Community 106 - "Defense-in-Depth Validation"
 Cohesion: 0.17
@@ -653,8 +653,8 @@ Cohesion: 0.17
 Nodes (7): Handle shadcn/ui component installation., ShadcnInstaller, Test component addition with subprocess error., Test listing installed components when they exist., Test initialization with custom project root., Test checking for existing shadcn config., Test getting installed components without config.
 
 ### Community 108 - ".generate_config_string"
-Cohesion: 0.29
-Nodes (4): Generate TypeScript configuration., Generate JavaScript configuration., Format plugins array for config.          Validates each plugin name against a s, Add indentation to JSON string.
+Cohesion: 0.20
+Nodes (6): Generate configuration file content.          Returns:             Configuration, Generate TypeScript configuration., Generate JavaScript configuration., Format plugins array for config.          Validates each plugin name against a s, Add indentation to JSON string., Write configuration to file.          Returns:             Tuple of (success, me
 
 ### Community 109 - "Verification Before Completion"
 Cohesion: 0.17
@@ -681,8 +681,8 @@ Cohesion: 0.20
 Nodes (9): args, extractTokens(), fs, minimal, MINIMAL_TOKENS, path, projectRoot, tokensPath (+1 more)
 
 ### Community 115 - "primitive"
-Cohesion: 0.20
-Nodes (10): fast, normal, slow, $type, $value, $type, $value, duration (+2 more)
+Cohesion: 0.18
+Nodes (11): fast, normal, slow, $type, $value, $type, $value, primitive (+3 more)
 
 ### Community 116 - "Executing Plans"
 Cohesion: 0.18
@@ -773,8 +773,8 @@ Cohesion: 0.29
 Nodes (8): padding-x, input, $type, $value, focus-ring, padding-x, $type, $value
 
 ### Community 138 - "radius"
-Cohesion: 0.67
-Nodes (4): padding-y, padding-y, $type, $value
+Cohesion: 0.36
+Nodes (7): MutationPage(), extractSkuFromInput(), ScannerPage(), formatDateToYYYYMMDD(), getActiveDutyPersonel(), getCurrentShiftInfo(), ShiftInfo
 
 ### Community 139 - "stop-server.sh"
 Cohesion: 0.43
@@ -797,16 +797,16 @@ Cohesion: 0.29
 Nodes (7): 1. Explicit Negation in Rules, 2. Entry in Rationalization Table, 3. Red Flag Entry, 4. Update description, Plugging Each Hole, Re-verify After Refactoring, REFACTOR Phase: Close Loopholes (Stay Green)
 
 ### Community 144 - "shadow"
-Cohesion: 0.60
-Nodes (5): sm, sm, sm, $type, $value
+Cohesion: 0.47
+Nodes (6): sm, shadow, sm, sm, $type, $value
 
 ### Community 145 - "Slides"
 Cohesion: 0.33
 Nodes (5): References (Knowledge Base), Routing, Slides, Subcommands, When to Use
 
 ### Community 146 - "_generate_intelligent_overrides"
-Cohesion: 0.22
-Nodes (20): InventoryContext, InventoryContextType, OnDutyPersonel, AnnualNeed, JadwalShift, JenisPeralatan, Lokasi, MasterConfig (+12 more)
+Cohesion: 0.21
+Nodes (21): InventoryContext, InventoryContextType, OnDutyPersonel, AnnualNeed, JadwalShift, JenisPeralatan, Lokasi, MasterConfig (+13 more)
 
 ### Community 147 - "SKILL.md"
 Cohesion: 0.33
@@ -873,8 +873,8 @@ Cohesion: 0.27
 Nodes (6): AppLayout(), FloatingDock(), HeaderStats(), HeaderStatsProps, Sidebar(), SidebarProps
 
 ### Community 165 - "none"
-Cohesion: 0.60
-Nodes (5): $type, $value, border, border, border
+Cohesion: 0.67
+Nodes (3): foreground, $type, $value
 
 ### Community 167 - "codex-tools.md"
 Cohesion: 0.50
@@ -909,8 +909,8 @@ Cohesion: 0.50
 Nodes (4): Example: TDD Skill Bulletproofing, Initial Test (Failed), Iteration 1 - Add Counter, Iteration 2 - Add Foundational Principle
 
 ### Community 178 - "destructive"
-Cohesion: 0.67
-Nodes (3): destructive, $type, $value
+Cohesion: 0.33
+Nodes (6): _detect_page_type(), format_page_override_md(), _generate_intelligent_overrides(), Format a page-specific override file with intelligent AI-generated content., Generate intelligent overrides based on page type using layered search., Detect page type from context and search results.
 
 ### Community 179 - "destructive-foreground"
 Cohesion: 0.67
@@ -918,11 +918,11 @@ Nodes (4): $type, $value, none, none
 
 ### Community 180 - "muted"
 Cohesion: 0.67
-Nodes (3): destructive-foreground, $type, $value
+Nodes (3): muted-foreground, $type, $value
 
 ### Community 181 - "primary-foreground"
 Cohesion: 0.67
-Nodes (3): muted, $type, $value
+Nodes (3): primary, $type, $value
 
 ### Community 182 - "ring"
 Cohesion: 0.67
@@ -930,15 +930,11 @@ Nodes (3): ring, $type, $value
 
 ### Community 183 - "primary-foreground"
 Cohesion: 0.67
-Nodes (3): primary-foreground, $type, $value
-
-### Community 218 - "html5-qrcode"
-Cohesion: 0.67
-Nodes (3): secondary-foreground, $type, $value
+Nodes (3): primary-hover, $type, $value
 
 ### Community 219 - "format_ascii_box"
-Cohesion: 0.25
-Nodes (8): ansi_ljust(), format_ascii_box(), hex_to_ansi(), Convert hex color to ANSI True Color swatch (██) with fallback., Like str.ljust but accounts for zero-width ANSI escape sequences., Create a Unicode section separator: ├─── NAME ───...┤, Format design system as Unicode box with ANSI color swatches., section_header()
+Cohesion: 0.67
+Nodes (4): padding-y, padding-y, $type, $value
 
 ### Community 220 - "NotificationContext.tsx"
 Cohesion: 0.25
@@ -946,31 +942,35 @@ Nodes (7): InventoryProvider(), NotificationContext, NotificationContextType, No
 
 ### Community 223 - "default"
 Cohesion: 0.67
-Nodes (4): $type, $value, default, default
+Nodes (4): $type, $value, md, md
 
 ### Community 224 - "xl"
 Cohesion: 0.67
 Nodes (4): xl, xl, $type, $value
 
+### Community 225 - "primary"
+Cohesion: 0.67
+Nodes (3): destructive, $type, $value
+
 ## Knowledge Gaps
-- **1394 isolated node(s):** `crypto`, `http`, `fs`, `path`, `OPCODES` (+1389 more)
+- **1396 isolated node(s):** `crypto`, `http`, `fs`, `path`, `OPCODES` (+1391 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **52 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `primitive` connect `App.tsx` to `spacing`, `design-tokens-starter.json`, `fontSize`, `primitive`, `gray`?**
+- **Why does `primitive` connect `primitive` to `App.tsx`, `spacing`, `design-tokens-starter.json`, `fontSize`, `shadow`, `gray`?**
   _High betweenness centrality (0.009) - this node is a cross-community bridge._
 - **Why does `dependencies` connect `dependencies` to `default`, `md`, `SettingsPage.tsx`, `package.json`, `mockSeedData.ts`, `NotificationContext.tsx`, `react-dom`, `@supabase/supabase-js`?**
-  _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `color` connect `gray` to `App.tsx`?**
+  _High betweenness centrality (0.005) - this node is a cross-community bridge._
+- **Why does `color` connect `gray` to `primitive`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Are the 36 inferred relationships involving `TailwindConfigGenerator` (e.g. with `TestGeneratedConfigIsValidJs` and `.test_node_check_parses_generated_config()`) actually correct?**
   _`TailwindConfigGenerator` has 36 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 23 inferred relationships involving `ShadcnInstaller` (e.g. with `TestShadcnInstaller` and `.test_add_all_components_dry_run()`) actually correct?**
   _`ShadcnInstaller` has 23 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `crypto`, `http`, `fs` to the rest of the system?**
-  _1394 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1396 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected._

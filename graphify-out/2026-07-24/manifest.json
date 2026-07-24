@@ -10,8 +10,8 @@
     "semantic_hash": ""
   },
   "src/components/layout/AppLayout.tsx": {
-    "mtime": 1784824984.861634,
-    "ast_hash": "f4571406c48d055bbc97c117b57e0e00",
+    "mtime": 1784879206.7182336,
+    "ast_hash": "e5b946d179d6cc03dbc86d2cb989c324",
     "semantic_hash": ""
   },
   "src/components/layout/HeaderStats.tsx": {
@@ -25,8 +25,8 @@
     "semantic_hash": ""
   },
   "src/context/InventoryContext.tsx": {
-    "mtime": 1784828201.657058,
-    "ast_hash": "21b634523d9fc7b8130b6a63486c34af",
+    "mtime": 1784865606.5042946,
+    "ast_hash": "8f42d291d2f4db9dc338960fcbd71ef9",
     "semantic_hash": ""
   },
   "src/context/NotificationContext.tsx": {
@@ -35,13 +35,13 @@
     "semantic_hash": ""
   },
   "src/data/mockSeedData.ts": {
-    "mtime": 1784717946.7480822,
-    "ast_hash": "4352a6fd17158ace8104f3c1fe5f3aff",
+    "mtime": 1784829694.5740988,
+    "ast_hash": "52334fe32e81f536e5272a6f27ed8a7b",
     "semantic_hash": ""
   },
   "src/lib/supabase.ts": {
-    "mtime": 1784821840.5228918,
-    "ast_hash": "43a2f44062a15bedf71edaa9a51d2976",
+    "mtime": 1784865819.5256305,
+    "ast_hash": "ac40d9bd696c3c8962c99e02c1d4c732",
     "semantic_hash": ""
   },
   "src/main.tsx": {
@@ -50,23 +50,23 @@
     "semantic_hash": ""
   },
   "src/pages/CatalogPage.tsx": {
-    "mtime": 1784824812.3048863,
-    "ast_hash": "2fee7be91cb3486636f1db24b64bb04b",
+    "mtime": 1784865680.9976835,
+    "ast_hash": "135eec5d73d6c756bae0cff88613cd37",
     "semantic_hash": ""
   },
   "src/pages/DashboardPage.tsx": {
-    "mtime": 1784827546.6424723,
-    "ast_hash": "554670d2f54f15aca53ae744b5e9f2eb",
+    "mtime": 1784856341.582083,
+    "ast_hash": "b134658820b28c07fa3e64f96ffddd01",
     "semantic_hash": ""
   },
   "src/pages/HistoryPage.tsx": {
-    "mtime": 1784821846.3196433,
-    "ast_hash": "35ed17b1cad630a886d652b98b17c82f",
+    "mtime": 1784865762.4999766,
+    "ast_hash": "0552b3541e6889187bc6b5067429aaf7",
     "semantic_hash": ""
   },
   "src/pages/MutationPage.tsx": {
-    "mtime": 1784752776.2024856,
-    "ast_hash": "f4ac095439cb4f9d072ce31891813b4c",
+    "mtime": 1784877651.0529976,
+    "ast_hash": "05928ef7752b7c762eb8e4b309f2c02f",
     "semantic_hash": ""
   },
   "src/pages/PredictiveAlertsPage.tsx": {
@@ -80,8 +80,8 @@
     "semantic_hash": ""
   },
   "src/pages/PrintLabelPage.tsx": {
-    "mtime": 1784687013.3913815,
-    "ast_hash": "52b07b3e4d36f18d2c0ae4219d334f54",
+    "mtime": 1784879196.7100043,
+    "ast_hash": "cefbc6e563b5be05668baf92a202a4c3",
     "semantic_hash": ""
   },
   "src/pages/ReportsPage.tsx": {
@@ -90,8 +90,8 @@
     "semantic_hash": ""
   },
   "src/pages/ScannerPage.tsx": {
-    "mtime": 1784718364.301107,
-    "ast_hash": "579effb5504dd3af2998102eb6b4f082",
+    "mtime": 1784879219.133284,
+    "ast_hash": "62670fe6a33fd6b6105afab34461e286",
     "semantic_hash": ""
   },
   "src/pages/SettingsPage.tsx": {
@@ -100,8 +100,8 @@
     "semantic_hash": ""
   },
   "src/types/index.ts": {
-    "mtime": 1784821816.8597348,
-    "ast_hash": "d72dee6b17da6aecd70f9d480e6bb53f",
+    "mtime": 1784865567.6125555,
+    "ast_hash": "8ae9470b7d8bc4baf3b6337cc410bc85",
     "semantic_hash": ""
   },
   "tsconfig.json": {
@@ -185,8 +185,8 @@
     "semantic_hash": ""
   },
   "src/lib/sparepartAnalytics.ts": {
-    "mtime": 1784753084.5931296,
-    "ast_hash": "5243cac7a8eaa1a5e34c1446047481b3",
+    "mtime": 1784865804.1792476,
+    "ast_hash": "6c70f060c69a5737f0d6cd571cc3d350",
     "semantic_hash": ""
   },
   ".agents/workflows/handoff.md": {
@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "docs/schema_relational_supabase.sql": {
-    "mtime": 1784747349.0346699,
-    "ast_hash": "a97222ffbcd29f71bcf9d88fdce6358d",
+    "mtime": 1784855483.6756306,
+    "ast_hash": "fba4f72323d76a712e457950c8b92031",
     "semantic_hash": ""
   },
   "docs/schema_relational_supabase_v2.sql": {
@@ -230,8 +230,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1784746347.8147402,
-    "ast_hash": "f8f65b40b99ea07e100942e86e75a72e",
+    "mtime": 1784866630.1697395,
+    "ast_hash": "6636e288a77e833a288d7e22e3d5fdd6",
     "semantic_hash": ""
   },
   "docs/specs/schema_alignment_spec.md": {
@@ -922,6 +922,11 @@
   "src/components/layout/FloatingDock.tsx": {
     "mtime": 1784824788.8827572,
     "ast_hash": "c389f55816eb5cbcf05394915fad4000",
+    "semantic_hash": ""
+  },
+  "src/utils/shiftUtils.ts": {
+    "mtime": 1784877627.069926,
+    "ast_hash": "9b1baebdb9c64345f875457996f48440",
     "semantic_hash": ""
   }
 }

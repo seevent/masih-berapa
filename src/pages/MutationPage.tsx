@@ -14,10 +14,12 @@ import {
   Search,
   Filter,
   MapPin,
-  Building2
+  Building2,
+  AlertCircle
 } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
 import { MutationType, SupplierType } from '../types';
+import { getActiveDutyPersonel } from '../utils/shiftUtils';
 
 export const MutationPage: React.FC = () => {
   const {
@@ -60,37 +62,21 @@ export const MutationPage: React.FC = () => {
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // --- Calculate Shift Time (PS: 08.00-20.00 | M: 20.00-08.00) ---
-  const currentHour = new Date().getHours();
-  const activeShiftCode = currentHour >= 8 && currentHour < 20 ? 'PS' : 'M';
-  const activeShiftLabel = activeShiftCode === 'PS' ? 'Dinas Pagi / Siang (08.00 - 20.00)' : 'Dinas Malam (20.00 - 08.00)';
+  // --- Calculate Shift Time & Filter Active Duty Personel ---
+  const {
+    personelOptions,
+    isFallback,
+    shiftInfo
+  } = getActiveDutyPersonel(personelList, jadwalShiftList, unitKerjaList);
 
-  // Filter Personel by Shift Time & format [Unit] Nama (Only active duty shift)
-  const filteredPersonelOptions = personelList.map((p) => {
-    const unitObj = unitKerjaList.find((u) => u.id === p.unit_id);
-    const unitPrefix = unitObj ? `[${unitObj.nama}] ` : '[TEK] ';
-    const formattedName = `${unitPrefix}${p.nama}`;
-
-    // Check shift record for current shift time (PS or M)
-    const hasShift = jadwalShiftList.some((s) => s.personel_id === p.id && s.shift.includes(activeShiftCode));
-
-    return {
-      ...p,
-      formattedName,
-      isDutyActive: hasShift
-    };
-  });
-
-  // ONLY include active shift personnel (fallback to all if schedule empty)
-  const activeDutyOnly = filteredPersonelOptions.filter((p) => p.isDutyActive);
-  const sortedPersonelList = activeDutyOnly.length > 0 ? activeDutyOnly : filteredPersonelOptions;
+  const { activeShiftLabel, operationalDate } = shiftInfo;
 
   // Default select first available personnel
   useEffect(() => {
-    if (sortedPersonelList.length > 0 && !selectedPersonelId) {
-      setSelectedPersonelId(sortedPersonelList[0].id);
+    if (personelOptions.length > 0 && !selectedPersonelId) {
+      setSelectedPersonelId(personelOptions[0].id);
     }
-  }, [sortedPersonelList, selectedPersonelId]);
+  }, [personelOptions, selectedPersonelId]);
 
   // Available Tipe filter options based on selected Jenis filter
   const availableTipesForFilter = selectedJenisFilter
@@ -437,16 +423,28 @@ export const MutationPage: React.FC = () => {
 
           {/* 4. Personel Operator Berdinas */}
           <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <label className="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-2">
                 <UserCheck className="w-4 h-4 text-emerald-400" />
                 <span>Personel Berdinas</span>
               </label>
-              <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
-                <Clock className="w-3.5 h-3.5 text-emerald-400" />
-                <span>{activeShiftLabel}</span>
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">
+                  {operationalDate}
+                </span>
+                <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center gap-1">
+                  <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>{activeShiftLabel}</span>
+                </span>
+              </div>
             </div>
+
+            {isFallback && (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium">
+                <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                <span>Jadwal shift untuk tanggal ini ({operationalDate}) belum diisi. Menampilkan semua personel sebagai pilihan.</span>
+              </div>
+            )}
 
             <div>
               <select
@@ -455,9 +453,9 @@ export const MutationPage: React.FC = () => {
                 onChange={(e) => setSelectedPersonelId(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-cyan-500 cursor-pointer font-bold"
               >
-                {sortedPersonelList.map((p) => (
+                {personelOptions.map((p) => (
                   <option key={p.id} value={p.id}>
-                    {p.formattedName} {p.isDutyActive ? ' (Dinas Aktif)' : ''}
+                    {p.formattedName} {!isFallback && p.isDutyActive ? ' ✨ (Dinas Aktif)' : ''}
                   </option>
                 ))}
               </select>

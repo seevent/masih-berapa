@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { HeaderStats } from './HeaderStats';
 import { FloatingDock } from './FloatingDock';
@@ -10,6 +10,17 @@ export const AppLayout: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const { isSupabaseConnected, isLoading } = useInventory();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  // Auto-redirect if URL contains ?sku= or ?scan= parameter from external QR camera scan
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const skuParam = params.get('sku') || params.get('scan');
+    if (skuParam && location.pathname !== '/scanner') {
+      navigate(`/scanner?sku=${encodeURIComponent(skuParam)}`, { replace: true });
+    }
+  }, [location, navigate]);
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex relative">

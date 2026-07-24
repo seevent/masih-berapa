@@ -10,8 +10,8 @@
     "semantic_hash": ""
   },
   "src/components/layout/AppLayout.tsx": {
-    "mtime": 1784829511.281478,
-    "ast_hash": "f683474382d77c85354b6cd1ce985828",
+    "mtime": 1784879206.7182336,
+    "ast_hash": "e5b946d179d6cc03dbc86d2cb989c324",
     "semantic_hash": ""
   },
   "src/components/layout/HeaderStats.tsx": {
@@ -20,8 +20,8 @@
     "semantic_hash": ""
   },
   "src/components/layout/Sidebar.tsx": {
-    "mtime": 1784825350.556156,
-    "ast_hash": "c21f40fd4e39817cc533c46b3d8b67e3",
+    "mtime": 1784879553.5158968,
+    "ast_hash": "9378d654136bb359aab483058f8f704d",
     "semantic_hash": ""
   },
   "src/context/InventoryContext.tsx": {
@@ -65,8 +65,8 @@
     "semantic_hash": ""
   },
   "src/pages/MutationPage.tsx": {
-    "mtime": 1784866429.7440572,
-    "ast_hash": "338078abbf5dcf61b9208752e89a7d2b",
+    "mtime": 1784877651.0529976,
+    "ast_hash": "05928ef7752b7c762eb8e4b309f2c02f",
     "semantic_hash": ""
   },
   "src/pages/PredictiveAlertsPage.tsx": {
@@ -80,8 +80,8 @@
     "semantic_hash": ""
   },
   "src/pages/PrintLabelPage.tsx": {
-    "mtime": 1784865790.536353,
-    "ast_hash": "19e8669b0368ca9a74abb1b490aa7650",
+    "mtime": 1784880956.8388853,
+    "ast_hash": "4d8811ad589e354533419b352beb4de5",
     "semantic_hash": ""
   },
   "src/pages/ReportsPage.tsx": {
@@ -90,8 +90,8 @@
     "semantic_hash": ""
   },
   "src/pages/ScannerPage.tsx": {
-    "mtime": 1784718364.301107,
-    "ast_hash": "579effb5504dd3af2998102eb6b4f082",
+    "mtime": 1784879219.133284,
+    "ast_hash": "62670fe6a33fd6b6105afab34461e286",
     "semantic_hash": ""
   },
   "src/pages/SettingsPage.tsx": {
@@ -922,6 +922,11 @@
   "src/components/layout/FloatingDock.tsx": {
     "mtime": 1784824788.8827572,
     "ast_hash": "c389f55816eb5cbcf05394915fad4000",
+    "semantic_hash": ""
+  },
+  "src/utils/shiftUtils.ts": {
+    "mtime": 1784877627.069926,
+    "ast_hash": "9b1baebdb9c64345f875457996f48440",
     "semantic_hash": ""
   }
 }
