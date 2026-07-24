@@ -88,8 +88,23 @@ export const SparepartMetricsCards: React.FC<SparepartMetricsCardsProps> = ({
               <span className="text-xs font-semibold text-slate-400">Bekas</span>
             </h3>
           </div>
-          <p className="text-xs text-slate-400 mt-1">
-            Ketersediaan unit baru vs unit bekas layak pakai.
+
+          {/* Option B: Visual Dual-Bar Progress Indicator */}
+          <div className="mt-2.5 w-full bg-slate-950 rounded-full h-2 overflow-hidden flex border border-slate-800/80">
+            <div
+              style={{ width: `${totalPhysicalStock > 0 ? Math.round((totalNewStock / totalPhysicalStock) * 100) : 50}%` }}
+              className="bg-emerald-500 h-full transition-all duration-500"
+              title={`Stok Baru: ${totalNewStock}`}
+            />
+            <div
+              style={{ width: `${totalPhysicalStock > 0 ? Math.round((totalUsedStock / totalPhysicalStock) * 100) : 50}%` }}
+              className="bg-amber-500 h-full transition-all duration-500"
+              title={`Stok Bekas: ${totalUsedStock}`}
+            />
+          </div>
+          <p className="text-[11px] text-slate-400 mt-1.5 flex justify-between">
+            <span>Baru ({totalPhysicalStock > 0 ? Math.round((totalNewStock / totalPhysicalStock) * 100) : 0}%)</span>
+            <span>Bekas ({totalPhysicalStock > 0 ? Math.round((totalUsedStock / totalPhysicalStock) * 100) : 0}%)</span>
           </p>
         </div>
       </div>

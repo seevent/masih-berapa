@@ -2,20 +2,27 @@ import React, { useState } from 'react';
 import { Outlet, Link } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { HeaderStats } from './HeaderStats';
+import { FloatingDock } from './FloatingDock';
 import { useInventory } from '../../context/InventoryContext';
-import { AlertTriangle, Database, ArrowRight } from 'lucide-react';
+import { Database, ArrowRight } from 'lucide-react';
 
 export const AppLayout: React.FC = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { isSupabaseConnected, isLoading } = useInventory();
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex relative">
       {/* Sidebar Navigation */}
-      <Sidebar mobileOpen={mobileOpen} setMobileOpen={setMobileOpen} />
+      <Sidebar
+        mobileOpen={mobileOpen}
+        setMobileOpen={setMobileOpen}
+        isCollapsed={isCollapsed}
+        setIsCollapsed={setIsCollapsed}
+      />
 
       {/* Main Content Area */}
-      <div className="flex-1 md:pl-72 flex flex-col min-w-0">
+      <div className={`flex-1 flex flex-col min-w-0 transition-all duration-300 ${isCollapsed ? 'md:pl-20' : 'md:pl-72'}`}>
         <HeaderStats setMobileOpen={setMobileOpen} />
 
         {/* Warning Banner if Supabase Disconnected */}

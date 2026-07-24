@@ -1,4 +1,4 @@
-import { Sparepart, StockMutation } from '../types';
+import { Sparepart, StockMutation, SupplierType } from '../types';
 
 export interface ABCItemPhysical {
   sparepart: Sparepart;
@@ -41,7 +41,7 @@ export interface ReorderPriorityItemPhysical {
   minimumStok: number;
   safetyStok: number;
   suggestedReorderQty: number;
-  supplierType: 'LOKAL' | 'IMPOR';
+  supplierType: SupplierType;
   estimatedLeadTimeDays: number;
   urgency: 'CRITICAL' | 'WARNING' | 'HEALTHY';
   locationRack: string;
@@ -287,7 +287,7 @@ export const getReorderPriorityListPhysical = (
       const isWarning = !isCritical && p.stok_aktual <= safetyStok;
 
       const suggestedQty = Math.max(p.minimum_stok * 2 - p.stok_aktual, 1);
-      const leadTime = p.supplier_type === 'IMPOR' ? 45 : 14;
+      const leadTime = 30;
 
       let urgency: 'CRITICAL' | 'WARNING' | 'HEALTHY' = 'HEALTHY';
       if (isCritical) urgency = 'CRITICAL';
@@ -303,7 +303,7 @@ export const getReorderPriorityListPhysical = (
         minimumStok: p.minimum_stok,
         safetyStok,
         suggestedReorderQty: suggestedQty,
-        supplierType: p.supplier_type || 'LOKAL',
+        supplierType: 'VENDOR' as SupplierType,
         estimatedLeadTimeDays: leadTime,
         urgency,
         locationRack: p.rack || p.location_rack || p.location || 'RAK-A1'

@@ -17,7 +17,7 @@ import {
   Building2
 } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
-import { MutationType } from '../types';
+import { MutationType, SupplierType } from '../types';
 
 export const MutationPage: React.FC = () => {
   const {
@@ -54,7 +54,8 @@ export const MutationPage: React.FC = () => {
   const [selectedTitikId, setSelectedTitikId] = useState('');
   const [selectedUnitId, setSelectedUnitId] = useState('');
 
-  // 5. Quantity & Notes
+  // 5. Quantity, Sumber & Notes
+  const [sumber, setSumber] = useState<SupplierType>('IAS');
   const [qty, setQty] = useState<number>(1);
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -161,6 +162,7 @@ export const MutationPage: React.FC = () => {
       unit_id: mutationType === 'Pakai' || mutationType === 'Bekas' ? selectedUnitId || undefined : undefined,
       personel_id: selectedPersonelObj.id,
       mutation_type: mutationType,
+      sumber: mutationType === 'Masuk' ? sumber : undefined,
       qty,
       operator_name: operatorName,
       notes: notes.trim()
@@ -462,22 +464,45 @@ export const MutationPage: React.FC = () => {
             </div>
           </div>
 
-          {/* 5. Transaction Quantity & Notes */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-semibold text-slate-300 mb-1">
-                Jumlah Mutasi (Qty Unit)
-              </label>
-              <input
-                type="number"
-                min="1"
-                required
-                value={qty}
-                onChange={(e) => setQty(parseInt(e.target.value) || 1)}
-                className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white font-bold text-base focus:border-cyan-500"
-              />
+          {/* 5. Transaction Quantity, Sumber & Notes */}
+          <div className="space-y-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {mutationType === 'Masuk' && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Sumber Asal Barang *
+                  </label>
+                  <select
+                    value={sumber}
+                    onChange={(e) => setSumber(e.target.value as SupplierType)}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white font-semibold focus:border-cyan-500 cursor-pointer"
+                  >
+                    <option value="IAS">IAS</option>
+                    <option value="SUP API">SUP API</option>
+                    <option value="SISA PEKERJAAN">SISA PEKERJAAN</option>
+                    <option value="MANDIRI">MANDIRI</option>
+                    <option value="DARI UNIT LAIN">DARI UNIT LAIN</option>
+                    <option value="VENDOR">VENDOR</option>
+                  </select>
+                </div>
+              )}
+
+              <div className={mutationType === 'Masuk' ? '' : 'sm:col-span-2'}>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">
+                  Jumlah Mutasi (Qty Unit)
+                </label>
+                <input
+                  type="number"
+                  min="1"
+                  required
+                  value={qty}
+                  onChange={(e) => setQty(parseInt(e.target.value) || 1)}
+                  className="w-full bg-slate-950 border border-slate-700 rounded-xl px-4 py-2.5 text-white font-bold text-base focus:border-cyan-500"
+                />
+              </div>
             </div>
 
+            {/* Catatan Transaksi - Moved Below */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1 flex items-center gap-1">
                 <MessageSquare className="w-3.5 h-3.5 text-slate-400" />

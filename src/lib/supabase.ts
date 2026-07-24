@@ -82,11 +82,17 @@ export async function seedSupabaseDatabase(): Promise<{ success: boolean; messag
     await supabase.from('master_configs').upsert(INITIAL_MASTER_CONFIGS);
 
     // 11. spareparts
-    const sparepartsClean = INITIAL_SPAREPARTS.map(({ equipment_type_name, ...rest }) => rest);
+    const sparepartsClean = INITIAL_SPAREPARTS.map(({ equipment_type_name, location_rack, id_jenis, stok_aktual, stok_bekas, supplier_type, sumber, location, ...rest }: any) => ({
+      ...rest,
+      lokasi: rest.lokasi || location || ''
+    }));
     await supabase.from('spareparts').upsert(sparepartsClean);
 
     // 12. stock_mutations
-    const mutationsClean = INITIAL_MUTATIONS.map(({ sparepart_sku, sparepart_name, ...rest }) => rest);
+    const mutationsClean = INITIAL_MUTATIONS.map(({ sparepart_sku, sparepart_name, operator_name, reference_no, ...rest }: any) => ({
+      ...rest,
+      sumber: rest.sumber || 'VENDOR'
+    }));
     await supabase.from('stock_mutations').upsert(mutationsClean);
 
     // 13. sparepart_compatibility

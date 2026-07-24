@@ -274,7 +274,7 @@ export const INITIAL_SPAREPARTS: Sparepart[] = [
     location: 'Gudang Utility Chiller T2',
     rack: 'RAK-A1-04',
     location_rack: 'RAK-A1-04',
-    supplier_type: 'IMPOR',
+    supplier_type: 'VENDOR',
     mtbf_days: 180,
     last_replaced_at: '2025-10-15',
     created_at: '2025-01-10T08:00:00Z'
@@ -294,7 +294,7 @@ export const INITIAL_SPAREPARTS: Sparepart[] = [
     location: 'Gudang Utility Chiller T2',
     rack: 'RAK-A2-12',
     location_rack: 'RAK-A2-12',
-    supplier_type: 'LOKAL',
+    supplier_type: 'SUP API',
     mtbf_days: 120,
     last_replaced_at: '2026-01-20',
     created_at: '2025-01-12T08:00:00Z'
@@ -314,7 +314,7 @@ export const INITIAL_SPAREPARTS: Sparepart[] = [
     location: 'Terminal 2D Domestik',
     rack: 'RAK-B3-01',
     location_rack: 'RAK-B3-01',
-    supplier_type: 'IMPOR',
+    supplier_type: 'VENDOR',
     mtbf_days: 90,
     last_replaced_at: '2025-11-01',
     created_at: '2025-01-15T08:00:00Z'
@@ -334,7 +334,7 @@ export const INITIAL_SPAREPARTS: Sparepart[] = [
     location: 'Terminal 2E Internasional',
     rack: 'RAK-C1-05',
     location_rack: 'RAK-C1-05',
-    supplier_type: 'IMPOR',
+    supplier_type: 'VENDOR',
     mtbf_days: 365,
     last_replaced_at: '2025-06-15',
     created_at: '2025-02-01T08:00:00Z'
@@ -354,7 +354,7 @@ export const INITIAL_SPAREPARTS: Sparepart[] = [
     location: 'Gedung Utility Chiller T2',
     rack: 'RAK-C2-02',
     location_rack: 'RAK-C2-02',
-    supplier_type: 'LOKAL',
+    supplier_type: 'SUP API',
     mtbf_days: 90,
     last_replaced_at: '2026-05-10',
     created_at: '2025-02-10T08:00:00Z'
@@ -374,7 +374,7 @@ export const INITIAL_SPAREPARTS: Sparepart[] = [
     location: 'Gedung Substation T2 Utama',
     rack: 'RAK-A3-09',
     location_rack: 'RAK-A3-09',
-    supplier_type: 'IMPOR',
+    supplier_type: 'VENDOR',
     mtbf_days: 240,
     last_replaced_at: '2025-08-20',
     created_at: '2025-02-15T08:00:00Z'
@@ -394,7 +394,7 @@ export const INITIAL_SPAREPARTS: Sparepart[] = [
     location: 'Gedung Substation T2 Utama',
     rack: 'RAK-E1-01',
     location_rack: 'RAK-E1-01',
-    supplier_type: 'IMPOR',
+    supplier_type: 'VENDOR',
     mtbf_days: 730,
     last_replaced_at: '2024-12-01',
     created_at: '2025-03-01T08:00:00Z'

@@ -1,5 +1,5 @@
 export type MutationType = 'Masuk' | 'Pakai' | 'Bekas' | 'Rusak';
-export type SupplierType = 'LOKAL' | 'IMPOR';
+export type SupplierType = 'SUP API' | 'SISA PEKERJAAN' | 'IAS' | 'MANDIRI' | 'DARI UNIT LAIN' | 'VENDOR';
 export type UnitStatus = 'operasi' | 'standby' | 'gudang' | 'rusak';
 
 // --- Database Table Types matching exact Supabase Schema ---
@@ -103,7 +103,7 @@ export interface Sparepart {
   name: string;
   description?: string;
   id_tipe: string;
-  id_jenis: string;
+  id_jenis?: string;
   equipment_type_name?: string;
   unit?: string;
   stok_aktual: number;
@@ -113,8 +113,6 @@ export interface Sparepart {
   lokasi?: string;
   rack?: string;
   location_rack?: string; // backwards compatibility helper
-  supplier_type?: SupplierType;
-  sumber?: SupplierType;
   mtbf_days?: number;
   last_replaced_at?: string;
   created_at?: string;
@@ -129,8 +127,9 @@ export interface StockMutation {
   sparepart_sku?: string;
   sparepart_name?: string;
   mutation_type: MutationType;
+  sumber?: SupplierType;
   qty: number;
-  operator_name: string;
+  operator_name?: string;
   reference_no?: string;
   notes?: string;
   created_at: string;

@@ -474,8 +474,8 @@ export const SettingsPage: React.FC = () => {
             <table className="w-full text-left text-xs">
               <thead className="bg-slate-950 text-slate-400 border-b border-slate-800">
                 <tr>
+                  <th className="py-2.5 px-3">Lokasi</th>
                   <th className="py-2.5 px-3 w-1/3">Titik Lokasi</th>
-                  <th className="py-2.5 px-3">Nama Lokasi Area</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-800/60">
@@ -490,10 +490,10 @@ export const SettingsPage: React.FC = () => {
 
                   return (
                     <tr key={lok.id} className="hover:bg-slate-800/40">
+                      <td className="py-2.5 px-3 font-semibold text-white">{lok.nama}</td>
                       <td className="py-2.5 px-3 font-mono font-semibold text-cyan-300">
                         {titikFormatted ? `[${titikFormatted}]` : '-'}
                       </td>
-                      <td className="py-2.5 px-3 font-semibold text-white">{lok.nama}</td>
                     </tr>
                   );
                 })}

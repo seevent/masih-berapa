@@ -125,7 +125,7 @@ CREATE TABLE IF NOT EXISTS public.spareparts (
   stok_bekas integer NOT NULL DEFAULT 0 CHECK (stok_bekas >= 0),
   minimum_stok integer NOT NULL DEFAULT 1 CHECK (minimum_stok >= 0),
   lokasi character varying,
-  sumber character varying DEFAULT 'LOKAL'::character varying CHECK (sumber::text = ANY (ARRAY['LOKAL'::character varying, 'IMPOR'::character varying]::text[])),
+  sumber character varying DEFAULT 'VENDOR'::character varying CHECK (sumber::text = ANY (ARRAY['SUP API'::character varying, 'SISA PEKERJAAN'::character varying, 'IAS'::character varying, 'MANDIRI'::character varying, 'DARI UNIT LAIN'::character varying, 'VENDOR'::character varying, 'LOKAL'::character varying, 'IMPOR'::character varying]::text[])),
   mtbf_days integer DEFAULT 180,
   last_replaced_at timestamp with time zone,
   created_at timestamp with time zone DEFAULT now(),

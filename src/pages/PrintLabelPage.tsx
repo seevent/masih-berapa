@@ -6,13 +6,14 @@ import { Printer, Download, QrCode, Layers, MapPin, Boxes, Check } from 'lucide-
 import { useInventory } from '../context/InventoryContext';
 
 export const PrintLabelPage: React.FC = () => {
-  const { spareparts } = useInventory();
+  const { spareparts, mutations } = useInventory();
   const [selectedPartId, setSelectedPartId] = useState<string>(spareparts[0]?.id || '');
   const [labelSize, setLabelSize] = useState<'50x30' | '70x40' | 'grid'>('50x30');
   const [isGenerating, setIsGenerating] = useState(false);
 
   const printContainerRef = useRef<HTMLDivElement>(null);
   const selectedPart = spareparts.find((p) => p.id === selectedPartId) || spareparts[0];
+  const latestSumber = mutations.find((m) => m.sparepart_id === selectedPart?.id && m.sumber)?.sumber || 'VENDOR';
 
   const handleDownloadPDF = async () => {
     if (!printContainerRef.current) return;
@@ -130,39 +131,60 @@ export const PrintLabelPage: React.FC = () => {
               {/* Printable White Thermal Sticker Surface */}
               <div
                 ref={printContainerRef}
-                className="bg-white text-slate-950 p-3 rounded shadow-md border border-slate-300 flex items-center gap-3 select-none"
+                className="bg-white text-slate-950 rounded-lg shadow-md border-2 border-slate-300 select-none overflow-hidden flex flex-col justify-between"
                 style={{
                   width: labelSize === '70x40' ? '350px' : '300px',
-                  height: labelSize === '70x40' ? '200px' : '170px'
+                  height: labelSize === '70x40' ? '200px' : '170px',
+                  padding: labelSize === '70x40' ? '12px' : '10px',
                 }}
               >
-                {/* QR Code Graphic */}
-                <div className="bg-white p-1 rounded border border-slate-200 shrink-0">
-                  <QRCodeSVG value={selectedPart.sku} size={labelSize === '70x40' ? 110 : 85} level="H" />
+                {/* Header Bar: SSES T2 Title + Large Bold SKU */}
+                <div className="flex items-center justify-between border-b-2 border-slate-950 pb-1">
+                  <span className="font-mono text-xs font-black bg-black text-white px-2 py-0.5 rounded tracking-wide">
+                    SSES T2
+                  </span>
+                  <span className="font-mono font-black text-base text-black tracking-tight">
+                    {selectedPart.sku}
+                  </span>
                 </div>
 
-                {/* Text Details */}
-                <div className="flex-1 min-w-0 flex flex-col justify-between h-full py-1">
-                  <div>
-                    <span className="font-mono text-[10px] font-bold bg-black text-white px-1.5 py-0.5 rounded">
-                      SSES T2
-                    </span>
-                    <div className="font-mono font-extrabold text-xs text-black mt-1 leading-tight tracking-tight">
-                      {selectedPart.sku}
-                    </div>
-                    <div className="font-bold text-[11px] text-slate-900 line-clamp-2 leading-tight mt-0.5">
-                      {selectedPart.name}
-                    </div>
+                {/* Main Content: Large QR Code + Clear Information */}
+                <div className="flex items-center gap-3 my-auto py-1">
+                  {/* Large QR Code */}
+                  <div className="shrink-0 bg-white border-2 border-slate-900 rounded p-1 flex items-center justify-center">
+                    <QRCodeSVG
+                      value={selectedPart.sku}
+                      size={labelSize === '70x40' ? 115 : 95}
+                      level="H"
+                    />
                   </div>
 
-                  <div className="border-t border-slate-300 pt-1 text-[9px] text-slate-800 space-y-0.5 font-semibold">
-                    <div className="flex items-center justify-between">
-                      <span>Lokasi Rak:</span>
-                      <span className="font-mono font-bold text-black">{selectedPart.location_rack}</span>
+                  {/* Clean Text Information */}
+                  <div className="flex-1 min-w-0 flex flex-col justify-center space-y-1.5">
+                    {/* Nama Sparepart (Large & Clear) */}
+                    <div>
+                      <div className="text-[10px] font-bold text-slate-500 uppercase tracking-wider leading-none mb-0.5">
+                        Nama Sparepart
+                      </div>
+                      <div className="font-black text-sm text-black leading-tight line-clamp-2">
+                        {selectedPart.name}
+                      </div>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span>Mesin:</span>
-                      <span className="truncate max-w-[110px]">{selectedPart.equipment_type_name}</span>
+
+                    {/* Sumber & Tipe Peralatan */}
+                    <div className="grid grid-cols-1 gap-1 border-t border-slate-300 pt-1">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-semibold text-slate-600">Sumber:</span>
+                        <span className="font-bold text-black uppercase bg-slate-100 px-1.5 py-0.5 rounded border border-slate-300 text-[11px]">
+                          {latestSumber}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="font-semibold text-slate-600">Tipe Peralatan:</span>
+                        <span className="font-bold text-black truncate max-w-[100px] text-right text-[11px]">
+                          {selectedPart.equipment_type_name || '-'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>

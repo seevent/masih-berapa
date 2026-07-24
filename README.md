@@ -13,15 +13,15 @@ A modern, high-performance Progressive Web Application (PWA) for managing equipm
 
 ## 📌 Features & Key Modules
 
-- 📊 **Dashboard & Visual Analytics**: Live KPI cards, equipment status distribution, rotable stock asset ratio via Recharts, and on-duty shift personnel summary.
-- 📦 **Sparepart Catalog**: Searchable and multi-filterable catalog (by equipment type, supplier, and stock level) with complete rotable breakdowns.
-- 🔄 **Transaction Mutations**: Instant logging for `INBOUND`, `OUTBOUND`, `ROTABLE_RETURN`, and `SCRAP` mutations.
-- 📜 **Audit History Log**: Chronological transaction audit trail with 1-click Excel (`.xlsx`) export.
+- 📊 **Dashboard & Visual Analytics**: Live KPI cards, equipment status distribution, rotable stock asset ratio via Recharts, dedicated Qty column in recent transactions, and on-duty shift personnel summary (`PS` / `M`).
+- 📦 **Sparepart Catalog**: Searchable and multi-filterable catalog with **Grid Card vs. Compact List Table View Switcher** for maximum user flexibility.
+- 🔄 **Transaction Mutations**: Instant logging for `Masuk` (Penerimaan), `Pakai` (Pemakaian Work Order), `Bekas` (Pengembalian Rotable), and `Rusak` (Afkir). Includes **6 Dynamic Source Options** (`IAS`, `SUP API`, `SISA PEKERJAAN`, `MANDIRI`, `DARI UNIT LAIN`, `VENDOR`) on incoming transactions.
+- 📜 **Audit History Log & Management**: Full CRUD support to edit or delete mutation records with automatic real-time stock recalculation, search filters, and 1-click Excel (`.xlsx`) export.
 - 📷 **Mobile QR Code Scanner**: Built-in camera barcode/QR scanner (`html5-qrcode`) for fast SKU lookups and on-the-spot inventory updates.
-- 🏷️ **Thermal QR Label Generator**: Printable 2D Thermal QR labels (50x30mm & 70x40mm presets) with PDF download support (`jspdf` & `html2canvas`).
+- 🏷️ **Thermal QR Label Generator**: Printable compact 2D Thermal QR labels (50x30mm & 70x40mm presets) with large QR display, key metadata (`SSES T2`, `SKU`, `Nama Sparepart`, `Sumber`, `Tipe Peralatan`), and PDF download support (`jspdf` & `html2canvas`).
 - ⚠️ **Predictive Maintenance Alerts**: Automated MTBF (Mean Time Between Failures) lifespan tracking (`remaining_days = mtbf_days - (current_date - last_replaced_at)`).
 - 📈 **Annual Demand Planner**: Automated order forecasting (`order_needed_qty = annual_forecast - (stok_aktual + stok_bekas)`) with Excel export.
-- ⚙️ **Master Data & Supabase Integration**: Complete UI master editors for `jenis_peralatan`, `tipe_peralatan`, `lokasi`, `titik_lokasi`, and `personel`. Includes full Supabase client support + 1-Click database seeder and local storage fallback mode.
+- ⚙️ **Master Data & Supabase Integration**: Complete UI master editors for `jenis_peralatan`, `tipe_peralatan`, `lokasi`, `titik_lokasi`, `unit_peralatan`, `penempatan_peralatan`, `unit_kerja`, and `personel`. Includes full Supabase client support + 1-Click database seeder.
 
 ---
 
