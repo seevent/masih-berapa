@@ -3163,8 +3163,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_primitive",
-      "community": 130,
-      "community_name": "radius",
+      "community": 92,
+      "community_name": "primitive",
       "norm_label": "primitive"
     },
     {
@@ -4176,7 +4176,7 @@
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_fontsize_sm",
       "community": 130,
-      "community_name": "radius",
+      "community_name": "shadow",
       "norm_label": "sm"
     },
     {
@@ -4187,7 +4187,7 @@
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_sm_value",
       "community": 130,
-      "community_name": "radius",
+      "community_name": "shadow",
       "norm_label": "$value"
     },
     {
@@ -4198,7 +4198,7 @@
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_sm_type",
       "community": 130,
-      "community_name": "radius",
+      "community_name": "shadow",
       "norm_label": "$type"
     },
     {
@@ -4274,7 +4274,7 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_fontsize_xl",
-      "community": 159,
+      "community": 240,
       "community_name": "xl",
       "norm_label": "xl"
     },
@@ -4285,7 +4285,7 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_xl_value",
-      "community": 159,
+      "community": 240,
       "community_name": "xl",
       "norm_label": "$value"
     },
@@ -4296,7 +4296,7 @@
       "source_location": "L57",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_xl_type",
-      "community": 159,
+      "community": 240,
       "community_name": "xl",
       "norm_label": "$type"
     },
@@ -4406,7 +4406,7 @@
       "source_location": "L62",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_primitive_radius",
-      "community": 130,
+      "community": 159,
       "community_name": "radius",
       "norm_label": "radius"
     },
@@ -4451,7 +4451,7 @@
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_sm",
       "community": 130,
-      "community_name": "radius",
+      "community_name": "shadow",
       "norm_label": "sm"
     },
     {
@@ -4461,7 +4461,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_default",
-      "community": 130,
+      "community": 159,
       "community_name": "radius",
       "norm_label": "default"
     },
@@ -4472,7 +4472,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_default_value",
-      "community": 130,
+      "community": 159,
       "community_name": "radius",
       "norm_label": "$value"
     },
@@ -4483,7 +4483,7 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_default_type",
-      "community": 130,
+      "community": 159,
       "community_name": "radius",
       "norm_label": "$type"
     },
@@ -4495,7 +4495,7 @@
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_md",
       "community": 130,
-      "community_name": "radius",
+      "community_name": "shadow",
       "norm_label": "md"
     },
     {
@@ -4506,7 +4506,7 @@
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_md_value",
       "community": 130,
-      "community_name": "radius",
+      "community_name": "shadow",
       "norm_label": "$value"
     },
     {
@@ -4517,7 +4517,7 @@
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_md_type",
       "community": 130,
-      "community_name": "radius",
+      "community_name": "shadow",
       "norm_label": "$type"
     },
     {
@@ -4538,7 +4538,7 @@
       "source_location": "L68",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_xl",
-      "community": 159,
+      "community": 240,
       "community_name": "xl",
       "norm_label": "xl"
     },
@@ -4549,7 +4549,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_full",
-      "community": 130,
+      "community": 159,
       "community_name": "radius",
       "norm_label": "full"
     },
@@ -4560,7 +4560,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_full_value",
-      "community": 130,
+      "community": 159,
       "community_name": "radius",
       "norm_label": "$value"
     },
@@ -4571,7 +4571,7 @@
       "source_location": "L69",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_full_type",
-      "community": 130,
+      "community": 159,
       "community_name": "radius",
       "norm_label": "$type"
     },
@@ -4583,7 +4583,7 @@
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_primitive_shadow",
       "community": 130,
-      "community_name": "radius",
+      "community_name": "shadow",
       "norm_label": "shadow"
     },
     {
@@ -4605,7 +4605,7 @@
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_shadow_sm",
       "community": 130,
-      "community_name": "radius",
+      "community_name": "shadow",
       "norm_label": "sm"
     },
     {
@@ -4615,7 +4615,7 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_shadow_default",
-      "community": 130,
+      "community": 159,
       "community_name": "radius",
       "norm_label": "default"
     },
@@ -4627,7 +4627,7 @@
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_shadow_md",
       "community": 130,
-      "community_name": "radius",
+      "community_name": "shadow",
       "norm_label": "md"
     },
     {
@@ -4813,8 +4813,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_color_foreground",
-      "community": 6,
-      "community_name": "color",
+      "community": 241,
+      "community_name": "foreground",
       "norm_label": "foreground"
     },
     {
@@ -4824,8 +4824,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_foreground_value",
-      "community": 6,
-      "community_name": "color",
+      "community": 241,
+      "community_name": "foreground",
       "norm_label": "$value"
     },
     {
@@ -4835,8 +4835,8 @@
       "source_location": "L87",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_foreground_type",
-      "community": 6,
-      "community_name": "color",
+      "community": 241,
+      "community_name": "foreground",
       "norm_label": "$type"
     },
     {
@@ -4846,8 +4846,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_color_primary",
-      "community": 6,
-      "community_name": "color",
+      "community": 244,
+      "community_name": "primary",
       "norm_label": "primary"
     },
     {
@@ -4857,8 +4857,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_primary_value",
-      "community": 6,
-      "community_name": "color",
+      "community": 244,
+      "community_name": "primary",
       "norm_label": "$value"
     },
     {
@@ -4868,8 +4868,8 @@
       "source_location": "L88",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_primary_type",
-      "community": 6,
-      "community_name": "color",
+      "community": 244,
+      "community_name": "primary",
       "norm_label": "$type"
     },
     {
@@ -4879,8 +4879,8 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_color_primary_hover",
-      "community": 237,
-      "community_name": "secondary",
+      "community": 6,
+      "community_name": "color",
       "norm_label": "primary-hover"
     },
     {
@@ -4890,8 +4890,8 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_primary_hover_value",
-      "community": 237,
-      "community_name": "secondary",
+      "community": 6,
+      "community_name": "color",
       "norm_label": "$value"
     },
     {
@@ -4901,8 +4901,8 @@
       "source_location": "L89",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_primary_hover_type",
-      "community": 237,
-      "community_name": "secondary",
+      "community": 6,
+      "community_name": "color",
       "norm_label": "$type"
     },
     {
@@ -4912,8 +4912,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_color_primary_foreground",
-      "community": 6,
-      "community_name": "color",
+      "community": 246,
+      "community_name": "primary-foreground",
       "norm_label": "primary-foreground"
     },
     {
@@ -4923,8 +4923,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_primary_foreground_value",
-      "community": 6,
-      "community_name": "color",
+      "community": 246,
+      "community_name": "primary-foreground",
       "norm_label": "$value"
     },
     {
@@ -4934,8 +4934,8 @@
       "source_location": "L90",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_primary_foreground_type",
-      "community": 6,
-      "community_name": "color",
+      "community": 246,
+      "community_name": "primary-foreground",
       "norm_label": "$type"
     },
     {
@@ -4945,8 +4945,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_color_secondary",
-      "community": 6,
-      "community_name": "color",
+      "community": 247,
+      "community_name": "secondary",
       "norm_label": "secondary"
     },
     {
@@ -4956,8 +4956,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_secondary_value",
-      "community": 6,
-      "community_name": "color",
+      "community": 247,
+      "community_name": "secondary",
       "norm_label": "$value"
     },
     {
@@ -4967,8 +4967,8 @@
       "source_location": "L91",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_secondary_type",
-      "community": 6,
-      "community_name": "color",
+      "community": 247,
+      "community_name": "secondary",
       "norm_label": "$type"
     },
     {
@@ -5111,7 +5111,7 @@
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_color_destructive_foreground",
       "community": 119,
-      "community_name": "shadow",
+      "community_name": "destructive-foreground",
       "norm_label": "destructive-foreground"
     },
     {
@@ -5122,7 +5122,7 @@
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_destructive_foreground_value",
       "community": 119,
-      "community_name": "shadow",
+      "community_name": "destructive-foreground",
       "norm_label": "$value"
     },
     {
@@ -5133,7 +5133,7 @@
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_destructive_foreground_type",
       "community": 119,
-      "community_name": "shadow",
+      "community_name": "destructive-foreground",
       "norm_label": "$type"
     },
     {
@@ -5143,8 +5143,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_color_border",
-      "community": 177,
-      "community_name": "button",
+      "community": 235,
+      "community_name": "$type",
       "norm_label": "border"
     },
     {
@@ -5154,8 +5154,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_border_value",
-      "community": 177,
-      "community_name": "button",
+      "community": 235,
+      "community_name": "$type",
       "norm_label": "$value"
     },
     {
@@ -5165,8 +5165,8 @@
       "source_location": "L97",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_border_type",
-      "community": 177,
-      "community_name": "button",
+      "community": 235,
+      "community_name": "$type",
       "norm_label": "$type"
     },
     {
@@ -5176,8 +5176,8 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_color_ring",
-      "community": 178,
-      "community_name": "$type",
+      "community": 6,
+      "community_name": "color",
       "norm_label": "ring"
     },
     {
@@ -5187,8 +5187,8 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_ring_value",
-      "community": 178,
-      "community_name": "$type",
+      "community": 6,
+      "community_name": "color",
       "norm_label": "$value"
     },
     {
@@ -5198,8 +5198,8 @@
       "source_location": "L98",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_ring_type",
-      "community": 178,
-      "community_name": "$type",
+      "community": 6,
+      "community_name": "color",
       "norm_label": "$type"
     },
     {
@@ -5286,8 +5286,8 @@
       "source_location": "L105",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_component",
-      "community": 177,
-      "community_name": "button",
+      "community": 175,
+      "community_name": "design-tokens-starter.json",
       "norm_label": "component"
     },
     {
@@ -5297,8 +5297,8 @@
       "source_location": "L106",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_component_button",
-      "community": 177,
-      "community_name": "button",
+      "community": 178,
+      "community_name": "ring",
       "norm_label": "button"
     },
     {
@@ -5341,8 +5341,8 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_button_fg",
-      "community": 177,
-      "community_name": "button",
+      "community": 178,
+      "community_name": "ring",
       "norm_label": "fg"
     },
     {
@@ -5352,8 +5352,8 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_fg_value",
-      "community": 177,
-      "community_name": "button",
+      "community": 178,
+      "community_name": "ring",
       "norm_label": "$value"
     },
     {
@@ -5363,8 +5363,8 @@
       "source_location": "L108",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_fg_type",
-      "community": 177,
-      "community_name": "button",
+      "community": 178,
+      "community_name": "ring",
       "norm_label": "$type"
     },
     {
@@ -5374,8 +5374,8 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_button_hover_bg",
-      "community": 177,
-      "community_name": "button",
+      "community": 178,
+      "community_name": "ring",
       "norm_label": "hover-bg"
     },
     {
@@ -5385,8 +5385,8 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_hover_bg_value",
-      "community": 177,
-      "community_name": "button",
+      "community": 178,
+      "community_name": "ring",
       "norm_label": "$value"
     },
     {
@@ -5396,8 +5396,8 @@
       "source_location": "L109",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_hover_bg_type",
-      "community": 177,
-      "community_name": "button",
+      "community": 178,
+      "community_name": "ring",
       "norm_label": "$type"
     },
     {
@@ -5407,8 +5407,8 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_button_padding_x",
-      "community": 177,
-      "community_name": "button",
+      "community": 221,
+      "community_name": "core-js",
       "norm_label": "padding-x"
     },
     {
@@ -5418,8 +5418,8 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_padding_x_value",
-      "community": 177,
-      "community_name": "button",
+      "community": 221,
+      "community_name": "core-js",
       "norm_label": "$value"
     },
     {
@@ -5429,8 +5429,8 @@
       "source_location": "L110",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_padding_x_type",
-      "community": 177,
-      "community_name": "button",
+      "community": 221,
+      "community_name": "core-js",
       "norm_label": "$type"
     },
     {
@@ -5440,8 +5440,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_button_padding_y",
-      "community": 177,
-      "community_name": "button",
+      "community": 239,
+      "community_name": "padding-y",
       "norm_label": "padding-y"
     },
     {
@@ -5451,8 +5451,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_padding_y_value",
-      "community": 177,
-      "community_name": "button",
+      "community": 239,
+      "community_name": "padding-y",
       "norm_label": "$value"
     },
     {
@@ -5462,8 +5462,8 @@
       "source_location": "L111",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_padding_y_type",
-      "community": 177,
-      "community_name": "button",
+      "community": 239,
+      "community_name": "padding-y",
       "norm_label": "$type"
     },
     {
@@ -5473,8 +5473,8 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_button_radius",
-      "community": 177,
-      "community_name": "button",
+      "community": 237,
+      "community_name": "radius",
       "norm_label": "radius"
     },
     {
@@ -5484,8 +5484,8 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_value",
-      "community": 177,
-      "community_name": "button",
+      "community": 237,
+      "community_name": "radius",
       "norm_label": "$value"
     },
     {
@@ -5495,8 +5495,8 @@
       "source_location": "L112",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_type",
-      "community": 177,
-      "community_name": "button",
+      "community": 237,
+      "community_name": "radius",
       "norm_label": "$type"
     },
     {
@@ -5506,8 +5506,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_button_font_size",
-      "community": 177,
-      "community_name": "button",
+      "community": 178,
+      "community_name": "ring",
       "norm_label": "font-size"
     },
     {
@@ -5517,8 +5517,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_font_size_value",
-      "community": 177,
-      "community_name": "button",
+      "community": 178,
+      "community_name": "ring",
       "norm_label": "$value"
     },
     {
@@ -5528,8 +5528,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_font_size_type",
-      "community": 177,
-      "community_name": "button",
+      "community": 178,
+      "community_name": "ring",
       "norm_label": "$type"
     },
     {
@@ -5539,8 +5539,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_component_input",
-      "community": 177,
-      "community_name": "button",
+      "community": 221,
+      "community_name": "core-js",
       "norm_label": "input"
     },
     {
@@ -5561,8 +5561,8 @@
       "source_location": "L117",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_input_border",
-      "community": 177,
-      "community_name": "button",
+      "community": 235,
+      "community_name": "$type",
       "norm_label": "border"
     },
     {
@@ -5572,8 +5572,8 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_input_focus_ring",
-      "community": 177,
-      "community_name": "button",
+      "community": 221,
+      "community_name": "core-js",
       "norm_label": "focus-ring"
     },
     {
@@ -5583,8 +5583,8 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_focus_ring_value",
-      "community": 177,
-      "community_name": "button",
+      "community": 221,
+      "community_name": "core-js",
       "norm_label": "$value"
     },
     {
@@ -5594,8 +5594,8 @@
       "source_location": "L118",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_focus_ring_type",
-      "community": 177,
-      "community_name": "button",
+      "community": 221,
+      "community_name": "core-js",
       "norm_label": "$type"
     },
     {
@@ -5605,8 +5605,8 @@
       "source_location": "L119",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_input_padding_x",
-      "community": 177,
-      "community_name": "button",
+      "community": 221,
+      "community_name": "core-js",
       "norm_label": "padding-x"
     },
     {
@@ -5616,8 +5616,8 @@
       "source_location": "L120",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_input_padding_y",
-      "community": 177,
-      "community_name": "button",
+      "community": 239,
+      "community_name": "padding-y",
       "norm_label": "padding-y"
     },
     {
@@ -5627,8 +5627,8 @@
       "source_location": "L121",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_input_radius",
-      "community": 177,
-      "community_name": "button",
+      "community": 237,
+      "community_name": "radius",
       "norm_label": "radius"
     },
     {
@@ -5660,8 +5660,8 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_card_border",
-      "community": 177,
-      "community_name": "button",
+      "community": 235,
+      "community_name": "$type",
       "norm_label": "border"
     },
     {
@@ -5737,8 +5737,8 @@
       "source_location": "L128",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_card_radius",
-      "community": 177,
-      "community_name": "button",
+      "community": 237,
+      "community_name": "radius",
       "norm_label": "radius"
     },
     {
@@ -9972,7 +9972,7 @@
       "_origin": "ast",
       "id": "docs_migrations_2026_10_02_pakai_wajib_unit",
       "community": 220,
-      "community_name": "shiftUtils.ts",
+      "community_name": "2026-10-02_pakai_wajib_unit.sql",
       "norm_label": "2026-10-02_pakai_wajib_unit.sql"
     },
     {
@@ -9983,7 +9983,7 @@
       "_origin": "ast",
       "id": "docs_migrations_2026_10_02_pakai_wajib_unit_public_stock_mutations_pakai_wajib_unit",
       "community": 220,
-      "community_name": "shiftUtils.ts",
+      "community_name": "2026-10-02_pakai_wajib_unit.sql",
       "norm_label": "public.stock_mutations_pakai_wajib_unit()"
     },
     {
@@ -9994,7 +9994,7 @@
       "_origin": "ast",
       "id": "docs_migrations_2026_10_02_pakai_wajib_unit_stock_mutations_pakai_wajib_unit",
       "community": 220,
-      "community_name": "shiftUtils.ts",
+      "community_name": "2026-10-02_pakai_wajib_unit.sql",
       "norm_label": "stock_mutations_pakai_wajib_unit"
     },
     {
@@ -10444,8 +10444,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "package_dependencies_clsx",
-      "community": 0,
-      "community_name": "dependencies",
+      "community": 248,
+      "community_name": "clsx",
       "norm_label": "clsx"
     },
     {
@@ -10455,8 +10455,8 @@
       "source_location": "L15",
       "_origin": "ast",
       "id": "clsx",
-      "community": 0,
-      "community_name": "dependencies",
+      "community": 248,
+      "community_name": "clsx",
       "norm_label": "clsx"
     },
     {
@@ -10466,8 +10466,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "package_dependencies_core_js",
-      "community": 221,
-      "community_name": "padding-y",
+      "community": 0,
+      "community_name": "dependencies",
       "norm_label": "core-js"
     },
     {
@@ -10477,8 +10477,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "core_js",
-      "community": 221,
-      "community_name": "padding-y",
+      "community": 0,
+      "community_name": "dependencies",
       "norm_label": "core-js"
     },
     {
@@ -10533,7 +10533,7 @@
       "_origin": "ast",
       "id": "package_dependencies_jspdf",
       "community": 223,
-      "community_name": "radius",
+      "community_name": "jspdf",
       "norm_label": "jspdf"
     },
     {
@@ -10544,7 +10544,7 @@
       "_origin": "ast",
       "id": "jspdf",
       "community": 223,
-      "community_name": "radius",
+      "community_name": "jspdf",
       "norm_label": "jspdf"
     },
     {
@@ -10577,7 +10577,7 @@
       "_origin": "ast",
       "id": "package_dependencies_motion",
       "community": 224,
-      "community_name": "input",
+      "community_name": "motion",
       "norm_label": "motion"
     },
     {
@@ -10588,7 +10588,7 @@
       "_origin": "ast",
       "id": "motion",
       "community": 224,
-      "community_name": "input",
+      "community_name": "motion",
       "norm_label": "motion"
     },
     {
@@ -10730,8 +10730,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "package_dependencies_xlsx",
-      "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "xlsx"
     },
     {
@@ -10741,8 +10741,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "xlsx",
-      "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "xlsx"
     },
     {
@@ -10918,7 +10918,7 @@
       "_origin": "ast",
       "id": "package_devdependencies_tailwindcss",
       "community": 225,
-      "community_name": "default",
+      "community_name": "tailwindcss",
       "norm_label": "tailwindcss"
     },
     {
@@ -10929,7 +10929,7 @@
       "_origin": "ast",
       "id": "tailwindcss",
       "community": 225,
-      "community_name": "default",
+      "community_name": "tailwindcss",
       "norm_label": "tailwindcss"
     },
     {
@@ -11280,8 +11280,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_layout_applayout",
-      "community": 162,
-      "community_name": "App.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "applayout.tsx"
     },
     {
@@ -11291,8 +11291,8 @@
       "source_location": "L8",
       "_origin": "ast",
       "id": "src_components_layout_applayout_applayout",
-      "community": 162,
-      "community_name": "App.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "applayout()"
     },
     {
@@ -11324,8 +11324,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_layout_headerstats",
-      "community": 162,
-      "community_name": "App.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "headerstats.tsx"
     },
     {
@@ -11335,8 +11335,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_components_layout_headerstats_headerstatsprops",
-      "community": 162,
-      "community_name": "App.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "headerstatsprops"
     },
     {
@@ -11346,8 +11346,8 @@
       "source_location": "L10",
       "_origin": "ast",
       "id": "src_components_layout_headerstats_headerstats",
-      "community": 162,
-      "community_name": "App.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "headerstats()"
     },
     {
@@ -11357,8 +11357,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_layout_sidebar",
-      "community": 162,
-      "community_name": "App.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "sidebar.tsx"
     },
     {
@@ -11368,8 +11368,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "src_components_layout_sidebar_sidebarprops",
-      "community": 162,
-      "community_name": "App.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "sidebarprops"
     },
     {
@@ -11379,8 +11379,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_components_layout_sidebar_sidebar",
-      "community": 162,
-      "community_name": "App.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "sidebar()"
     },
     {
@@ -11413,7 +11413,7 @@
       "_origin": "ast",
       "id": "src_components_mutation_equipmentunitselect_equipmentunitselect",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "equipmentunitselect()"
     },
     {
@@ -11424,7 +11424,7 @@
       "_origin": "ast",
       "id": "src_components_mutation_stockflowfields",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "stockflowfields.tsx"
     },
     {
@@ -11435,7 +11435,7 @@
       "_origin": "ast",
       "id": "src_components_mutation_stockflowfields_stockflowformstate",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "stockflowformstate"
     },
     {
@@ -11446,7 +11446,7 @@
       "_origin": "ast",
       "id": "src_components_mutation_stockflowfields_initialstockflowform",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "initialstockflowform"
     },
     {
@@ -11457,7 +11457,7 @@
       "_origin": "ast",
       "id": "src_components_mutation_stockflowfields_isstockflowformcomplete",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "isstockflowformcomplete()"
     },
     {
@@ -11468,7 +11468,7 @@
       "_origin": "ast",
       "id": "src_components_mutation_stockflowfields_stockflowfieldsprops",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "stockflowfieldsprops"
     },
     {
@@ -11479,7 +11479,7 @@
       "_origin": "ast",
       "id": "src_components_mutation_stockflowfields_stockof",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "stockof()"
     },
     {
@@ -11490,7 +11490,7 @@
       "_origin": "ast",
       "id": "src_components_mutation_stockflowfields_optionclass",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "optionclass()"
     },
     {
@@ -11501,7 +11501,7 @@
       "_origin": "ast",
       "id": "src_components_mutation_stockflowfields_stockflowfields",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "stockflowfields()"
     },
     {
@@ -11511,8 +11511,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_components_predictive_mtbfbadge",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "mtbfbadge.tsx"
     },
     {
@@ -11522,8 +11522,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_components_predictive_mtbfbadge_confidence_label",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "confidence_label"
     },
     {
@@ -11533,8 +11533,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_components_predictive_mtbfbadge_confidence_class",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "confidence_class"
     },
     {
@@ -11544,8 +11544,8 @@
       "source_location": "L18",
       "_origin": "ast",
       "id": "src_components_predictive_mtbfbadge_mtbfbadgeprops",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "mtbfbadgeprops"
     },
     {
@@ -11555,8 +11555,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_components_predictive_mtbfbadge_mtbfbadge",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "mtbfbadge()"
     },
     {
@@ -11632,8 +11632,8 @@
       "source_location": "L115",
       "_origin": "ast",
       "id": "src_context_inventorycontext_stockrow",
-      "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community": 146,
+      "community_name": "InventoryContext.tsx",
       "norm_label": "stockrow"
     },
     {
@@ -11643,7 +11643,7 @@
       "source_location": "L125",
       "_origin": "ast",
       "id": "src_context_inventorycontext_fetchsparepartmutations",
-      "community": 151,
+      "community": 232,
       "community_name": "InventoryProvider",
       "norm_label": "fetchsparepartmutations()"
     },
@@ -11654,8 +11654,8 @@
       "source_location": "L135",
       "_origin": "ast",
       "id": "src_context_inventorycontext_validatestock",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 232,
+      "community_name": "InventoryProvider",
       "norm_label": "validatestock()"
     },
     {
@@ -11665,7 +11665,7 @@
       "source_location": "L139",
       "_origin": "ast",
       "id": "src_context_inventorycontext_flowcolumns",
-      "community": 151,
+      "community": 232,
       "community_name": "InventoryProvider",
       "norm_label": "flowcolumns()"
     },
@@ -11676,7 +11676,7 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "src_context_inventorycontext_inventoryprovider",
-      "community": 151,
+      "community": 232,
       "community_name": "InventoryProvider",
       "norm_label": "inventoryprovider()"
     },
@@ -11687,8 +11687,8 @@
       "source_location": "L773",
       "_origin": "ast",
       "id": "src_context_inventorycontext_useinventory",
-      "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "useinventory()"
     },
     {
@@ -11698,8 +11698,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_context_notificationcontext",
-      "community": 151,
-      "community_name": "InventoryProvider",
+      "community": 162,
+      "community_name": "App.tsx",
       "norm_label": "notificationcontext.tsx"
     },
     {
@@ -11709,8 +11709,8 @@
       "source_location": "L4",
       "_origin": "ast",
       "id": "src_context_notificationcontext_toasttype",
-      "community": 151,
-      "community_name": "InventoryProvider",
+      "community": 162,
+      "community_name": "App.tsx",
       "norm_label": "toasttype"
     },
     {
@@ -11720,8 +11720,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_context_notificationcontext_toastmessage",
-      "community": 151,
-      "community_name": "InventoryProvider",
+      "community": 162,
+      "community_name": "App.tsx",
       "norm_label": "toastmessage"
     },
     {
@@ -11731,8 +11731,8 @@
       "source_location": "L13",
       "_origin": "ast",
       "id": "src_context_notificationcontext_notificationcontexttype",
-      "community": 151,
-      "community_name": "InventoryProvider",
+      "community": 162,
+      "community_name": "App.tsx",
       "norm_label": "notificationcontexttype"
     },
     {
@@ -11742,8 +11742,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_context_notificationcontext_notificationcontext",
-      "community": 151,
-      "community_name": "InventoryProvider",
+      "community": 162,
+      "community_name": "App.tsx",
       "norm_label": "notificationcontext"
     },
     {
@@ -11753,8 +11753,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_context_notificationcontext_notificationprovider",
-      "community": 151,
-      "community_name": "InventoryProvider",
+      "community": 162,
+      "community_name": "App.tsx",
       "norm_label": "notificationprovider()"
     },
     {
@@ -11764,8 +11764,8 @@
       "source_location": "L79",
       "_origin": "ast",
       "id": "src_context_notificationcontext_usenotification",
-      "community": 151,
-      "community_name": "InventoryProvider",
+      "community": 162,
+      "community_name": "App.tsx",
       "norm_label": "usenotification()"
     },
     {
@@ -11787,7 +11787,7 @@
       "_origin": "ast",
       "id": "src_lib_sparepartanalytics_abcitemphysical",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "abcitemphysical"
     },
     {
@@ -11907,7 +11907,7 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_lib_supabase",
-      "community": 151,
+      "community": 232,
       "community_name": "InventoryProvider",
       "norm_label": "supabase.ts"
     },
@@ -11918,7 +11918,7 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_lib_supabase_getstoredsupabaseconfig",
-      "community": 151,
+      "community": 232,
       "community_name": "InventoryProvider",
       "norm_label": "getstoredsupabaseconfig()"
     },
@@ -11929,7 +11929,7 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "src_lib_supabase_getsupabaseclient",
-      "community": 151,
+      "community": 232,
       "community_name": "InventoryProvider",
       "norm_label": "getsupabaseclient()"
     },
@@ -11940,7 +11940,7 @@
       "source_location": "L32",
       "_origin": "ast",
       "id": "src_lib_supabase_fetchallrows",
-      "community": 151,
+      "community": 232,
       "community_name": "InventoryProvider",
       "norm_label": "fetchallrows()"
     },
@@ -11984,8 +11984,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_pages_dashboardpage",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 97,
+      "community_name": "useInventory",
       "norm_label": "dashboardpage.tsx"
     },
     {
@@ -11995,8 +11995,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_pages_dashboardpage_dashboardpage",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 97,
+      "community_name": "useInventory",
       "norm_label": "dashboardpage()"
     },
     {
@@ -12007,7 +12007,7 @@
       "_origin": "ast",
       "id": "src_pages_historypage",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "historypage.tsx"
     },
     {
@@ -12018,7 +12018,7 @@
       "_origin": "ast",
       "id": "src_pages_historypage_historypage",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "historypage()"
     },
     {
@@ -12029,7 +12029,7 @@
       "_origin": "ast",
       "id": "src_pages_mutationpage",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "mutationpage.tsx"
     },
     {
@@ -12040,7 +12040,7 @@
       "_origin": "ast",
       "id": "src_pages_mutationpage_mutationpage",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "mutationpage()"
     },
     {
@@ -12050,8 +12050,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_pages_predictivealertspage",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "predictivealertspage.tsx"
     },
     {
@@ -12061,8 +12061,8 @@
       "source_location": "L14",
       "_origin": "ast",
       "id": "src_pages_predictivealertspage_status_style",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "status_style"
     },
     {
@@ -12072,8 +12072,8 @@
       "source_location": "L22",
       "_origin": "ast",
       "id": "src_pages_predictivealertspage_pct",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "pct()"
     },
     {
@@ -12083,8 +12083,8 @@
       "source_location": "L23",
       "_origin": "ast",
       "id": "src_pages_predictivealertspage_formatdate",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "formatdate()"
     },
     {
@@ -12094,8 +12094,8 @@
       "source_location": "L25",
       "_origin": "ast",
       "id": "src_pages_predictivealertspage_formatnumber",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "formatnumber()"
     },
     {
@@ -12105,8 +12105,8 @@
       "source_location": "L28",
       "_origin": "ast",
       "id": "src_pages_predictivealertspage_predictivealertspage",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "predictivealertspage()"
     },
     {
@@ -12116,8 +12116,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_pages_predictiveneedspage",
-      "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "predictiveneedspage.tsx"
     },
     {
@@ -12127,8 +12127,8 @@
       "source_location": "L6",
       "_origin": "ast",
       "id": "src_pages_predictiveneedspage_predictiveneedspage",
-      "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "predictiveneedspage()"
     },
     {
@@ -12138,8 +12138,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_pages_printlabelpage",
-      "community": 151,
-      "community_name": "InventoryProvider",
+      "community": 162,
+      "community_name": "App.tsx",
       "norm_label": "printlabelpage.tsx"
     },
     {
@@ -12149,8 +12149,8 @@
       "source_location": "L7",
       "_origin": "ast",
       "id": "src_pages_printlabelpage_labelpreset",
-      "community": 151,
-      "community_name": "InventoryProvider",
+      "community": 162,
+      "community_name": "App.tsx",
       "norm_label": "labelpreset"
     },
     {
@@ -12160,8 +12160,8 @@
       "source_location": "L19",
       "_origin": "ast",
       "id": "src_pages_printlabelpage_label_presets",
-      "community": 151,
-      "community_name": "InventoryProvider",
+      "community": 162,
+      "community_name": "App.tsx",
       "norm_label": "label_presets"
     },
     {
@@ -12171,8 +12171,8 @@
       "source_location": "L83",
       "_origin": "ast",
       "id": "src_pages_printlabelpage_public_app_url",
-      "community": 151,
-      "community_name": "InventoryProvider",
+      "community": 162,
+      "community_name": "App.tsx",
       "norm_label": "public_app_url"
     },
     {
@@ -12182,8 +12182,8 @@
       "source_location": "L85",
       "_origin": "ast",
       "id": "src_pages_printlabelpage_printlabelpage",
-      "community": 151,
-      "community_name": "InventoryProvider",
+      "community": 162,
+      "community_name": "App.tsx",
       "norm_label": "printlabelpage()"
     },
     {
@@ -12193,8 +12193,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_pages_reportspage",
-      "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "reportspage.tsx"
     },
     {
@@ -12204,8 +12204,8 @@
       "source_location": "L5",
       "_origin": "ast",
       "id": "src_pages_reportspage_reportspage",
-      "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community": 151,
+      "community_name": "NotificationContext.tsx",
       "norm_label": "reportspage()"
     },
     {
@@ -12216,7 +12216,7 @@
       "_origin": "ast",
       "id": "src_pages_scannerpage",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "scannerpage.tsx"
     },
     {
@@ -12227,7 +12227,7 @@
       "_origin": "ast",
       "id": "src_pages_scannerpage_extractskufrominput",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "extractskufrominput()"
     },
     {
@@ -12238,7 +12238,7 @@
       "_origin": "ast",
       "id": "src_pages_scannerpage_scannerpage",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "scannerpage()"
     },
     {
@@ -12260,7 +12260,7 @@
       "_origin": "ast",
       "id": "src_types_index_mutationtype",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "mutationtype"
     },
     {
@@ -12293,7 +12293,7 @@
       "_origin": "ast",
       "id": "src_types_index_unitstatus",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "unitstatus"
     },
     {
@@ -12380,8 +12380,8 @@
       "source_location": "L71",
       "_origin": "ast",
       "id": "src_types_index_personel",
-      "community": 146,
-      "community_name": "InventoryContext.tsx",
+      "community": 234,
+      "community_name": "muted-foreground",
       "norm_label": "personel"
     },
     {
@@ -12414,7 +12414,7 @@
       "_origin": "ast",
       "id": "src_types_index_sparepart",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "sparepart"
     },
     {
@@ -12469,7 +12469,7 @@
       "_origin": "ast",
       "id": "src_utils_compatibility_usesequipmentunit",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "usesequipmentunit()"
     },
     {
@@ -12480,7 +12480,7 @@
       "_origin": "ast",
       "id": "src_utils_compatibility_requiresequipmentunit",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "requiresequipmentunit()"
     },
     {
@@ -12502,7 +12502,7 @@
       "_origin": "ast",
       "id": "src_utils_compatibility_getcompatibleequipment",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "getcompatibleequipment()"
     },
     {
@@ -12513,7 +12513,7 @@
       "_origin": "ast",
       "id": "src_utils_reliability_test",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "reliability.test.ts"
     },
     {
@@ -12524,7 +12524,7 @@
       "_origin": "ast",
       "id": "src_utils_reliability_test_day0",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "day0"
     },
     {
@@ -12535,7 +12535,7 @@
       "_origin": "ast",
       "id": "src_utils_reliability_test_day",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "day()"
     },
     {
@@ -12546,7 +12546,7 @@
       "_origin": "ast",
       "id": "src_utils_reliability_test_pakai",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "pakai()"
     },
     {
@@ -12557,7 +12557,7 @@
       "_origin": "ast",
       "id": "src_utils_reliability_test_part",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "part()"
     },
     {
@@ -12568,7 +12568,7 @@
       "_origin": "ast",
       "id": "src_utils_reliability_test_activeunits",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "activeunits"
     },
     {
@@ -12579,7 +12579,7 @@
       "_origin": "ast",
       "id": "src_utils_reliability_test_specexample",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "specexample"
     },
     {
@@ -12590,7 +12590,7 @@
       "_origin": "ast",
       "id": "src_utils_reliability",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "reliability.ts"
     },
     {
@@ -12601,7 +12601,7 @@
       "_origin": "ast",
       "id": "src_utils_reliability_inactive_unit_statuses",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "inactive_unit_statuses"
     },
     {
@@ -12612,7 +12612,7 @@
       "_origin": "ast",
       "id": "src_utils_reliability_reliabilitymutation",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "reliabilitymutation"
     },
     {
@@ -12623,7 +12623,7 @@
       "_origin": "ast",
       "id": "src_utils_reliability_reliabilityunit",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "reliabilityunit"
     },
     {
@@ -12634,7 +12634,7 @@
       "_origin": "ast",
       "id": "src_utils_reliability_installedposition",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "installedposition"
     },
     {
@@ -12644,8 +12644,8 @@
       "source_location": "L63",
       "_origin": "ast",
       "id": "src_utils_reliability_mtbfconfidence",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "mtbfconfidence"
     },
     {
@@ -12655,8 +12655,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "src_utils_reliability_mtbfestimate",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "mtbfestimate"
     },
     {
@@ -12666,8 +12666,8 @@
       "source_location": "L74",
       "_origin": "ast",
       "id": "src_utils_reliability_positionstatus",
-      "community": 22,
-      "community_name": "useInventory",
+      "community": 62,
+      "community_name": "stock.ts",
       "norm_label": "positionstatus"
     },
     {
@@ -12678,7 +12678,7 @@
       "_origin": "ast",
       "id": "src_utils_reliability_demandrate",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "demandrate"
     },
     {
@@ -12689,91 +12689,102 @@
       "_origin": "ast",
       "id": "src_utils_reliability_totime",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "totime()"
+    },
+    {
+      "label": "ceilQty()",
+      "file_type": "code",
+      "source_file": "src/utils/reliability.ts",
+      "source_location": "L86",
+      "_origin": "ast",
+      "id": "src_utils_reliability_ceilqty",
+      "community": 22,
+      "community_name": "reliability.ts",
+      "norm_label": "ceilqty()"
     },
     {
       "label": "buildPositions()",
       "file_type": "code",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L86",
+      "source_location": "L89",
       "_origin": "ast",
       "id": "src_utils_reliability_buildpositions",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "buildpositions()"
     },
     {
       "label": "estimateMtbf()",
       "file_type": "code",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L145",
+      "source_location": "L148",
       "_origin": "ast",
       "id": "src_utils_reliability_estimatemtbf",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "estimatemtbf()"
     },
     {
       "label": "poissonReorderPoint()",
       "file_type": "code",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L184",
+      "source_location": "L187",
       "_origin": "ast",
       "id": "src_utils_reliability_poissonreorderpoint",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "poissonreorderpoint()"
     },
     {
       "label": "inverseStandardNormal()",
       "file_type": "code",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L203",
+      "source_location": "L206",
       "_origin": "ast",
       "id": "src_utils_reliability_inversestandardnormal",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "inversestandardnormal()"
     },
     {
       "label": "PositionAlert",
       "file_type": "code",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L222",
+      "source_location": "L225",
       "_origin": "ast",
       "id": "src_utils_reliability_positionalert",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "positionalert"
     },
     {
       "label": "StockCoverage",
       "file_type": "code",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L233",
+      "source_location": "L236",
       "_origin": "ast",
       "id": "src_utils_reliability_stockcoverage",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "stockcoverage"
     },
     {
       "label": "AnnualNeed",
       "file_type": "code",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L247",
+      "source_location": "L250",
       "_origin": "ast",
       "id": "src_utils_reliability_annualneed",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "annualneed"
     },
     {
       "label": "PredictiveReport",
       "file_type": "code",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L256",
+      "source_location": "L259",
       "_origin": "ast",
       "id": "src_utils_reliability_predictivereport",
       "community": 146,
@@ -12784,22 +12795,22 @@
       "label": "STATUS_ORDER",
       "file_type": "code",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L267",
+      "source_location": "L270",
       "_origin": "ast",
       "id": "src_utils_reliability_status_order",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "status_order"
     },
     {
       "label": "buildPredictiveReport()",
       "file_type": "code",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L275",
+      "source_location": "L278",
       "_origin": "ast",
       "id": "src_utils_reliability_buildpredictivereport",
       "community": 22,
-      "community_name": "useInventory",
+      "community_name": "reliability.ts",
       "norm_label": "buildpredictivereport()"
     },
     {
@@ -12809,8 +12820,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_utils_shiftutils",
-      "community": 146,
-      "community_name": "InventoryContext.tsx",
+      "community": 234,
+      "community_name": "muted-foreground",
       "norm_label": "shiftutils.ts"
     },
     {
@@ -12820,8 +12831,8 @@
       "source_location": "L3",
       "_origin": "ast",
       "id": "src_utils_shiftutils_shiftinfo",
-      "community": 146,
-      "community_name": "InventoryContext.tsx",
+      "community": 234,
+      "community_name": "muted-foreground",
       "norm_label": "shiftinfo"
     },
     {
@@ -12831,8 +12842,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "src_utils_shiftutils_activedutypersonelresult",
-      "community": 146,
-      "community_name": "InventoryContext.tsx",
+      "community": 234,
+      "community_name": "muted-foreground",
       "norm_label": "activedutypersonelresult"
     },
     {
@@ -12842,8 +12853,8 @@
       "source_location": "L16",
       "_origin": "ast",
       "id": "src_utils_shiftutils_absent_statuses",
-      "community": 146,
-      "community_name": "InventoryContext.tsx",
+      "community": 234,
+      "community_name": "muted-foreground",
       "norm_label": "absent_statuses"
     },
     {
@@ -12853,8 +12864,8 @@
       "source_location": "L21",
       "_origin": "ast",
       "id": "src_utils_shiftutils_formatdatetoyyyymmdd",
-      "community": 146,
-      "community_name": "InventoryContext.tsx",
+      "community": 234,
+      "community_name": "muted-foreground",
       "norm_label": "formatdatetoyyyymmdd()"
     },
     {
@@ -12864,8 +12875,8 @@
       "source_location": "L34",
       "_origin": "ast",
       "id": "src_utils_shiftutils_getcurrentshiftinfo",
-      "community": 146,
-      "community_name": "InventoryContext.tsx",
+      "community": 234,
+      "community_name": "muted-foreground",
       "norm_label": "getcurrentshiftinfo()"
     },
     {
@@ -12876,7 +12887,7 @@
       "_origin": "ast",
       "id": "src_utils_shiftutils_getactivedutypersonel",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "getactivedutypersonel()"
     },
     {
@@ -12886,8 +12897,8 @@
       "source_location": "L1",
       "_origin": "ast",
       "id": "src_utils_stock",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 97,
+      "community_name": "useInventory",
       "norm_label": "stock.ts"
     },
     {
@@ -12898,7 +12909,7 @@
       "_origin": "ast",
       "id": "src_utils_stock_stockbucket",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "stockbucket"
     },
     {
@@ -12908,8 +12919,8 @@
       "source_location": "L17",
       "_origin": "ast",
       "id": "src_utils_stock_serahterimaarah",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 97,
+      "community_name": "useInventory",
       "norm_label": "serahterimaarah"
     },
     {
@@ -12930,8 +12941,8 @@
       "source_location": "L24",
       "_origin": "ast",
       "id": "src_utils_stock_stockdelta",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 97,
+      "community_name": "useInventory",
       "norm_label": "stockdelta"
     },
     {
@@ -12942,7 +12953,7 @@
       "_origin": "ast",
       "id": "src_utils_stock_stock_bucket_label",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "stock_bucket_label"
     },
     {
@@ -12952,8 +12963,8 @@
       "source_location": "L36",
       "_origin": "ast",
       "id": "src_utils_stock_buckets",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 97,
+      "community_name": "useInventory",
       "norm_label": "buckets"
     },
     {
@@ -12963,8 +12974,8 @@
       "source_location": "L37",
       "_origin": "ast",
       "id": "src_utils_stock_isbucket",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 97,
+      "community_name": "useInventory",
       "norm_label": "isbucket()"
     },
     {
@@ -12975,7 +12986,7 @@
       "_origin": "ast",
       "id": "src_utils_stock_flowinput",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "flowinput"
     },
     {
@@ -12985,8 +12996,8 @@
       "source_location": "L50",
       "_origin": "ast",
       "id": "src_utils_stock_geteffectiveflow",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 97,
+      "community_name": "useInventory",
       "norm_label": "geteffectiveflow()"
     },
     {
@@ -12996,8 +13007,8 @@
       "source_location": "L65",
       "_origin": "ast",
       "id": "src_utils_stock_isincompleteserahterima",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 97,
+      "community_name": "useInventory",
       "norm_label": "isincompleteserahterima()"
     },
     {
@@ -13008,7 +13019,7 @@
       "_origin": "ast",
       "id": "src_utils_stock_flowoptions",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "flowoptions"
     },
     {
@@ -13019,7 +13030,7 @@
       "_origin": "ast",
       "id": "src_utils_stock_resolvestockflow",
       "community": 97,
-      "community_name": "ScannerPage.tsx",
+      "community_name": "useInventory",
       "norm_label": "resolvestockflow()"
     },
     {
@@ -13029,8 +13040,8 @@
       "source_location": "L94",
       "_origin": "ast",
       "id": "src_utils_stock_flowtooptions",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 97,
+      "community_name": "useInventory",
       "norm_label": "flowtooptions()"
     },
     {
@@ -13040,8 +13051,8 @@
       "source_location": "L104",
       "_origin": "ast",
       "id": "src_utils_stock_describeflow",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 97,
+      "community_name": "useInventory",
       "norm_label": "describeflow()"
     },
     {
@@ -13051,8 +13062,8 @@
       "source_location": "L113",
       "_origin": "ast",
       "id": "src_utils_stock_getmutationdelta",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 97,
+      "community_name": "useInventory",
       "norm_label": "getmutationdelta()"
     },
     {
@@ -13062,8 +13073,8 @@
       "source_location": "L123",
       "_origin": "ast",
       "id": "src_utils_stock_getusablestockdelta",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 97,
+      "community_name": "useInventory",
       "norm_label": "getusablestockdelta()"
     },
     {
@@ -13073,8 +13084,8 @@
       "source_location": "L129",
       "_origin": "ast",
       "id": "src_utils_stock_computestockbysparepart",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 232,
+      "community_name": "InventoryProvider",
       "norm_label": "computestockbysparepart()"
     },
     {
@@ -13084,8 +13095,8 @@
       "source_location": "L147",
       "_origin": "ast",
       "id": "src_utils_stock_findnegativestock",
-      "community": 62,
-      "community_name": "stock.ts",
+      "community": 232,
+      "community_name": "InventoryProvider",
       "norm_label": "findnegativestock()"
     },
     {
@@ -28770,8 +28781,8 @@
       "source_location": "L9",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_core_principles",
-      "community": 101,
-      "community_name": "Skill authoring best practices",
+      "community": 233,
+      "community_name": "Core principles",
       "norm_label": "core principles"
     },
     {
@@ -28781,8 +28792,8 @@
       "source_location": "L11",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_concise_is_key",
-      "community": 101,
-      "community_name": "Skill authoring best practices",
+      "community": 233,
+      "community_name": "Core principles",
       "norm_label": "concise is key"
     },
     {
@@ -28792,8 +28803,8 @@
       "source_location": "L59",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_set_appropriate_degrees_of_freedom",
-      "community": 101,
-      "community_name": "Skill authoring best practices",
+      "community": 233,
+      "community_name": "Core principles",
       "norm_label": "set appropriate degrees of freedom"
     },
     {
@@ -28803,8 +28814,8 @@
       "source_location": "L132",
       "_origin": "ast",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_test_with_all_models_you_plan_to_use",
-      "community": 101,
-      "community_name": "Skill authoring best practices",
+      "community": 233,
+      "community_name": "Core principles",
       "norm_label": "test with all models you plan to use"
     },
     {
@@ -31851,7 +31862,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_spesifikasi_predictive_maintenance_v2_mtbf_otomatis_dari_data",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "spesifikasi: predictive maintenance v2 \u2014 mtbf otomatis dari data"
     },
     {
@@ -31862,7 +31873,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_1_keputusan_pemilik",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "1. keputusan pemilik"
     },
     {
@@ -31873,7 +31884,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_2_kondisi_sekarang",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "2. kondisi sekarang"
     },
     {
@@ -31884,7 +31895,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_3_istilah",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "3. istilah"
     },
     {
@@ -31895,7 +31906,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_4_rumus",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "4. rumus"
     },
     {
@@ -31906,7 +31917,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_4_1_mtbf_otomatis_per_sparepart_digabung_dari_semua_unit",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "4.1 mtbf otomatis (per sparepart, digabung dari semua unit)"
     },
     {
@@ -31917,7 +31928,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_4_2_status_umur_per_posisi_terpasang",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "4.2 status umur per posisi terpasang"
     },
     {
@@ -31928,7 +31939,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_4_3_kecukupan_stok_dengan_sla_98",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "4.3 kecukupan stok dengan sla 98%"
     },
     {
@@ -31939,7 +31950,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_4_4_kebutuhan_tahunan",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "4.4 kebutuhan tahunan"
     },
     {
@@ -31950,7 +31961,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_5_perubahan_aplikasi",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "5. perubahan aplikasi"
     },
     {
@@ -31961,7 +31972,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_6_perubahan_database",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "6. perubahan database"
     },
     {
@@ -31972,7 +31983,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_7_tiket",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "7. tiket"
     },
     {
@@ -31983,7 +31994,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_8_hal_yang_perlu_dikonfirmasi",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "8. hal yang perlu dikonfirmasi"
     },
     {
@@ -31994,7 +32005,7 @@
       "_origin": "ast",
       "id": "docs_specs_predictive_maintenance_9_di_luar_lingkup",
       "community": 8,
-      "community_name": "card",
+      "community_name": "Spesifikasi: Predictive Maintenance v2 \u2014 MTBF otomatis dari data",
       "norm_label": "9. di luar lingkup"
     },
     {
@@ -52475,7 +52486,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L248",
+      "source_location": "L251",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability_annualneed",
@@ -52487,7 +52498,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L223",
+      "source_location": "L226",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability_positionalert",
@@ -52499,7 +52510,7 @@
       "context": "field",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L234",
+      "source_location": "L237",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability_stockcoverage",
@@ -52800,7 +52811,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L247",
+      "source_location": "L250",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability",
@@ -52811,7 +52822,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L86",
+      "source_location": "L89",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability",
@@ -52822,7 +52833,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L275",
+      "source_location": "L278",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability",
@@ -52833,7 +52844,18 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L168",
+      "source_location": "L86",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_utils_reliability",
+      "target": "src_utils_reliability_ceilqty",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "src/utils/reliability.ts",
+      "source_location": "L171",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability",
@@ -52844,7 +52866,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L145",
+      "source_location": "L148",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability",
@@ -52877,7 +52899,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L203",
+      "source_location": "L206",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability",
@@ -52888,7 +52910,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L137",
+      "source_location": "L140",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability",
@@ -52910,7 +52932,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L184",
+      "source_location": "L187",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability",
@@ -52921,7 +52943,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L222",
+      "source_location": "L225",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability",
@@ -52932,7 +52954,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L158",
+      "source_location": "L161",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability",
@@ -52943,7 +52965,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L256",
+      "source_location": "L259",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability",
@@ -52976,7 +52998,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L267",
+      "source_location": "L270",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability",
@@ -52987,7 +53009,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L233",
+      "source_location": "L236",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability",
@@ -53011,7 +53033,7 @@
       "confidence": "EXTRACTED",
       "confidence_score": 1.0,
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L115",
+      "source_location": "L118",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability_buildpositions",
@@ -53022,7 +53044,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L169",
+      "source_location": "L172",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability_demandrate",
@@ -53034,7 +53056,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L96",
+      "source_location": "L99",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability_buildpositions",
@@ -53046,7 +53068,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L308",
+      "source_location": "L311",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability_buildpredictivereport",
@@ -53058,7 +53080,19 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L289",
+      "source_location": "L341",
+      "weight": 1.0,
+      "_origin": "ast",
+      "source": "src_utils_reliability_buildpredictivereport",
+      "target": "src_utils_reliability_ceilqty",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "context": "call",
+      "confidence": "EXTRACTED",
+      "source_file": "src/utils/reliability.ts",
+      "source_location": "L292",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability_buildpredictivereport",
@@ -53070,7 +53104,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L302",
+      "source_location": "L305",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability_buildpredictivereport",
@@ -53082,7 +53116,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L322",
+      "source_location": "L325",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability_buildpredictivereport",
@@ -53094,7 +53128,7 @@
       "context": "call",
       "confidence": "EXTRACTED",
       "source_file": "src/utils/reliability.ts",
-      "source_location": "L188",
+      "source_location": "L191",
       "weight": 1.0,
       "_origin": "ast",
       "source": "src_utils_reliability_poissonreorderpoint",
@@ -72105,5 +72139,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6f82ddfc240bcfe8f948451506887cb2d817957b"
+  "built_at_commit": "b7d5323d48b32fe84e96c7db9e07cf49592c4e8f"
 }
