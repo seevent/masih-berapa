@@ -1,7 +1,7 @@
 // How each type moves stock between the baru / bekas / rusak buckets: see src/utils/stock.ts
 export type MutationType = 'Masuk' | 'Pakai' | 'Bekas' | 'Rusak' | 'Serah Terima';
 export type StockBucketValue = 'baru' | 'bekas' | 'rusak';
-export type SupplierType = 'SUP API' | 'SISA PEKERJAAN' | 'IAS' | 'MANDIRI' | 'DARI UNIT LAIN' | 'VENDOR';
+export type SupplierType = 'SUP API' | 'SISA PEKERJAAN' | 'IASS' | 'MANDIRI' | 'DARI UNIT LAIN' | 'VENDOR';
 export type UnitStatus = 'operasi' | 'standby' | 'gudang' | 'rusak';
 
 // --- Database Table Types matching exact Supabase Schema ---

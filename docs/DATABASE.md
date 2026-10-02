@@ -241,7 +241,7 @@ Log semua pergerakan stok. **Sumber kebenaran stok.**
 | `qty` | integer | tidak | | CHECK > 0 |
 | `notes` | text | ya | | |
 | `created_at` | timestamptz | ya | `now()` | |
-| `sumber` | varchar | ya | `'VENDOR'` | asal barang (hanya bermakna untuk `Masuk`): `IAS`, `SUP API`, `SISA PEKERJAAN`, `MANDIRI`, `DARI UNIT LAIN`, `VENDOR`. **Tidak ada CHECK**; aplikasi yang membatasi |
+| `sumber` | varchar | ya | `'VENDOR'` | asal barang (hanya bermakna untuk `Masuk`): `IASS`, `SUP API`, `SISA PEKERJAAN`, `MANDIRI`, `DARI UNIT LAIN`, `VENDOR`. **Tidak ada CHECK**; aplikasi yang membatasi |
 | `location` | varchar | ya | | lokasi teks bebas; tidak ditulis aplikasi ini, tetapi ditampilkan bila ada |
 | `penerima`, `unit_penerima` | text | ya | | pihak lain pada `Serah Terima` |
 | `stok_asal`, `stok_tujuan` | varchar | ya | | kantong stok; CHECK `baru`/`bekas`/`rusak` atau NULL |

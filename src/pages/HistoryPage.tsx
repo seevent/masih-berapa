@@ -470,7 +470,7 @@ export const HistoryPage: React.FC = () => {
                   >
                     <option value="SUP API">SUP API</option>
                     <option value="SISA PEKERJAAN">SISA PEKERJAAN</option>
-                    <option value="IAS">IAS</option>
+                    <option value="IASS">IASS</option>
                     <option value="MANDIRI">MANDIRI</option>
                     <option value="DARI UNIT LAIN">DARI UNIT LAIN</option>
                     <option value="VENDOR">VENDOR</option>

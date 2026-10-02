@@ -67,7 +67,7 @@ export const MutationPage: React.FC = () => {
   const [selectedUnitId, setSelectedUnitId] = useState('');
 
   // 5. Quantity, Sumber & Notes
-  const [sumber, setSumber] = useState<SupplierType>('IAS');
+  const [sumber, setSumber] = useState<SupplierType>('IASS');
   const [flowForm, setFlowForm] = useState<StockFlowFormState>(initialStockFlowForm);
   const [qty, setQty] = useState<number>(1);
   const [notes, setNotes] = useState('');
@@ -482,7 +482,7 @@ export const MutationPage: React.FC = () => {
                     onChange={(e) => setSumber(e.target.value as SupplierType)}
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white font-semibold focus:border-cyan-500 cursor-pointer"
                   >
-                    <option value="IAS">IAS</option>
+                    <option value="IASS">IASS</option>
                     <option value="SUP API">SUP API</option>
                     <option value="SISA PEKERJAAN">SISA PEKERJAAN</option>
                     <option value="MANDIRI">MANDIRI</option>

@@ -95,7 +95,7 @@ Lima tipe transaksi; detail aturan di [bagian 7](#7-aturan-bisnis).
 
 | Tipe | Kegunaan | Isian khusus |
 |---|---|---|
-| Masuk | menerima barang baru | sumber: IAS, SUP API, SISA PEKERJAAN, MANDIRI, DARI UNIT LAIN, VENDOR |
+| Masuk | menerima barang baru | sumber: IASS, SUP API, SISA PEKERJAAN, MANDIRI, DARI UNIT LAIN, VENDOR |
 | Pakai | memasang barang baru ke peralatan | lokasi, titik (filter), **unit peralatan wajib**: unit kompatibel di atas, unit lain di grup terpisah |
 | Bekas | mengembalikan barang copotan layak pakai | lokasi, titik, unit (opsional) |
 | Rusak | memindahkan barang yang tidak layak pakai ke stok rusak | **asal: stok baru atau stok bekas**; lokasi/unit (opsional) |
@@ -279,7 +279,7 @@ F-01 sampai F-09. Pada Oktober 2026 menu Pengaturan (F-10) dihapus, lalu: perbai
 
 1. Siapa yang boleh mengubah dan menghapus transaksi dan sparepart? Perlu peran (mis. teknisi vs koordinator)?
 2. Setelah barang menjadi **rusak**, bagaimana alurnya (diserahkan ke vendor, dibuang, dihapus dari stok)? Apakah perlu status atau tipe transaksi sendiri?
-3. Untuk `Serah Terima` jenis **terima**, apakah asal barang (IAS, SUP API, VENDOR, dst., yang kini hanya dicatat pada `Masuk`) juga perlu dicatat?
+3. Untuk `Serah Terima` jenis **terima**, apakah asal barang (IASS, SUP API, VENDOR, dst., yang kini hanya dicatat pada `Masuk`) juga perlu dicatat?
 4. Apa target waktu pencatatan dan target akurasi stok yang diinginkan (bagian 10)?
 5. Berapa banyak sparepart dan transaksi per bulan yang diperkirakan dalam 1–2 tahun (untuk menilai skala)?
 6. Apakah banyak gudang perlu dikelola terpisah?
