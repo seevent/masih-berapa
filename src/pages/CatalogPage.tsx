@@ -387,10 +387,7 @@ export const CatalogPage: React.FC = () => {
                 </div>
 
                 {/* Card Footer Actions */}
-                <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between">
-                  <span className="text-xs font-semibold text-slate-400 font-mono">
-                    Rak: {sp.rack || '-'}
-                  </span>
+                <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-end">
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => handleOpenEditModal(sp)}
