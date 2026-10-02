@@ -1,9 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { QRCodeSVG } from 'qrcode.react';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import { Printer, Download, QrCode, Layers, MapPin, Boxes, Check, LayoutGrid, FileText } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
+import { useNotification } from '../context/NotificationContext';
 
 export interface LabelPreset {
   id: string;
@@ -80,23 +79,51 @@ export const LABEL_PRESETS: LabelPreset[] = [
   }
 ];
 
+// Public URL encoded in the QR code; labels must point to the deployed app, not localhost
+const PUBLIC_APP_URL = (import.meta.env.VITE_PUBLIC_APP_URL || 'https://masih-berapa.vercel.app').replace(/\/+$/, '');
+
 export const PrintLabelPage: React.FC = () => {
   const { spareparts, mutations } = useInventory();
+  const { showToast } = useNotification();
   const [selectedPartId, setSelectedPartId] = useState<string>(spareparts[0]?.id || '');
   const [selectedPresetId, setSelectedPresetId] = useState<string>('50x30');
-  const [printMode, setPrintMode] = useState<'single' | 'sheet'>('single');
+  const [printModeState, setPrintMode] = useState<'single' | 'sheet'>('single');
   const [isGenerating, setIsGenerating] = useState(false);
 
   const printContainerRef = useRef<HTMLDivElement>(null);
   const selectedPart = spareparts.find((p) => p.id === selectedPartId) || spareparts[0];
   const activePreset = LABEL_PRESETS.find((p) => p.id === selectedPresetId) || LABEL_PRESETS[0];
-  const latestSumber = mutations.find((m) => m.sparepart_id === selectedPart?.id && m.sumber)?.sumber || 'VENDOR';
+  // mutations are sorted newest first, so this is the source of the most recent incoming stock
+  const latestSumber = mutations.find((m) => m.sparepart_id === selectedPart?.id && m.mutation_type === 'Masuk' && m.sumber)?.sumber || '-';
+
+  // Thermal printers print from a roll, so a sheet layout only exists for Tom & Jerry presets
+  const supportsSheet = activePreset.category === 'tom_jerry';
+  const printMode = supportsSheet ? printModeState : 'single';
+
+  // Preview at the label's real aspect ratio (scaled to fit 340x200 px)
+  const previewScale = Math.min(5, 340 / activePreset.widthMm, 200 / activePreset.heightMm);
+
+  // Sheet layout at true label size (mm): labels in the preset grid with fixed gaps & margins
+  const SHEET_MARGIN_MM = 3;
+  const SHEET_GAP_MM = 2;
+  const sheetCols = activePreset.gridCols || 1;
+  const sheetRows = activePreset.gridRows || 1;
+  const sheetWidthMm = SHEET_MARGIN_MM * 2 + sheetCols * activePreset.widthMm + (sheetCols - 1) * SHEET_GAP_MM;
+  const sheetHeightMm = SHEET_MARGIN_MM * 2 + sheetRows * activePreset.heightMm + (sheetRows - 1) * SHEET_GAP_MM;
+  const sheetScale = Math.min(500 / sheetWidthMm, 760 / sheetHeightMm);
 
   const handleDownloadPDF = async () => {
     if (!printContainerRef.current) return;
     setIsGenerating(true);
 
     try {
+      // Loaded on demand to keep the page bundle small.
+      // html2canvas-pro supports the oklch() colors that Tailwind v4 emits (html2canvas 1.x throws on them).
+      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
+        import('jspdf'),
+        import('html2canvas-pro')
+      ]);
+
       const canvas = await html2canvas(printContainerRef.current, {
         scale: 3,
         useCORS: true,
@@ -115,83 +142,102 @@ export const PrintLabelPage: React.FC = () => {
         pdf.addImage(imgData, 'PNG', 0, 0, activePreset.widthMm, activePreset.heightMm);
         pdf.save(`Label_${activePreset.id}_${selectedPart?.sku || 'QR'}.pdf`);
       } else {
-        // Sheet Grid Mode (A4 Sheet layout)
+        // Sheet Grid Mode: page has the exact size of the label sheet (print at 100% / actual size)
         const pdf = new jsPDF({
-          orientation: 'portrait',
+          orientation: sheetWidthMm >= sheetHeightMm ? 'landscape' : 'portrait',
           unit: 'mm',
-          format: 'a4'
+          format: [sheetWidthMm, sheetHeightMm]
         });
 
-        pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);
+        pdf.addImage(imgData, 'PNG', 0, 0, sheetWidthMm, sheetHeightMm);
         pdf.save(`Label_Lembar_${activePreset.id}_${selectedPart?.sku || 'QR'}.pdf`);
       }
     } catch (err) {
       console.error('Failed generating label PDF:', err);
+      showToast('Gagal Membuat PDF', err instanceof Error ? err.message : String(err), 'error');
     } finally {
       setIsGenerating(false);
     }
   };
 
-  // Helper render single label item
-  const renderSingleStickerContent = (isCompact: boolean = false) => (
-    <div
-      className="bg-white text-slate-950 rounded shadow-md border-2 border-slate-400 select-none overflow-hidden flex flex-col justify-between"
-      style={{
-        width: '100%',
-        height: '100%',
-        padding: isCompact ? '4px 6px' : '8px 10px',
-      }}
-    >
-      {/* Header Bar */}
-      <div className="flex items-center justify-between border-b-2 border-slate-950 pb-0.5">
-        <span className="font-mono text-[9px] font-black bg-black text-white px-1 rounded tracking-wide">
-          SSES T2
-        </span>
-        <span className="font-mono font-black text-xs text-black tracking-tight">
-          {selectedPart.sku}
-        </span>
-      </div>
+  const qrValue = selectedPart ? `${PUBLIC_APP_URL}/?sku=${encodeURIComponent(selectedPart.sku)}` : '';
 
-      {/* Main Content: QR Code + Text */}
-      <div className="flex items-center gap-2 my-auto py-0.5">
-        {/* QR Code */}
-        <div className="shrink-0 bg-white border border-slate-900 rounded p-0.5 flex items-center justify-center">
-          <QRCodeSVG
-            value={`https://masih-berapa.vercel.app/?sku=${selectedPart.sku}`}
-            size={isCompact ? 45 : 75}
-            level="H"
-          />
-        </div>
-
-        {/* Text Details */}
-        <div className="flex-1 min-w-0 flex flex-col justify-center space-y-0.5">
-          <div>
-            <div className="text-[8px] font-bold text-slate-500 uppercase tracking-wider leading-none">
-              Sparepart
-            </div>
-            <div className="font-black text-xs text-black leading-tight line-clamp-2">
-              {selectedPart.name}
-            </div>
-          </div>
-
-          <div className="border-t border-slate-300 pt-0.5 space-y-0.5 text-[9px]">
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-slate-600">Tipe:</span>
-              <span className="font-bold text-black truncate max-w-[90px] text-right">
-                {selectedPart.equipment_type_name || '-'}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="font-semibold text-slate-600">Sumber:</span>
-              <span className="font-bold text-black uppercase bg-slate-100 px-1 py-0.2 rounded border border-slate-300 text-[8.5px]">
-                {latestSumber}
-              </span>
-            </div>
+  // Render one label; the layout adapts to the label's rendered height so small stickers stay readable
+  const renderSingleStickerContent = (heightPx: number) => {
+    if (heightPx < 80) {
+      // Small labels (e.g. 18mm high): QR on the left, SKU + name on the right
+      const qrSize = Math.max(24, Math.floor(heightPx - 10));
+      return (
+        <div
+          className="bg-white text-slate-950 rounded border border-slate-400 select-none overflow-hidden flex items-center gap-1.5"
+          style={{ width: '100%', height: '100%', padding: '3px 4px' }}
+        >
+          <QRCodeSVG value={qrValue} size={qrSize} level="M" className="shrink-0" />
+          <div className="flex-1 min-w-0 leading-tight">
+            <div className="font-mono font-black text-[10px] text-black truncate">{selectedPart.sku}</div>
+            <div className="font-bold text-[8px] text-black line-clamp-2">{selectedPart.name}</div>
           </div>
         </div>
+      );
+    }
+
+    const isCompact = heightPx < 120;
+    const qrSize = Math.max(40, Math.min(75, Math.floor(heightPx - (isCompact ? 36 : 48))));
+
+    return (
+      <div
+        className="bg-white text-slate-950 rounded border-2 border-slate-400 select-none overflow-hidden flex flex-col justify-between"
+        style={{
+          width: '100%',
+          height: '100%',
+          padding: isCompact ? '4px 6px' : '8px 10px'
+        }}
+      >
+        {/* Header Bar */}
+        <div className="flex items-center justify-between border-b-2 border-slate-950 pb-0.5">
+          <span className="font-mono text-[9px] font-black bg-black text-white px-1 rounded tracking-wide">
+            SSES T2
+          </span>
+          <span className="font-mono font-black text-xs text-black tracking-tight">
+            {selectedPart.sku}
+          </span>
+        </div>
+
+        {/* Main Content: QR Code + Text */}
+        <div className="flex items-center gap-2 my-auto py-0.5">
+          <div className="shrink-0 bg-white border border-slate-900 rounded p-0.5 flex items-center justify-center">
+            <QRCodeSVG value={qrValue} size={qrSize} level="H" />
+          </div>
+
+          <div className="flex-1 min-w-0 flex flex-col justify-center space-y-0.5">
+            <div>
+              <div className="text-[8px] font-bold text-slate-500 uppercase tracking-wider leading-none">
+                Sparepart
+              </div>
+              <div className="font-black text-xs text-black leading-tight line-clamp-2">
+                {selectedPart.name}
+              </div>
+            </div>
+
+            <div className="border-t border-slate-300 pt-0.5 space-y-0.5 text-[9px]">
+              <div className="flex items-center justify-between gap-1">
+                <span className="font-semibold text-slate-600">Tipe:</span>
+                <span className="font-bold text-black truncate text-right">
+                  {selectedPart.equipment_type_name || '-'}
+                </span>
+              </div>
+              <div className="flex items-center justify-between gap-1">
+                <span className="font-semibold text-slate-600">Sumber:</span>
+                <span className="font-bold text-black uppercase bg-slate-100 px-1 rounded border border-slate-300 text-[8.5px]">
+                  {latestSumber}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -244,7 +290,9 @@ export const PrintLabelPage: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setPrintMode('sheet')}
-                className={`p-2.5 rounded-xl border text-center text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                disabled={!supportsSheet}
+                title={supportsSheet ? 'Cetak satu lembar penuh' : 'Mode lembar hanya untuk kertas stiker Tom & Jerry'}
+                className={`p-2.5 rounded-xl border text-center text-xs font-bold transition-all flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed ${
                   printMode === 'sheet'
                     ? 'bg-cyan-600 text-white border-cyan-400 shadow-md'
                     : 'bg-slate-950 text-slate-400 border-slate-800 hover:text-white'
@@ -336,6 +384,7 @@ export const PrintLabelPage: React.FC = () => {
             </span>
             <span className="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-slate-800 text-cyan-400 border border-slate-700">
               {activePreset.widthMm}mm x {activePreset.heightMm}mm
+              {printMode === 'sheet' && ` · lembar ${Math.round(sheetWidthMm)}x${Math.round(sheetHeightMm)}mm`}
             </span>
           </div>
 
@@ -343,30 +392,31 @@ export const PrintLabelPage: React.FC = () => {
             <div className="p-4 bg-slate-950/80 rounded-2xl border border-slate-800 shadow-2xl flex items-center justify-center max-w-full overflow-auto">
               <div
                 ref={printContainerRef}
-                className="bg-white text-slate-950 rounded shadow-md border-2 border-slate-300 select-none overflow-hidden"
+                className="bg-white text-slate-950 shadow-md select-none overflow-hidden"
                 style={
                   printMode === 'sheet'
                     ? {
-                        width: '595px', // A4 width proportion
-                        height: '842px', // A4 height proportion
-                        padding: '16px',
+                        width: `${Math.round(sheetWidthMm * sheetScale)}px`,
+                        height: `${Math.round(sheetHeightMm * sheetScale)}px`,
+                        padding: `${SHEET_MARGIN_MM * sheetScale}px`,
                         display: 'grid',
-                        gridTemplateColumns: `repeat(${activePreset.gridCols || 3}, minmax(0, 1fr))`,
-                        gridTemplateRows: `repeat(${activePreset.gridRows || 4}, minmax(0, 1fr))`,
-                        gap: '8px'
+                        gridTemplateColumns: `repeat(${sheetCols}, ${activePreset.widthMm * sheetScale}px)`,
+                        gridTemplateRows: `repeat(${sheetRows}, ${activePreset.heightMm * sheetScale}px)`,
+                        gap: `${SHEET_GAP_MM * sheetScale}px`,
+                        boxSizing: 'border-box'
                       }
                     : {
-                        width: `${Math.min(activePreset.widthMm * 5, 340)}px`,
-                        height: `${Math.min(activePreset.heightMm * 5, 200)}px`,
+                        width: `${Math.round(activePreset.widthMm * previewScale)}px`,
+                        height: `${Math.round(activePreset.heightMm * previewScale)}px`,
                       }
                 }
               >
                 {printMode === 'single' ? (
-                  renderSingleStickerContent(activePreset.heightMm <= 20)
+                  renderSingleStickerContent(activePreset.heightMm * previewScale)
                 ) : (
-                  Array.from({ length: activePreset.countPerSheet || 12 }).map((_, idx) => (
+                  Array.from({ length: sheetCols * sheetRows }).map((_, idx) => (
                     <div key={idx} className="w-full h-full overflow-hidden">
-                      {renderSingleStickerContent(true)}
+                      {renderSingleStickerContent(activePreset.heightMm * sheetScale)}
                     </div>
                   ))
                 )}
@@ -377,7 +427,7 @@ export const PrintLabelPage: React.FC = () => {
           )}
 
           <p className="text-[11px] text-slate-400 mt-4 text-center">
-            * Layout Tom & Jerry disesuaikan dengan standar lembar cetak stiker printer USB/Inkjet/Laser & Printer Thermal.
+            * Label dicetak dengan ukuran asli (mm). Saat mencetak PDF pilih skala 100% / "Actual size". Untuk lembar Tom & Jerry, cocokkan dulu dengan satu lembar uji.
           </p>
         </div>
       </div>

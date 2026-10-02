@@ -17,7 +17,8 @@ import {
   MessageSquare
 } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
-import { Sparepart, MutationType, SupplierType } from '../types';
+import { InputMutationType, SupplierType } from '../types';
+import { getCompatibleEquipment } from '../utils/compatibility';
 import { getActiveDutyPersonel } from '../utils/shiftUtils';
 
 /**
@@ -44,6 +45,7 @@ export const ScannerPage: React.FC = () => {
     lokasiList,
     titikLokasiList,
     unitPeralatanList,
+    penempatanList,
     tipePeralatan,
     unitKerjaList,
     personelList,
@@ -57,11 +59,12 @@ export const ScannerPage: React.FC = () => {
   const [manualSkuInput, setManualSkuInput] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'camera' | 'manual'>('camera');
   
-  // Found Part state
-  const [foundPart, setFoundPart] = useState<Sparepart | null>(null);
+  // Found Part state (store the id so stock figures stay live after each transaction)
+  const [foundPartId, setFoundPartId] = useState<string | null>(null);
+  const foundPart = foundPartId ? spareparts.find((sp) => sp.id === foundPartId) || null : null;
 
   // 1. Transaction Type State
-  const [mutationType, setMutationType] = useState<MutationType>('Pakai');
+  const [mutationType, setMutationType] = useState<InputMutationType>('Pakai');
 
   // 2. Personel State
   const [selectedPersonelId, setSelectedPersonelId] = useState('');
@@ -77,7 +80,6 @@ export const ScannerPage: React.FC = () => {
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const scannerRef = useRef<any>(null);
 
   // --- Calculate Shift Time & Filter Active Duty Personel ---
   const {
@@ -89,35 +91,46 @@ export const ScannerPage: React.FC = () => {
   const { activeShiftLabel, operationalDate } = shiftInfo;
 
   // Default select first available personnel
+  // (also re-selects when the active shift changes and the chosen person is no longer on duty)
   useEffect(() => {
-    if (personelOptions.length > 0 && !selectedPersonelId) {
+    if (personelOptions.length > 0 && !personelOptions.some((p) => p.id === selectedPersonelId)) {
       setSelectedPersonelId(personelOptions[0].id);
     }
   }, [personelOptions, selectedPersonelId]);
 
-  // Lookup SKU in master catalog
+  // Lookup SKU in master catalog. Kept in a ref because the camera callback is registered
+  // once and would otherwise keep a stale (possibly still empty) sparepart list.
+  const sparepartsRef = useRef(spareparts);
+  sparepartsRef.current = spareparts;
+
   const handleLookupSku = (skuToFind: string) => {
     const cleanSku = extractSkuFromInput(skuToFind);
     if (!cleanSku) return;
 
-    const matched = spareparts.find(
+    const matched = sparepartsRef.current.find(
       (sp) => sp.sku.toLowerCase() === cleanSku.toLowerCase() || sp.id === cleanSku
     );
+    const nextId = matched ? matched.id : null;
 
-    if (matched) {
-      setFoundPart(matched);
-      setScannedSku(cleanSku);
-    } else {
-      setFoundPart(null);
-      setScannedSku(cleanSku);
+    setScannedSku(cleanSku);
+    if (nextId !== foundPartIdRef.current) {
+      setSelectedLokasiId('');
+      setSelectedTitikId('');
+      setSelectedUnitId('');
     }
+    setFoundPartId(nextId);
   };
+
+  const foundPartIdRef = useRef(foundPartId);
+  foundPartIdRef.current = foundPartId;
+  const handleLookupRef = useRef(handleLookupSku);
+  handleLookupRef.current = handleLookupSku;
 
   // Read ?sku= parameter from URL automatically
   useEffect(() => {
     const urlSku = searchParams.get('sku') || searchParams.get('scan');
     if (urlSku && spareparts.length > 0) {
-      handleLookupSku(urlSku);
+      handleLookupRef.current(urlSku);
     }
   }, [searchParams, spareparts]);
 
@@ -125,32 +138,38 @@ export const ScannerPage: React.FC = () => {
   useEffect(() => {
     if (activeTab !== 'camera') return;
 
+    let cancelled = false;
     let scannerInstance: any = null;
-    import('html5-qrcode').then(({ Html5QrcodeScanner }) => {
-      const scanner = new Html5QrcodeScanner(
-        'reader',
-        {
-          fps: 10,
-          qrbox: { width: 250, height: 250 },
-          aspectRatio: 1.0
-        },
-        false
-      );
+    import('html5-qrcode')
+      .then(({ Html5QrcodeScanner }) => {
+        // The tab may have been switched / page left while the module was loading
+        if (cancelled || !document.getElementById('reader')) return;
 
-      scanner.render(
-        (decodedText) => {
-          handleLookupSku(decodedText);
-        },
-        (error) => {
-          // ignore scan errors
-        }
-      );
+        const scanner = new Html5QrcodeScanner(
+          'reader',
+          {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0
+          },
+          false
+        );
 
-      scannerRef.current = scanner;
-      scannerInstance = scanner;
-    }).catch(console.error);
+        scanner.render(
+          (decodedText) => {
+            handleLookupRef.current(decodedText);
+          },
+          () => {
+            // ignore per-frame "no QR found" errors
+          }
+        );
+
+        scannerInstance = scanner;
+      })
+      .catch(console.error);
 
     return () => {
+      cancelled = true;
       if (scannerInstance) {
         scannerInstance.clear().catch((e: any) => console.error(e));
       }
@@ -158,44 +177,21 @@ export const ScannerPage: React.FC = () => {
   }, [activeTab]);
 
   // --- Compatible Locations & Equipment Units for Found Sparepart ---
-  const compatTypeIds = foundPart
-    ? Array.from(
-        new Set([
-          foundPart.id_tipe,
-          ...sparepartCompatibility
-            .filter((c) => c.sparepart_id === foundPart.id)
-            .map((c) => c.id_tipe)
-        ])
-      )
-    : [];
-
-  const compatibleUnits = foundPart
-    ? unitPeralatanList.filter((u) => compatTypeIds.includes(u.id_tipe))
-    : [];
-
-  const compatibleLokasiList = Array.from(new Set(compatibleUnits.map((u) => u.id)))
-    .map((unitId) => {
-      const u = unitPeralatanList.find((x) => x.id === unitId);
-      const t = titikLokasiList.find((titik) => titik.id === u?.id);
-      return lokasiList.find((lok) => lok.id === t?.id_lokasi);
-    })
-    .filter(Boolean) as typeof lokasiList;
-
-  const availableTitikList = selectedLokasiId
-    ? titikLokasiList.filter((t) => t.id_lokasi === selectedLokasiId)
-    : titikLokasiList;
-
-  const availableUnitsForLocation = compatibleUnits.filter((u) => {
-    if (!selectedLokasiId) return true;
-    const t = titikLokasiList.find((titik) => titik.id === u.id);
-    if (!t) return true;
-    if (selectedTitikId) return t.id === selectedTitikId;
-    return t.id_lokasi === selectedLokasiId;
-  });
+  const { compatibleLokasiList, otherLokasiList, availableTitikList, availableUnits: availableUnitsForLocation } =
+    getCompatibleEquipment({
+      part: foundPart,
+      sparepartCompatibility,
+      lokasiList,
+      titikLokasiList,
+      unitPeralatanList,
+      penempatanList,
+      selectedLokasiId,
+      selectedTitikId
+    });
 
   const handleSubmitTransaction = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!foundPart) return;
+    if (!foundPart || !selectedPersonelId) return;
 
     setIsSubmitting(true);
     const success = await addMutation({
@@ -203,7 +199,7 @@ export const ScannerPage: React.FC = () => {
       mutation_type: mutationType,
       sumber: mutationType === 'Masuk' ? sumber : undefined,
       unit_id: (mutationType === 'Pakai' || mutationType === 'Bekas') ? (selectedUnitId || undefined) : undefined,
-      personel_id: selectedPersonelId || undefined,
+      personel_id: selectedPersonelId,
       qty: qty,
       notes: notes || `Transaksi via Scan Barcode/QR (${mutationType})`
     });
@@ -216,7 +212,7 @@ export const ScannerPage: React.FC = () => {
     }
   };
 
-  const mutationTypes: { type: MutationType; label: string; icon: any; color: string; desc: string }[] = [
+  const mutationTypes: { type: InputMutationType; label: string; icon: any; color: string; desc: string }[] = [
     {
       type: 'Pakai',
       label: 'Pakai Baru',
@@ -328,7 +324,10 @@ export const ScannerPage: React.FC = () => {
               <p className="text-xs text-slate-300 mt-1">{foundPart.description}</p>
             </div>
             <button
-              onClick={() => setFoundPart(null)}
+              onClick={() => {
+                setFoundPartId(null);
+                setScannedSku('');
+              }}
               className="text-slate-400 hover:text-white p-1 rounded-lg"
             >
               <X className="w-5 h-5" />
@@ -338,11 +337,11 @@ export const ScannerPage: React.FC = () => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
             <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
               <span className="text-[10px] text-slate-400 block uppercase">Peralatan</span>
-              <span className="font-semibold text-white truncate block">{foundPart.equipment_type_name}</span>
+              <span className="font-semibold text-white truncate block">{foundPart.equipment_type_name || '-'}</span>
             </div>
             <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
               <span className="text-[10px] text-slate-400 block uppercase">Lokasi Rak</span>
-              <span className="font-mono font-bold text-cyan-300 block">{foundPart.location_rack}</span>
+              <span className="font-mono font-bold text-cyan-300 block">{foundPart.rack || foundPart.lokasi || '-'}</span>
             </div>
             <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
               <span className="text-[10px] text-slate-400 block uppercase">Stok Baru</span>
@@ -423,7 +422,7 @@ export const ScannerPage: React.FC = () => {
                       )}
 
                       <optgroup label="📍 Semua Lokasi Lain">
-                        {lokasiList.map((lok) => (
+                        {otherLokasiList.map((lok) => (
                           <option key={lok.id} value={lok.id}>
                             {lok.nama}
                           </option>
@@ -572,7 +571,7 @@ export const ScannerPage: React.FC = () => {
 
             <button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || !selectedPersonelId}
               className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-500/25 transition-all disabled:opacity-50"
             >
               {isSubmitting ? 'Memproses Transaksi...' : `Simpan Transaksi Mutasi (${mutationType})`}

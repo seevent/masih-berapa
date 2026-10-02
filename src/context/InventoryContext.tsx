@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { SupabaseClient } from '@supabase/supabase-js';
 import {
   JenisPeralatan,
   TipePeralatan,
@@ -14,14 +15,41 @@ import {
   StockMutation,
   SparepartCompatibility,
   MutationType,
+  InputMutationType,
+  SupplierType,
   PredictiveAlert,
   AnnualNeed
 } from '../types';
-import { getSupabaseClient } from '../lib/supabase';
+import { getSupabaseClient, fetchAllRows } from '../lib/supabase';
+import { computeStockBySparepart } from '../utils/stock';
 import { useNotification } from './NotificationContext';
 
-export interface OnDutyPersonel extends Personel {
-  current_shift?: string;
+/** Fields of a sparepart that are stored in the `spareparts` table. */
+export interface SparepartFormInput {
+  sku: string;
+  name: string;
+  description?: string;
+  unit?: string;
+  minimum_stok: number;
+  lokasi?: string;
+  rack?: string;
+  mtbf_days?: number;
+  last_replaced_at?: string | null;
+  /** Selected tipe peralatan; the first one becomes the primary `id_tipe`. */
+  tipeIds: string[];
+}
+
+export interface NewSparepartInput extends SparepartFormInput {
+  stok_awal_baru: number;
+  stok_awal_bekas: number;
+}
+
+export interface MutationUpdateInput {
+  mutation_type: MutationType;
+  sumber?: SupplierType | null;
+  qty: number;
+  personel_id?: string | null;
+  notes?: string | null;
 }
 
 interface InventoryContextType {
@@ -39,11 +67,11 @@ interface InventoryContextType {
   spareparts: Sparepart[];
   mutations: StockMutation[];
   sparepartCompatibility: SparepartCompatibility[];
-  
+
   isLoading: boolean;
   isSupabaseConnected: boolean;
 
-  // Actions (Full Supabase UUID CRUD)
+  // Actions
   addJenisPeralatan: (data: Omit<JenisPeralatan, 'id'>) => Promise<void>;
   addTipePeralatan: (data: Omit<TipePeralatan, 'id'>) => Promise<void>;
   addLokasi: (data: Omit<Lokasi, 'id'>) => Promise<void>;
@@ -52,38 +80,25 @@ interface InventoryContextType {
   updateUnitStatus: (id: string, status: UnitPeralatan['status']) => Promise<void>;
   addPersonel: (data: Omit<Personel, 'id' | 'created_at'>) => Promise<void>;
   addJadwalShift: (data: Omit<JadwalShift, 'id' | 'created_at'>) => Promise<void>;
-  
-  addSparepart: (part: Omit<Sparepart, 'id' | 'created_at' | 'updated_at'>) => Promise<void>;
-  updateSparepart: (id: string, part: Partial<Sparepart>) => Promise<void>;
-  deleteSparepart: (id: string) => Promise<void>;
-  
+
+  addSparepart: (part: NewSparepartInput) => Promise<boolean>;
+  updateSparepart: (id: string, part: SparepartFormInput) => Promise<boolean>;
+  deleteSparepart: (id: string) => Promise<boolean>;
+
   addMutation: (mutation: {
     sparepart_id: string;
     unit_id?: string;
     personel_id?: string;
-    mutation_type: MutationType;
+    mutation_type: InputMutationType;
     sumber?: SupplierType;
     qty: number;
-    operator_name?: string;
     reference_no?: string;
     notes?: string;
   }) => Promise<boolean>;
-  updateMutation: (
-    id: string,
-    data: Partial<{
-      sparepart_id: string;
-      unit_id?: string | null;
-      personel_id?: string | null;
-      mutation_type: MutationType;
-      sumber?: SupplierType;
-      qty: number;
-      notes?: string | null;
-    }>
-  ) => Promise<boolean>;
+  updateMutation: (id: string, data: MutationUpdateInput) => Promise<boolean>;
   deleteMutation: (id: string) => Promise<boolean>;
 
   // Calculations
-  getOnDutyPersonel: (dateStr?: string) => OnDutyPersonel[];
   getPredictiveAlerts: () => PredictiveAlert[];
   getAnnualNeeds: () => AnnualNeed[];
   refreshData: () => Promise<void>;
@@ -91,8 +106,41 @@ interface InventoryContextType {
 
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
 
+const DAY_MS = 1000 * 60 * 60 * 24;
+
+const MUTATION_TYPE_LABEL: Record<string, string> = {
+  Masuk: 'stok baru',
+  Pakai: 'stok baru',
+  Bekas: 'stok bekas',
+  Rusak: 'stok bekas'
+};
+
+/** Reads all mutations of one sparepart straight from the database (fresh, not cached state). */
+const fetchSparepartMutations = (supabase: SupabaseClient, sparepartId: string) =>
+  fetchAllRows<{ id: string; sparepart_id: string; mutation_type: MutationType; qty: number }>(() =>
+    supabase
+      .from('stock_mutations')
+      .select('id, sparepart_id, mutation_type, qty')
+      .eq('sparepart_id', sparepartId)
+      .order('id', { ascending: true })
+  );
+
+/** Returns an error message when the given mutations would leave negative stock, otherwise null. */
+const validateStock = (
+  muts: Array<{ sparepart_id: string; mutation_type: MutationType; qty: number }>,
+  sparepartId: string
+): string | null => {
+  const stock = computeStockBySparepart(muts)[sparepartId] || { baru: 0, bekas: 0 };
+  if (stock.baru < 0) return `Stok baru akan menjadi ${stock.baru}. Transaksi ini membuat stok baru minus.`;
+  if (stock.bekas < 0) return `Stok bekas akan menjadi ${stock.bekas}. Transaksi ini membuat stok bekas minus.`;
+  return null;
+};
+
 export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { showToast } = useNotification();
+  // showToast is recreated on every render of NotificationProvider; keep a stable reference
+  const showToastRef = useRef(showToast);
+  showToastRef.current = showToast;
 
   const [jenisPeralatan, setJenisPeralatan] = useState<JenisPeralatan[]>([]);
   const [tipePeralatan, setTipePeralatan] = useState<TipePeralatan[]>([]);
@@ -111,7 +159,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isSupabaseConnected, setIsSupabaseConnected] = useState<boolean>(false);
 
-  // --- Fetch All Data 100% From Supabase PostgreSQL ---
+  // --- Fetch all data from Supabase PostgreSQL ---
   const refreshData = useCallback(async () => {
     setIsLoading(true);
     const supabase = getSupabaseClient();
@@ -139,102 +187,128 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       const [
         jpRes, tpRes, lokRes, titRes, unitRes, penRes, ukRes, persRes, shfRes, cfgRes, spRes, mutRes, compatRes
       ] = await Promise.all([
-        supabase.from('jenis_peralatan').select('*').order('nama', { ascending: true }),
-        supabase.from('tipe_peralatan').select('*').order('nama', { ascending: true }),
-        supabase.from('lokasi').select('*').order('nama', { ascending: true }),
-        supabase.from('titik_lokasi').select('*'),
-        supabase.from('unit_peralatan').select('*'),
-        supabase.from('penempatan_peralatan').select('*'),
-        supabase.from('unit_kerja').select('*'),
-        supabase.from('personel').select('*'),
-        supabase.from('jadwal_shift').select('*'),
-        supabase.from('master_configs').select('*'),
-        supabase.from('spareparts').select('*').order('created_at', { ascending: false }),
-        supabase.from('stock_mutations').select('*').order('created_at', { ascending: false }),
-        supabase.from('sparepart_compatibility').select('*')
+        fetchAllRows<JenisPeralatan>(() => supabase.from('jenis_peralatan').select('*').order('nama').order('id')),
+        fetchAllRows<TipePeralatan>(() => supabase.from('tipe_peralatan').select('*').order('nama').order('id')),
+        fetchAllRows<Lokasi>(() => supabase.from('lokasi').select('*').order('nama').order('id')),
+        fetchAllRows<TitikLokasi>(() => supabase.from('titik_lokasi').select('*').order('nomor').order('id')),
+        fetchAllRows<UnitPeralatan>(() => supabase.from('unit_peralatan').select('*').order('id')),
+        fetchAllRows<PenempatanPeralatan>(() => supabase.from('penempatan_peralatan').select('*').order('id')),
+        fetchAllRows<UnitKerja>(() => supabase.from('unit_kerja').select('*').order('nama').order('id')),
+        fetchAllRows<Personel>(() => supabase.from('personel').select('*').order('urutan', { nullsFirst: false }).order('nama').order('id')),
+        fetchAllRows<JadwalShift>(() => supabase.from('jadwal_shift').select('*').order('tanggal').order('id')),
+        fetchAllRows<MasterConfig>(() => supabase.from('master_configs').select('*').order('id')),
+        fetchAllRows<any>(() => supabase.from('spareparts').select('*').order('created_at', { ascending: false }).order('id')),
+        fetchAllRows<any>(() => supabase.from('stock_mutations').select('*').order('created_at', { ascending: false }).order('id')),
+        fetchAllRows<SparepartCompatibility>(() => supabase.from('sparepart_compatibility').select('*').order('id'))
       ]);
 
-      if (jpRes.error || tpRes.error || spRes.error) {
-        console.error('Supabase fetch error:', jpRes.error || tpRes.error || spRes.error);
+      // Stock is derived from stock_mutations, so a failed spareparts/mutations read must never
+      // be shown as if it were real data.
+      const criticalErrors = [
+        ['jenis_peralatan', jpRes.error],
+        ['tipe_peralatan', tpRes.error],
+        ['spareparts', spRes.error],
+        ['stock_mutations', mutRes.error]
+      ].filter(([, err]) => err) as Array<[string, { message: string }]>;
+
+      if (criticalErrors.length > 0) {
+        console.error('Supabase fetch error:', criticalErrors);
         setIsSupabaseConnected(false);
-        setIsLoading(false);
+        showToastRef.current(
+          'Gagal Memuat Data',
+          criticalErrors.map(([table, err]) => `${table}: ${err.message}`).join(' | '),
+          'error'
+        );
         return;
       }
 
+      const optionalErrors = [
+        ['lokasi', lokRes.error],
+        ['titik_lokasi', titRes.error],
+        ['unit_peralatan', unitRes.error],
+        ['penempatan_peralatan', penRes.error],
+        ['unit_kerja', ukRes.error],
+        ['personel', persRes.error],
+        ['jadwal_shift', shfRes.error],
+        ['master_configs', cfgRes.error],
+        ['sparepart_compatibility', compatRes.error]
+      ].filter(([, err]) => err) as Array<[string, { message: string }]>;
+
+      if (optionalErrors.length > 0) {
+        console.error('Supabase partial fetch error:', optionalErrors);
+        showToastRef.current(
+          'Sebagian Data Gagal Dimuat',
+          optionalErrors.map(([table, err]) => `${table}: ${err.message}`).join(' | '),
+          'warning'
+        );
+      }
+
       setIsSupabaseConnected(true);
-      setJenisPeralatan(jpRes.data || []);
-      setTipePeralatan(tpRes.data || []);
-      setLokasiList(lokRes.data || []);
-      setTitikLokasiList(titRes.data || []);
-      setUnitPeralatanList(unitRes.data || []);
-      setPenempatanList(penRes.data || []);
-      setUnitKerjaList(ukRes.data || []);
-      setPersonelList(persRes.data || []);
-      setJadwalShiftList(shfRes.data || []);
-      setMasterConfigs(cfgRes.data || []);
+      setJenisPeralatan(jpRes.data);
+      setTipePeralatan(tpRes.data);
+      setLokasiList(lokRes.data);
+      setTitikLokasiList(titRes.data);
+      setUnitPeralatanList(unitRes.data);
+      setPenempatanList(penRes.data);
+      setUnitKerjaList(ukRes.data);
+      setPersonelList(persRes.data);
+      setJadwalShiftList(shfRes.data);
+      setMasterConfigs(cfgRes.data);
 
-      const tpMap = new Map((tpRes.data || []).map((t: any) => [t.id, t.nama]));
-      const tpJenisMap = new Map((tpRes.data || []).map((t: any) => [t.id, t.id_jenis]));
-      const persMap = new Map((persRes.data || []).map((p: any) => [p.id, p.nama]));
+      const tpMap = new Map(tpRes.data.map((t) => [t.id, t]));
+      const persMap = new Map(persRes.data.map((p) => [p.id, p.nama]));
+      const mutsData = mutRes.data;
 
-      const mutsData = mutRes.data || [];
+      // Stock per sparepart is the sum of its stock_mutations history
+      const stockMap = computeStockBySparepart(mutsData);
 
-      // Calculate dynamic stock per sparepart ID from stock_mutations history
-      const mutationBaruDelta: Record<string, number> = {};
-      const mutationBekasDelta: Record<string, number> = {};
-
+      // The latest 'Pakai' is the latest replacement of the part (used by MTBF prediction)
+      const lastPakaiMap: Record<string, string> = {};
       mutsData.forEach((m: any) => {
-        const spId = m.sparepart_id;
-        if (!spId) return;
-        if (mutationBaruDelta[spId] === undefined) mutationBaruDelta[spId] = 0;
-        if (mutationBekasDelta[spId] === undefined) mutationBekasDelta[spId] = 0;
-
-        if (m.mutation_type === 'Masuk') {
-          mutationBaruDelta[spId] += Number(m.qty) || 0;
-        } else if (m.mutation_type === 'Pakai') {
-          mutationBaruDelta[spId] -= Number(m.qty) || 0;
-        } else if (m.mutation_type === 'Bekas') {
-          mutationBekasDelta[spId] += Number(m.qty) || 0;
-        } else if (m.mutation_type === 'Rusak') {
-          mutationBekasDelta[spId] -= Number(m.qty) || 0;
-        }
+        if (m.mutation_type !== 'Pakai' || !m.created_at) return;
+        const prev = lastPakaiMap[m.sparepart_id];
+        if (!prev || new Date(m.created_at) > new Date(prev)) lastPakaiMap[m.sparepart_id] = m.created_at;
       });
 
-      const formattedParts: Sparepart[] = (spRes.data || []).map((sp: any) => {
-        const idJenis = sp.id_jenis || tpJenisMap.get(sp.id_tipe) || '';
-        const baseBaru = Number(sp.stok_aktual) || 0;
-        const baseBekas = Number(sp.stok_bekas) || 0;
-        const deltaBaru = mutationBaruDelta[sp.id] || 0;
-        const deltaBekas = mutationBekasDelta[sp.id] || 0;
-
-        const calculatedStokBaru = Math.max(0, baseBaru + deltaBaru);
-        const calculatedStokBekas = Math.max(0, baseBekas + deltaBekas);
+      const formattedParts: Sparepart[] = spRes.data.map((sp: any) => {
+        const tipe = sp.id_tipe ? tpMap.get(sp.id_tipe) : undefined;
+        const stock = stockMap[sp.id] || { baru: 0, bekas: 0 };
+        const lastPakai = lastPakaiMap[sp.id];
+        const lastReplaced =
+          lastPakai && (!sp.last_replaced_at || new Date(lastPakai) > new Date(sp.last_replaced_at))
+            ? lastPakai
+            : sp.last_replaced_at || undefined;
 
         return {
           ...sp,
-          id_jenis: idJenis,
-          stok_aktual: calculatedStokBaru,
-          stok_bekas: calculatedStokBekas,
-          equipment_type_name: tpMap.get(sp.id_tipe) || sp.equipment_type_name || 'Umum',
-          lokasi: sp.lokasi || sp.location || ''
+          id_jenis: tipe?.id_jenis || '',
+          equipment_type_name: tipe?.nama || 'Umum',
+          lokasi: sp.lokasi || '',
+          rack: sp.rack || '',
+          minimum_stok: Number(sp.minimum_stok) || 0,
+          stok_aktual: Math.max(0, stock.baru),
+          stok_bekas: Math.max(0, stock.bekas),
+          last_replaced_at: lastReplaced
         };
       });
 
       const spMap = new Map(formattedParts.map((sp) => [sp.id, sp]));
       const formattedMuts: StockMutation[] = mutsData.map((mut: any) => ({
         ...mut,
-        sumber: mut.sumber || 'VENDOR',
-        operator_name: persMap.get(mut.personel_id) || mut.operator_name || 'Teknisi',
+        qty: Number(mut.qty) || 0,
+        sumber: mut.sumber || null,
+        operator_name: (mut.personel_id && persMap.get(mut.personel_id)) || mut.penerima || 'Teknisi',
         sparepart_sku: spMap.get(mut.sparepart_id)?.sku || 'UNKNOWN',
         sparepart_name: spMap.get(mut.sparepart_id)?.name || 'Sparepart Removed'
       }));
 
       setSpareparts(formattedParts);
       setMutations(formattedMuts);
-      setSparepartCompatibilityState(compatRes.data || []);
+      setSparepartCompatibilityState(compatRes.data);
     } catch (err: any) {
       console.error('Failed to sync with Supabase PostgreSQL:', err);
       setIsSupabaseConnected(false);
+      showToastRef.current('Gagal Terhubung ke Supabase', err?.message || String(err), 'error');
     } finally {
       setIsLoading(false);
     }
@@ -244,133 +318,65 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     refreshData();
   }, [refreshData]);
 
-  // --- Filter Personnel Currently On Duty Based on Shift Schedule ---
-  const getOnDutyPersonel = useCallback(
-    (dateStr?: string): OnDutyPersonel[] => {
-      const targetDate = dateStr || new Date().toISOString().slice(0, 10);
-      
-      const onDutyShifts = jadwalShiftList.filter(
-        (s) =>
-          s.tanggal === targetDate &&
-          s.shift !== 'Off' &&
-          s.status_kehadiran !== 'Izin' &&
-          s.status_kehadiran !== 'Sakit'
-      );
-
-      if (onDutyShifts.length > 0) {
-        return onDutyShifts
-          .map((s) => {
-            const p = personelList.find((pers) => pers.id === s.personel_id);
-            if (!p) return null;
-            return {
-              ...p,
-              current_shift: s.shift
-            };
-          })
-          .filter((p): p is OnDutyPersonel => p !== null);
-      }
-
-      return personelList.slice(0, 5).map((p, idx) => ({
-        ...p,
-        current_shift: idx % 3 === 0 ? 'Pagi (08:00 - 16:00)' : idx % 3 === 1 ? 'Siang (16:00 - 24:00)' : 'Malam (00:00 - 08:00)'
-      }));
-    },
-    [jadwalShiftList, personelList]
-  );
-
-  // --- CRUD Actions (100% Pure UUID Primary Keys) ---
-
-  const addJenisPeralatan = async (data: Omit<JenisPeralatan, 'id'>) => {
+  /** Returns the client or shows a toast when Supabase is not configured. */
+  const requireClient = (): SupabaseClient | null => {
     const supabase = getSupabaseClient();
     if (!supabase) {
-      showToast('Koneksi Gagal', 'Supabase belum terkonfigurasi di Pengaturan.', 'error');
-      return;
+      showToast('Koneksi Gagal', 'VITE_SUPABASE_URL & VITE_SUPABASE_ANON_KEY belum diisi di file .env.', 'error');
     }
-    const newItem = { ...data, id: crypto.randomUUID() };
-    const { error } = await supabase.from('jenis_peralatan').insert([newItem]);
+    return supabase;
+  };
+
+  // --- Master data ---
+
+  const insertMaster = async (table: string, row: Record<string, any>, title: string, label: string) => {
+    const supabase = requireClient();
+    if (!supabase) return;
+    const { error } = await supabase.from(table).insert([row]);
     if (error) {
       showToast('Gagal Simpan', error.message, 'error');
     } else {
-      showToast('Jenis Peralatan Ditambah', newItem.nama, 'success');
+      showToast(title, label, 'success');
       await refreshData();
     }
   };
 
-  const addTipePeralatan = async (data: Omit<TipePeralatan, 'id'>) => {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      showToast('Koneksi Gagal', 'Supabase belum terkonfigurasi di Pengaturan.', 'error');
-      return;
-    }
-    const newItem = { ...data, id: crypto.randomUUID() };
-    const { error } = await supabase.from('tipe_peralatan').insert([newItem]);
-    if (error) {
-      showToast('Gagal Simpan', error.message, 'error');
-    } else {
-      showToast('Tipe Peralatan Ditambah', newItem.nama, 'success');
-      await refreshData();
-    }
-  };
+  const addJenisPeralatan = (data: Omit<JenisPeralatan, 'id'>) =>
+    insertMaster('jenis_peralatan', { ...data, id: crypto.randomUUID() }, 'Jenis Peralatan Ditambah', data.nama);
 
-  const addLokasi = async (data: Omit<Lokasi, 'id'>) => {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      showToast('Koneksi Gagal', 'Supabase belum terkonfigurasi.', 'error');
-      return;
-    }
-    const newItem = { ...data, id: crypto.randomUUID() };
-    const { error } = await supabase.from('lokasi').insert([newItem]);
-    if (error) {
-      showToast('Gagal Simpan', error.message, 'error');
-    } else {
-      showToast('Lokasi Ditambah', newItem.nama, 'success');
-      await refreshData();
-    }
-  };
+  const addTipePeralatan = (data: Omit<TipePeralatan, 'id'>) =>
+    insertMaster(
+      'tipe_peralatan',
+      { id: crypto.randomUUID(), id_jenis: data.id_jenis, nama: data.nama, varian: data.varian || null },
+      'Tipe Peralatan Ditambah',
+      data.nama
+    );
 
-  const addTitikLokasi = async (data: Omit<TitikLokasi, 'id'>) => {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      showToast('Koneksi Gagal', 'Supabase belum terkonfigurasi.', 'error');
-      return;
-    }
-    const newItem = { ...data, id: crypto.randomUUID() };
-    const { error } = await supabase.from('titik_lokasi').insert([newItem]);
-    if (error) {
-      showToast('Gagal Simpan', error.message, 'error');
-    } else {
-      showToast('Titik Lokasi Ditambah', newItem.nomor, 'success');
-      await refreshData();
-    }
-  };
+  const addLokasi = (data: Omit<Lokasi, 'id'>) =>
+    insertMaster('lokasi', { ...data, id: crypto.randomUUID() }, 'Lokasi Ditambah', data.nama);
 
-  const addUnitPeralatan = async (data: Omit<UnitPeralatan, 'id' | 'created_at' | 'updated_at'>) => {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      showToast('Koneksi Gagal', 'Supabase belum terkonfigurasi.', 'error');
-      return;
-    }
-    const newItem = {
-      ...data,
-      id: crypto.randomUUID(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-    const { error } = await supabase.from('unit_peralatan').insert([newItem]);
-    if (error) {
-      showToast('Gagal Simpan', error.message, 'error');
-    } else {
-      showToast('Unit Peralatan Ditambah', newItem.serial_number || 'Unit Baru', 'success');
-      await refreshData();
-    }
+  const addTitikLokasi = (data: Omit<TitikLokasi, 'id'>) =>
+    insertMaster(
+      'titik_lokasi',
+      { id: crypto.randomUUID(), id_lokasi: data.id_lokasi, nomor: data.nomor },
+      'Titik Lokasi Ditambah',
+      data.nomor
+    );
+
+  const addUnitPeralatan = (data: Omit<UnitPeralatan, 'id' | 'created_at' | 'updated_at'>) => {
+    const { tipe_nama, jenis_nama, ...dbData } = data;
+    const now = new Date().toISOString();
+    return insertMaster(
+      'unit_peralatan',
+      { ...dbData, id: crypto.randomUUID(), created_at: now, updated_at: now },
+      'Unit Peralatan Ditambah',
+      data.serial_number || 'Unit Baru'
+    );
   };
 
   const updateUnitStatus = async (id: string, status: UnitPeralatan['status']) => {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      showToast('Koneksi Gagal', 'Supabase belum terkonfigurasi.', 'error');
-      return;
-    }
+    const supabase = requireClient();
+    if (!supabase) return;
     const { error } = await supabase
       .from('unit_peralatan')
       .update({ status, updated_at: new Date().toISOString() })
@@ -384,165 +390,170 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }
   };
 
-  const addPersonel = async (data: Omit<Personel, 'id' | 'created_at'>) => {
-    const supabase = getSupabaseClient();
-    if (!supabase) return;
-    const newItem = { ...data, id: crypto.randomUUID(), created_at: new Date().toISOString() };
-    const { error } = await supabase.from('personel').insert([newItem]);
-    if (!error) {
-      showToast('Personel Ditambah', newItem.nama, 'success');
-      await refreshData();
-    }
+  const addPersonel = (data: Omit<Personel, 'id' | 'created_at'>) => {
+    const { unit_nama, ...dbData } = data;
+    return insertMaster(
+      'personel',
+      { ...dbData, id: crypto.randomUUID(), created_at: new Date().toISOString() },
+      'Personel Ditambah',
+      data.nama
+    );
   };
 
-  const addJadwalShift = async (data: Omit<JadwalShift, 'id' | 'created_at'>) => {
-    const supabase = getSupabaseClient();
-    if (!supabase) return;
-    const newItem = { ...data, id: crypto.randomUUID(), created_at: new Date().toISOString() };
-    const { error } = await supabase.from('jadwal_shift').insert([newItem]);
-    if (!error) {
-      showToast('Jadwal Shift Ditambah', `${data.shift} - ${data.tanggal}`, 'success');
-      await refreshData();
-    }
+  const addJadwalShift = (data: Omit<JadwalShift, 'id' | 'created_at'>) => {
+    const { personel_nama, ...dbData } = data;
+    return insertMaster(
+      'jadwal_shift',
+      { ...dbData, id: crypto.randomUUID(), created_at: new Date().toISOString() },
+      'Jadwal Shift Ditambah',
+      `${data.shift} - ${data.tanggal}`
+    );
   };
 
-  const addSparepart = async (partData: Omit<Sparepart, 'id' | 'created_at' | 'updated_at'>) => {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      showToast('Koneksi Gagal', 'Supabase URL & Anon Key belum terkonfigurasi di Settings.', 'error');
-      return;
+  // --- Spareparts ---
+
+  /** Maps form input to the columns that exist in the `spareparts` table. */
+  const toSparepartRow = (input: SparepartFormInput) => ({
+    sku: input.sku.trim(),
+    name: input.name.trim(),
+    description: input.description?.trim() || null,
+    id_tipe: input.tipeIds[0] || null,
+    unit: input.unit?.trim().toUpperCase() || 'PCS',
+    minimum_stok: Math.max(0, Number(input.minimum_stok) || 0),
+    lokasi: input.lokasi?.trim() || null,
+    rack: input.rack?.trim() || null,
+    mtbf_days: Math.max(1, Number(input.mtbf_days) || 180),
+    last_replaced_at: input.last_replaced_at || null
+  });
+
+  /** Makes sparepart_compatibility match the selected tipe list exactly. */
+  const syncCompatibility = async (
+    supabase: SupabaseClient,
+    sparepartId: string,
+    tipeIds: string[]
+  ): Promise<string | null> => {
+    const uniqueIds = Array.from(new Set(tipeIds.filter(Boolean)));
+
+    let deleteQuery = supabase.from('sparepart_compatibility').delete().eq('sparepart_id', sparepartId);
+    if (uniqueIds.length > 0) {
+      deleteQuery = deleteQuery.not('id_tipe', 'in', `(${uniqueIds.join(',')})`);
     }
+    const { error: delErr } = await deleteQuery;
+    if (delErr) return delErr.message;
+
+    if (uniqueIds.length === 0) return null;
+
+    const { error: upsertErr } = await supabase.from('sparepart_compatibility').upsert(
+      uniqueIds.map((idTipe, idx) => ({
+        sparepart_id: sparepartId,
+        id_tipe: idTipe,
+        is_primary: idx === 0
+      })),
+      { onConflict: 'sparepart_id,id_tipe' }
+    );
+    return upsertErr ? upsertErr.message : null;
+  };
+
+  const addSparepart = async (input: NewSparepartInput): Promise<boolean> => {
+    const supabase = requireClient();
+    if (!supabase) return false;
+
     const newId = crypto.randomUUID();
-    const initialStokBaru = Number(partData.stok_aktual) || 0;
-    const initialStokBekas = Number(partData.stok_bekas) || 0;
-
-    // Sanitize payload for live Supabase columns (remove non-db & computed stock fields)
-    const {
-      equipment_type_name,
-      location_rack,
-      id_jenis,
-      supplier_type,
-      location,
-      stok_aktual,
-      stok_bekas,
-      ...dbPayload
-    } = partData as any;
-
-    const cleanPayload = {
-      ...dbPayload,
-      id: newId,
-      lokasi: dbPayload.lokasi || location || '',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
-    };
-
-    const { error } = await supabase.from('spareparts').insert([cleanPayload]);
+    const now = new Date().toISOString();
+    const { error } = await supabase
+      .from('spareparts')
+      .insert([{ ...toSparepartRow(input), id: newId, created_at: now, updated_at: now }]);
     if (error) {
-      showToast('Gagal Simpan Supabase', error.message, 'error');
-      return;
+      showToast('Gagal Simpan Sparepart', error.message, 'error');
+      return false;
     }
 
-    // Insert initial stock mutations if initial stock was provided
-    if (initialStokBaru > 0) {
-      await supabase.from('stock_mutations').insert([{
+    const problems: string[] = [];
+
+    const compatErr = await syncCompatibility(supabase, newId, input.tipeIds);
+    if (compatErr) problems.push(`kompatibilitas: ${compatErr}`);
+
+    // Initial stock is recorded as mutations, because stock is derived from stock_mutations
+    const initialMutations = [
+      input.stok_awal_baru > 0 && {
         id: crypto.randomUUID(),
         sparepart_id: newId,
         mutation_type: 'Masuk',
         sumber: 'VENDOR',
-        qty: initialStokBaru,
+        qty: input.stok_awal_baru,
         notes: 'Stok awal pendaftaran sparepart baru',
-        created_at: new Date().toISOString()
-      }]);
-    }
-    if (initialStokBekas > 0) {
-      await supabase.from('stock_mutations').insert([{
+        created_at: now
+      },
+      input.stok_awal_bekas > 0 && {
         id: crypto.randomUUID(),
         sparepart_id: newId,
         mutation_type: 'Bekas',
-        sumber: 'VENDOR',
-        qty: initialStokBekas,
+        sumber: null,
+        qty: input.stok_awal_bekas,
         notes: 'Stok awal bekas pendaftaran sparepart baru',
-        created_at: new Date().toISOString()
-      }]);
+        created_at: now
+      }
+    ].filter(Boolean);
+
+    if (initialMutations.length > 0) {
+      const { error: mutErr } = await supabase.from('stock_mutations').insert(initialMutations);
+      if (mutErr) problems.push(`stok awal: ${mutErr.message}`);
     }
 
-    showToast('Sparepart Ditambahkan', `${partData.name} tersimpan di Supabase`, 'success');
+    if (problems.length > 0) {
+      showToast('Sparepart Tersimpan Sebagian', `${input.name} tersimpan, tetapi gagal menyimpan ${problems.join('; ')}`, 'warning');
+    } else {
+      showToast('Sparepart Ditambahkan', `${input.name} tersimpan di Supabase`, 'success');
+    }
     await refreshData();
+    return true;
   };
 
-  const updateSparepart = async (id: string, partData: Partial<Sparepart>) => {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      showToast('Koneksi Gagal', 'Supabase belum terkonfigurasi.', 'error');
-      return;
-    }
-
-    // Sanitize payload for live Supabase columns (remove non-db & computed stock fields)
-    const {
-      equipment_type_name,
-      location_rack,
-      id_jenis,
-      supplier_type,
-      sumber,
-      location,
-      stok_aktual,
-      stok_bekas,
-      ...dbPayload
-    } = partData as any;
-
-    const cleanPayload: any = {
-      ...dbPayload,
-      updated_at: new Date().toISOString()
-    };
-
-    if (location !== undefined) cleanPayload.lokasi = location;
+  const updateSparepart = async (id: string, input: SparepartFormInput): Promise<boolean> => {
+    const supabase = requireClient();
+    if (!supabase) return false;
 
     const { error } = await supabase
       .from('spareparts')
-      .update(cleanPayload)
+      .update({ ...toSparepartRow(input), updated_at: new Date().toISOString() })
       .eq('id', id);
 
     if (error) {
-      showToast('Gagal Update Supabase', error.message, 'error');
+      showToast('Gagal Update Sparepart', error.message, 'error');
+      return false;
+    }
+
+    const compatErr = await syncCompatibility(supabase, id, input.tipeIds);
+    if (compatErr) {
+      showToast('Kompatibilitas Gagal Disimpan', compatErr, 'warning');
     } else {
       showToast('Berhasil Diperbarui', 'Data sparepart diperbarui di Supabase', 'success');
-      await refreshData();
     }
+    await refreshData();
+    return true;
   };
 
-  const deleteSparepart = async (id: string) => {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      showToast('Koneksi Gagal', 'Supabase belum terkonfigurasi.', 'error');
-      return;
-    }
+  const deleteSparepart = async (id: string): Promise<boolean> => {
+    const supabase = requireClient();
+    if (!supabase) return false;
     const target = spareparts.find((s) => s.id === id);
+    // stock_mutations & sparepart_compatibility rows are removed by ON DELETE CASCADE
     const { error } = await supabase.from('spareparts').delete().eq('id', id);
 
     if (error) {
-      showToast('Gagal Hapus Supabase', error.message, 'error');
-    } else {
-      showToast('Sparepart Dihapus', `${target?.name || id} telah dihapus dari Supabase`, 'info');
-      await refreshData();
-    }
-  };
-
-  const addMutation = async (mutationData: {
-    sparepart_id: string;
-    unit_id?: string;
-    personel_id?: string;
-    mutation_type: MutationType;
-    sumber?: SupplierType;
-    qty: number;
-    operator_name?: string;
-    reference_no?: string;
-    notes?: string;
-  }): Promise<boolean> => {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      showToast('Koneksi Gagal', 'Supabase belum terkonfigurasi di Settings.', 'error');
+      showToast('Gagal Hapus Sparepart', error.message, 'error');
       return false;
     }
+    showToast('Sparepart Dihapus', `${target?.name || id} beserta riwayat mutasinya telah dihapus`, 'info');
+    await refreshData();
+    return true;
+  };
+
+  // --- Stock mutations ---
+
+  const addMutation: InventoryContextType['addMutation'] = async (mutationData) => {
+    const supabase = requireClient();
+    if (!supabase) return false;
 
     const targetPart = spareparts.find((s) => s.id === mutationData.sparepart_id);
     if (!targetPart) {
@@ -550,11 +561,24 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return false;
     }
 
-    if (mutationData.mutation_type === 'Pakai' && targetPart.stok_aktual < mutationData.qty) {
-      showToast('Stok Tidak Cukup', `Stok baru (${targetPart.stok_aktual}) kurang dari ${mutationData.qty}`, 'error');
+    const qty = Math.floor(Number(mutationData.qty));
+    if (!Number.isFinite(qty) || qty <= 0) {
+      showToast('Jumlah Tidak Valid', 'Jumlah mutasi harus lebih dari 0.', 'error');
       return false;
-    } else if (mutationData.mutation_type === 'Rusak' && targetPart.stok_bekas < mutationData.qty) {
-      showToast('Stok Bekas Kurang', `Stok bekas (${targetPart.stok_bekas}) kurang dari ${mutationData.qty}`, 'error');
+    }
+
+    // Validate against the latest stock in the database (another user may have changed it)
+    const { data: currentMuts, error: readErr } = await fetchSparepartMutations(supabase, targetPart.id);
+    if (readErr) {
+      showToast('Gagal Membaca Stok', readErr.message, 'error');
+      return false;
+    }
+    const stockError = validateStock(
+      [...currentMuts, { sparepart_id: targetPart.id, mutation_type: mutationData.mutation_type, qty }],
+      targetPart.id
+    );
+    if (stockError) {
+      showToast(`Stok Tidak Cukup (${MUTATION_TYPE_LABEL[mutationData.mutation_type]})`, stockError, 'error');
       return false;
     }
 
@@ -569,13 +593,13 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       unit_id: mutationData.unit_id || null,
       personel_id: mutationData.personel_id || null,
       mutation_type: mutationData.mutation_type,
-      sumber: mutationData.sumber || 'VENDOR',
-      qty: mutationData.qty,
+      // Sumber (asal barang) only applies to incoming stock
+      sumber: mutationData.mutation_type === 'Masuk' ? mutationData.sumber || 'VENDOR' : null,
+      qty,
       notes: finalNotes || null,
       created_at: new Date().toISOString()
     };
 
-    // Execute Supabase Mutation
     const { error: mutErr } = await supabase.from('stock_mutations').insert([dbMutPayload]);
     if (mutErr) {
       showToast('Gagal Transaksi Supabase', mutErr.message, 'error');
@@ -587,26 +611,45 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return true;
   };
 
-  const updateMutation = async (
-    id: string,
-    data: Partial<{
-      sparepart_id: string;
-      unit_id?: string | null;
-      personel_id?: string | null;
-      mutation_type: MutationType;
-      qty: number;
-      notes?: string | null;
-    }>
-  ): Promise<boolean> => {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      showToast('Koneksi Gagal', 'Supabase belum terkonfigurasi di Settings.', 'error');
+  const updateMutation = async (id: string, data: MutationUpdateInput): Promise<boolean> => {
+    const supabase = requireClient();
+    if (!supabase) return false;
+
+    const original = mutations.find((m) => m.id === id);
+    if (!original) {
+      showToast('Gagal Edit Transaksi', 'Data mutasi tidak ditemukan. Muat ulang halaman.', 'error');
+      return false;
+    }
+
+    const qty = Math.floor(Number(data.qty));
+    if (!Number.isFinite(qty) || qty <= 0) {
+      showToast('Jumlah Tidak Valid', 'Jumlah mutasi harus lebih dari 0.', 'error');
+      return false;
+    }
+
+    const { data: currentMuts, error: readErr } = await fetchSparepartMutations(supabase, original.sparepart_id);
+    if (readErr) {
+      showToast('Gagal Membaca Stok', readErr.message, 'error');
+      return false;
+    }
+    const stockError = validateStock(
+      currentMuts.map((m) => (m.id === id ? { ...m, mutation_type: data.mutation_type, qty } : m)),
+      original.sparepart_id
+    );
+    if (stockError) {
+      showToast('Perubahan Ditolak', stockError, 'error');
       return false;
     }
 
     const { error } = await supabase
       .from('stock_mutations')
-      .update(data)
+      .update({
+        mutation_type: data.mutation_type,
+        sumber: data.mutation_type === 'Masuk' ? data.sumber || 'VENDOR' : null,
+        qty,
+        personel_id: data.personel_id || null,
+        notes: data.notes || null
+      })
       .eq('id', id);
 
     if (error) {
@@ -620,16 +663,27 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const deleteMutation = async (id: string): Promise<boolean> => {
-    const supabase = getSupabaseClient();
-    if (!supabase) {
-      showToast('Koneksi Gagal', 'Supabase belum terkonfigurasi di Settings.', 'error');
-      return false;
+    const supabase = requireClient();
+    if (!supabase) return false;
+
+    const original = mutations.find((m) => m.id === id);
+    if (original) {
+      const { data: currentMuts, error: readErr } = await fetchSparepartMutations(supabase, original.sparepart_id);
+      if (readErr) {
+        showToast('Gagal Membaca Stok', readErr.message, 'error');
+        return false;
+      }
+      const stockError = validateStock(
+        currentMuts.filter((m) => m.id !== id),
+        original.sparepart_id
+      );
+      if (stockError) {
+        showToast('Hapus Ditolak', `${stockError} Stok tersebut sudah dipakai oleh transaksi lain.`, 'error');
+        return false;
+      }
     }
 
-    const { error } = await supabase
-      .from('stock_mutations')
-      .delete()
-      .eq('id', id);
+    const { error } = await supabase.from('stock_mutations').delete().eq('id', id);
 
     if (error) {
       showToast('Gagal Hapus Transaksi', error.message, 'error');
@@ -641,47 +695,80 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return true;
   };
 
-  // Calculations
+  // --- Calculations ---
+
   const getPredictiveAlerts = (): PredictiveAlert[] => {
-    const now = new Date();
-    return spareparts.map((sp) => {
-      const mtbf = sp.mtbf_days || 180;
-      const lastReplaced = sp.last_replaced_at ? new Date(sp.last_replaced_at) : new Date(sp.created_at || now);
-      const diffTime = Math.abs(now.getTime() - lastReplaced.getTime());
-      const daysUsed = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      const remainingDays = Math.max(0, mtbf - daysUsed);
-      const isStockEmpty = sp.stok_aktual + sp.stok_bekas <= 0;
+    const now = Date.now();
+    const urgencyOrder = { CRITICAL: 0, WARNING: 1, NORMAL: 2 };
 
-      let urgency: PredictiveAlert['urgency'] = 'NORMAL';
-      if (isStockEmpty || remainingDays <= 7 || sp.stok_aktual <= sp.minimum_stok) {
-        urgency = 'CRITICAL';
-      } else if (remainingDays <= 21 || sp.stok_aktual <= sp.minimum_stok * 1.5) {
-        urgency = 'WARNING';
-      }
+    return spareparts
+      .map((sp) => {
+        const mtbf = sp.mtbf_days || 180;
+        const lastReplacedStr = sp.last_replaced_at || sp.created_at;
+        const lastReplaced = lastReplacedStr ? new Date(lastReplacedStr).getTime() : now;
+        const daysUsed = Math.max(0, Math.floor((now - lastReplaced) / DAY_MS));
+        const remainingDays = Math.max(0, mtbf - daysUsed);
+        const isStockEmpty = sp.stok_aktual + sp.stok_bekas <= 0;
 
-      return {
-        sparepart: sp,
-        days_used: daysUsed,
-        remaining_days: remainingDays,
-        urgency,
-        is_stock_empty: isStockEmpty
-      };
-    });
+        let urgency: PredictiveAlert['urgency'] = 'NORMAL';
+        if (isStockEmpty || remainingDays <= 7 || sp.stok_aktual <= sp.minimum_stok) {
+          urgency = 'CRITICAL';
+        } else if (remainingDays <= 21 || sp.stok_aktual <= sp.minimum_stok * 1.5) {
+          urgency = 'WARNING';
+        }
+
+        return {
+          sparepart: sp,
+          days_used: daysUsed,
+          remaining_days: remainingDays,
+          urgency,
+          is_stock_empty: isStockEmpty
+        };
+      })
+      .sort((a, b) => urgencyOrder[a.urgency] - urgencyOrder[b.urgency] || a.remaining_days - b.remaining_days);
   };
 
   const getAnnualNeeds = (): AnnualNeed[] => {
+    const now = Date.now();
+    const yearAgo = now - 365 * DAY_MS;
+
     return spareparts.map((sp) => {
-      const mtbf = sp.mtbf_days || 180;
-      const annualForecast = Math.ceil((365 / Math.max(mtbf, 30)) * 2);
+      const partMuts = mutations.filter((m) => m.sparepart_id === sp.id);
+      const usageLastYear = partMuts
+        .filter((m) => m.mutation_type === 'Pakai' && new Date(m.created_at).getTime() >= yearAgo)
+        .reduce((sum, m) => sum + m.qty, 0);
+
+      let annualForecast: number;
+      let basis: AnnualNeed['forecast_basis'];
+
+      if (usageLastYear > 0) {
+        // Annualize when the part has less than a year of history (min. 30 days to avoid spikes)
+        const firstMutationTime = Math.min(...partMuts.map((m) => new Date(m.created_at).getTime()));
+        const historyDays = Math.min(365, Math.max(30, (now - Math.max(firstMutationTime, yearAgo)) / DAY_MS));
+        annualForecast = Math.ceil((usageLastYear / historyDays) * 365);
+        basis = 'HISTORY';
+      } else {
+        // No usage history yet: one replacement per MTBF cycle for every installed compatible unit
+        const compatTipeIds = new Set([
+          sp.id_tipe,
+          ...sparepartCompatibility.filter((c) => c.sparepart_id === sp.id).map((c) => c.id_tipe)
+        ]);
+        const installedUnits = unitPeralatanList.filter(
+          (u) => compatTipeIds.has(u.id_tipe) && (u.status === 'operasi' || u.status === 'standby')
+        ).length;
+        const mtbf = Math.max(sp.mtbf_days || 180, 1);
+        annualForecast = Math.ceil(365 / mtbf) * Math.max(installedUnits, 1);
+        basis = 'MTBF';
+      }
+
       const totalAvailable = sp.stok_aktual + sp.stok_bekas;
-      const orderNeeded = Math.max(0, annualForecast - totalAvailable);
 
       return {
         sparepart: sp,
         annual_forecast_qty: annualForecast,
         total_available_stock: totalAvailable,
-        order_needed_qty: orderNeeded,
-        estimated_cost: 0
+        order_needed_qty: Math.max(0, annualForecast - totalAvailable),
+        forecast_basis: basis
       };
     });
   };
@@ -718,7 +805,6 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         addMutation,
         updateMutation,
         deleteMutation,
-        getOnDutyPersonel,
         getPredictiveAlerts,
         getAnnualNeeds,
         refreshData

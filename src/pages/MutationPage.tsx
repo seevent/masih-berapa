@@ -18,7 +18,8 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
-import { MutationType, SupplierType } from '../types';
+import { InputMutationType, SupplierType } from '../types';
+import { getCompatibleEquipment } from '../utils/compatibility';
 import { getActiveDutyPersonel } from '../utils/shiftUtils';
 
 export const MutationPage: React.FC = () => {
@@ -40,7 +41,7 @@ export const MutationPage: React.FC = () => {
   const navigate = useNavigate();
 
   // 1. Mutation Type State
-  const [mutationType, setMutationType] = useState<MutationType>('Masuk');
+  const [mutationType, setMutationType] = useState<InputMutationType>('Masuk');
 
   // 2. Sparepart Search & Filter State
   const [sparepartSearch, setSparepartSearch] = useState('');
@@ -72,8 +73,9 @@ export const MutationPage: React.FC = () => {
   const { activeShiftLabel, operationalDate } = shiftInfo;
 
   // Default select first available personnel
+  // (also re-selects when the active shift changes and the chosen person is no longer on duty)
   useEffect(() => {
-    if (personelOptions.length > 0 && !selectedPersonelId) {
+    if (personelOptions.length > 0 && !personelOptions.some((p) => p.id === selectedPersonelId)) {
       setSelectedPersonelId(personelOptions[0].id);
     }
   }, [personelOptions, selectedPersonelId]);
@@ -98,50 +100,25 @@ export const MutationPage: React.FC = () => {
   const selectedPart = spareparts.find((p) => p.id === selectedSparepartId);
 
   // --- Compatible Locations & Equipment Units for Selected Sparepart ---
-  const compatTypeIds = selectedPart
-    ? Array.from(
-        new Set([
-          selectedPart.id_tipe,
-          ...sparepartCompatibility
-            .filter((c) => c.sparepart_id === selectedPart.id)
-            .map((c) => c.id_tipe)
-        ])
-      ).filter(Boolean)
-    : [];
+  const { compatibleLokasiList, otherLokasiList, availableTitikList, availableUnits: availableUnitsForLocation } =
+    getCompatibleEquipment({
+      part: selectedPart,
+      sparepartCompatibility,
+      lokasiList,
+      titikLokasiList,
+      unitPeralatanList,
+      penempatanList,
+      selectedLokasiId,
+      selectedTitikId
+    });
 
-  // Find penempatan records for units with compatible tipe
-  const compatPenempatan = penempatanList.filter((pen) => pen.is_active && compatTypeIds.includes(pen.id_tipe || ''));
-  const compatLokasiIds = Array.from(new Set(compatPenempatan.map((p) => p.id_lokasi).filter(Boolean)));
-
-  // Compatible locations list + fallback for all locations
-  const compatibleLokasiList = lokasiList.filter((lok) => compatLokasiIds.includes(lok.id));
-
-  // Available Titik for selected Lokasi
-  const availableTitikList = selectedLokasiId
-    ? titikLokasiList.filter((t) => t.id_lokasi === selectedLokasiId)
-    : [];
-
-  // Available Units at selected Lokasi & Titik compatible with selected sparepart
-  const availableUnitsForLocation = unitPeralatanList.filter((unit) => {
-    const isCompatType = compatTypeIds.includes(unit.id_tipe);
-    if (!isCompatType) return false;
-
-    if (selectedLokasiId) {
-      const pen = penempatanList.find((p) => p.id_unit === unit.id && p.is_active);
-      if (!pen || pen.id_lokasi !== selectedLokasiId) return false;
-      if (selectedTitikId && pen.id_titik !== selectedTitikId) return false;
-    }
-    return true;
-  });
-
-  const selectedPersonelObj = sortedPersonelList.find((p) => p.id === selectedPersonelId) || sortedPersonelList[0];
+  const selectedPersonelObj = personelOptions.find((p) => p.id === selectedPersonelId);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedSparepartId || qty <= 0 || !selectedPersonelObj) return;
 
     setIsSubmitting(true);
-    const operatorName = selectedPersonelObj.formattedName;
 
     const success = await addMutation({
       sparepart_id: selectedSparepartId,
@@ -150,7 +127,6 @@ export const MutationPage: React.FC = () => {
       mutation_type: mutationType,
       sumber: mutationType === 'Masuk' ? sumber : undefined,
       qty,
-      operator_name: operatorName,
       notes: notes.trim()
     });
 
@@ -162,28 +138,28 @@ export const MutationPage: React.FC = () => {
 
   const mutationTypesInfo = [
     {
-      type: 'Masuk' as MutationType,
+      type: 'Masuk' as InputMutationType,
       label: 'Masuk',
       desc: 'Penambahan stok baru dari Pembelian / PO Vendor',
       icon: ArrowDownLeft,
       color: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300'
     },
     {
-      type: 'Pakai' as MutationType,
+      type: 'Pakai' as InputMutationType,
       label: 'Pakai',
       desc: 'Pengeluaran stok untuk pemakaian perbaikan unit',
       icon: ArrowUpRight,
       color: 'border-blue-500/40 bg-blue-500/10 text-blue-300'
     },
     {
-      type: 'Bekas' as MutationType,
+      type: 'Bekas' as InputMutationType,
       label: 'Bekas',
       desc: 'Mengembalikan barang bekas yang dilepas dari mesin ke stok backup',
       icon: RotateCcw,
       color: 'border-amber-500/40 bg-amber-500/10 text-amber-300'
     },
     {
-      type: 'Rusak' as MutationType,
+      type: 'Rusak' as InputMutationType,
       label: 'Rusak',
       desc: 'Mengubah status barang menjadi rusak dan menghapus dari stok',
       icon: Trash2,
@@ -313,7 +289,7 @@ export const MutationPage: React.FC = () => {
               <div>
                 <span className="font-mono text-cyan-400 font-bold">{selectedPart.sku}</span>
                 <h4 className="text-sm font-bold text-white mt-0.5">{selectedPart.name}</h4>
-                <p className="text-slate-400 mt-1">Gudang: {selectedPart.location || selectedPart.lokasi || 'Gudang Utama T2'} | Rak: {selectedPart.rack || selectedPart.location_rack || 'RAK-A1'}</p>
+                <p className="text-slate-400 mt-1">Gudang: {selectedPart.lokasi || '-'} | Rak: {selectedPart.rack || '-'}</p>
               </div>
               <div className="flex items-center gap-4 bg-slate-900 px-4 py-2.5 rounded-lg border border-slate-800">
                 <div>
@@ -368,7 +344,7 @@ export const MutationPage: React.FC = () => {
                     )}
 
                     <optgroup label="📍 Semua Lokasi Lain">
-                      {lokasiList.map((lok) => (
+                      {otherLokasiList.map((lok) => (
                         <option key={lok.id} value={lok.id}>
                           {lok.nama}
                         </option>

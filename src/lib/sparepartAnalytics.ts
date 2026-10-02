@@ -1,4 +1,5 @@
 import { Sparepart, StockMutation, SupplierType } from '../types';
+import { isLowStock } from '../utils/stock';
 
 export interface ABCItemPhysical {
   sparepart: Sparepart;
@@ -68,7 +69,7 @@ export const getFilteredSpareparts = (
 
     // Filter Location / Rack
     if (filters.locationRackFilter && filters.locationRackFilter !== 'ALL') {
-      const locStr = item.rack || item.location_rack || item.location || '';
+      const locStr = `${item.rack || ''} ${item.lokasi || ''}`;
       if (!locStr.toLowerCase().includes(filters.locationRackFilter.toLowerCase())) {
         return false;
       }
@@ -105,11 +106,9 @@ export const calculateABCAnalysisPhysical = (
   // Combine mutation volume + stock turnover estimate
   const itemsWithVolume = spareparts.map((p) => {
     const outboundVol = volumeMap[p.id] || 0;
-    // Derive realistic physical rotation volume
-    const derivedVolume = outboundVol > 0 ? outboundVol : Math.max(Math.floor(p.stok_aktual * 0.4), 1);
     return {
       sparepart: p,
-      usageVolume: derivedVolume
+      usageVolume: outboundVol
     };
   });
 
@@ -126,10 +125,10 @@ export const calculateABCAnalysisPhysical = (
     let category: 'A' | 'B' | 'C' = 'C';
     let categoryLabel: ABCItemPhysical['categoryLabel'] = 'Slow / Dead Stock (Class C)';
 
-    if (cumulativePct <= 80 || item.usageVolume >= 10) {
+    if (item.usageVolume > 0 && (cumulativePct <= 80 || item.usageVolume >= 10)) {
       category = 'A';
       categoryLabel = 'Fast Moving (Class A)';
-    } else if (cumulativePct <= 95) {
+    } else if (item.usageVolume > 0 && cumulativePct <= 95) {
       category = 'B';
       categoryLabel = 'Medium Moving (Class B)';
     }
@@ -212,9 +211,10 @@ export const calculateCategoryPhysicalBreakdown = (
 
   return Object.entries(categoryMap).map(([categoryName, data]) => {
     const totalPhysical = data.newStock + data.usedStock;
+    // Units issued per unit of physical stock currently held
     const rotationRatio = totalPhysical > 0
-      ? Math.round(((data.outboundQty * 4) / totalPhysical) * 10) / 10
-      : 1.4;
+      ? Math.round((data.outboundQty / totalPhysical) * 10) / 10
+      : 0;
 
     return {
       categoryName,
@@ -222,7 +222,7 @@ export const calculateCategoryPhysicalBreakdown = (
       totalNewStock: data.newStock,
       totalUsedStock: data.usedStock,
       totalPhysicalStock: totalPhysical,
-      rotationRatio: Math.max(rotationRatio, 0.8)
+      rotationRatio
     };
   });
 };
@@ -283,10 +283,10 @@ export const getReorderPriorityListPhysical = (
   return spareparts
     .map((p) => {
       const safetyStok = Math.ceil(p.minimum_stok * 1.5);
-      const isCritical = p.stok_aktual <= p.minimum_stok;
+      const isCritical = isLowStock(p.stok_aktual, p.minimum_stok);
       const isWarning = !isCritical && p.stok_aktual <= safetyStok;
 
-      const suggestedQty = Math.max(p.minimum_stok * 2 - p.stok_aktual, 1);
+      const suggestedQty = Math.max(p.minimum_stok * 2 - p.stok_aktual, 0);
       const leadTime = 30;
 
       let urgency: 'CRITICAL' | 'WARNING' | 'HEALTHY' = 'HEALTHY';
@@ -306,7 +306,7 @@ export const getReorderPriorityListPhysical = (
         supplierType: 'VENDOR' as SupplierType,
         estimatedLeadTimeDays: leadTime,
         urgency,
-        locationRack: p.rack || p.location_rack || p.location || 'RAK-A1'
+        locationRack: p.rack || p.lokasi || '-'
       };
     })
     .sort((a, b) => {

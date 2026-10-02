@@ -17,7 +17,9 @@ import {
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { useInventory } from '../context/InventoryContext';
-import { MutationType, StockMutation } from '../types';
+import { MutationType, InputMutationType, StockMutation, SupplierType } from '../types';
+
+const EDITABLE_TYPES: string[] = ['Masuk', 'Pakai', 'Bekas', 'Rusak'];
 
 export const HistoryPage: React.FC = () => {
   const {
@@ -38,8 +40,8 @@ export const HistoryPage: React.FC = () => {
 
   // Edit Modal State
   const [editingMutation, setEditingMutation] = useState<StockMutation | null>(null);
-  const [editType, setEditType] = useState<MutationType>('Masuk');
-  const [editSumber, setEditSumber] = useState<any>('VENDOR');
+  const [editType, setEditType] = useState<InputMutationType>('Masuk');
+  const [editSumber, setEditSumber] = useState<SupplierType>('VENDOR');
   const [editQty, setEditQty] = useState<number>(1);
   const [editPersonelId, setEditPersonelId] = useState<string>('');
   const [editNotes, setEditNotes] = useState<string>('');
@@ -67,17 +69,21 @@ export const HistoryPage: React.FC = () => {
         const titik = titikLokasiList.find((t) => t.id === pen.id_titik);
         locationStr = lok ? (titik ? `${lok.nama} (Titik ${titik.nomor})` : lok.nama) : '-';
       }
-    } else if (sp?.location || sp?.lokasi) {
-      locationStr = sp.location || sp.lokasi || '-';
+    } else if (m.location) {
+      locationStr = m.location;
+    } else if (sp?.lokasi) {
+      locationStr = sp.lokasi;
     }
 
     const personelName = persObj ? persObj.nama : m.operator_name || 'Teknisi';
+    const penerimaStr = [m.penerima, m.unit_penerima].filter(Boolean).join(' / ');
 
     return {
       ...m,
       tipeName,
       locationStr,
-      personelName
+      personelName,
+      penerimaStr
     };
   });
 
@@ -88,7 +94,8 @@ export const HistoryPage: React.FC = () => {
       (m.personelName.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
       (m.tipeName.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
       (m.locationStr.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
-      (m.sumber?.toLowerCase() || '').includes(searchTerm.toLowerCase());
+      (m.sumber?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+      m.penerimaStr.toLowerCase().includes(searchTerm.toLowerCase());
 
     const matchesType = !selectedType || m.mutation_type === selectedType;
 
@@ -101,11 +108,12 @@ export const HistoryPage: React.FC = () => {
       SKU: m.sparepart_sku || '-',
       'Nama Sparepart': m.sparepart_name || '-',
       'Tipe Peralatan': m.tipeName,
-      'Tipe Mutasi': m.mutation_type === 'Masuk' ? 'MASUK' : m.mutation_type === 'Pakai' ? 'PAKAI' : m.mutation_type === 'Bekas' ? 'BEKAS' : 'RUSAK',
+      'Tipe Mutasi': m.mutation_type.toUpperCase(),
       'Sumber Barang': m.sumber || '-',
       Jumlah: m.qty,
       Personel: m.personelName,
       'Lokasi & Titik': m.locationStr,
+      Penerima: m.penerimaStr || '-',
       Catatan: m.notes || '-'
     }));
 
@@ -118,7 +126,8 @@ export const HistoryPage: React.FC = () => {
 
   const handleOpenEdit = (m: StockMutation) => {
     setEditingMutation(m);
-    setEditType(m.mutation_type);
+    if (!EDITABLE_TYPES.includes(m.mutation_type)) return;
+    setEditType(m.mutation_type as InputMutationType);
     setEditSumber(m.sumber || 'VENDOR');
     setEditQty(m.qty);
     setEditPersonelId(m.personel_id || '');
@@ -129,14 +138,15 @@ export const HistoryPage: React.FC = () => {
     if (!editingMutation) return;
     setIsSubmitting(true);
     try {
-      await updateMutation(editingMutation.id, {
+      const success = await updateMutation(editingMutation.id, {
         mutation_type: editType,
-        sumber: editSumber,
+        sumber: editType === 'Masuk' ? editSumber : null,
         qty: editQty,
         personel_id: editPersonelId || null,
         notes: editNotes || null
       });
-      setEditingMutation(null);
+      // Keep the modal open when the change was rejected so the user can correct it
+      if (success) setEditingMutation(null);
     } finally {
       setIsSubmitting(false);
     }
@@ -146,14 +156,14 @@ export const HistoryPage: React.FC = () => {
     if (!deletingId) return;
     setIsSubmitting(true);
     try {
-      await deleteMutation(deletingId);
-      setDeletingId(null);
+      const success = await deleteMutation(deletingId);
+      if (success) setDeletingId(null);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const getMutationBadge = (type: MutationType) => {
+  const getMutationBadge = (type: MutationType | string) => {
     switch (type) {
       case 'Masuk':
         return (
@@ -181,6 +191,12 @@ export const HistoryPage: React.FC = () => {
           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30">
             <Trash2 className="w-3.5 h-3.5" />
             RUSAK
+          </span>
+        );
+      default:
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-slate-500/10 text-slate-300 border border-slate-500/30 uppercase">
+            {type}
           </span>
         );
     }
@@ -294,6 +310,9 @@ export const HistoryPage: React.FC = () => {
                     </td>
                     <td className="py-3.5 px-4 text-slate-200 font-medium">
                       {m.personelName}
+                      {m.penerimaStr && (
+                        <div className="text-[10px] text-slate-400">Penerima: {m.penerimaStr}</div>
+                      )}
                     </td>
                     <td className="py-3.5 px-4 text-cyan-300 font-medium whitespace-nowrap">
                       {m.locationStr}
@@ -305,8 +324,9 @@ export const HistoryPage: React.FC = () => {
                       <div className="flex items-center justify-center gap-1.5">
                         <button
                           onClick={() => handleOpenEdit(m)}
-                          title="Edit Transaksi"
-                          className="p-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 transition-all cursor-pointer"
+                          disabled={!EDITABLE_TYPES.includes(m.mutation_type)}
+                          title={EDITABLE_TYPES.includes(m.mutation_type) ? 'Edit Transaksi' : 'Tipe transaksi ini tidak dapat diedit dari aplikasi ini'}
+                          className="p-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
                         >
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
@@ -351,7 +371,7 @@ export const HistoryPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-300 mb-1">Tipe Mutasi</label>
                 <select
                   value={editType}
-                  onChange={(e) => setEditType(e.target.value as MutationType)}
+                  onChange={(e) => setEditType(e.target.value as InputMutationType)}
                   className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white"
                 >
                   <option value="Masuk">Masuk (Penerimaan Stok Baru)</option>
@@ -366,7 +386,7 @@ export const HistoryPage: React.FC = () => {
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Sumber Asal Barang</label>
                   <select
                     value={editSumber}
-                    onChange={(e) => setEditSumber(e.target.value)}
+                    onChange={(e) => setEditSumber(e.target.value as SupplierType)}
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white"
                   >
                     <option value="SUP API">SUP API</option>

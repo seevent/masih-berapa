@@ -61,7 +61,7 @@ export const HeaderStats: React.FC<HeaderStatsProps> = ({ setMobileOpen }) => {
           title={
             isSupabaseConnected
               ? 'Terhubung 100% ke Supabase PostgreSQL Database'
-              : 'Supabase Belum Terhubung! Klik untuk mengkonfigurasi URL & Anon Key di Pengaturan'
+              : 'Supabase belum terhubung. Periksa VITE_SUPABASE_URL & VITE_SUPABASE_ANON_KEY di file .env'
           }
         >
           <Database className="w-3.5 h-3.5" />

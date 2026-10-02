@@ -4,15 +4,16 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "node node_modules/vite/bin/vite.js",
-    "build": "node node_modules/vite/bin/vite.js build",
-    "preview": "node node_modules/vite/bin/vite.js preview"
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.49.1",
     "clsx": "^2.1.1",
     "core-js": "^3.49.0",
-    "html2canvas": "^1.4.1",
+    "html2canvas-pro": "^1.6.7",
     "html5-qrcode": "^2.3.8",
     "jspdf": "^3.0.0",
     "lucide-react": "^0.475.0",

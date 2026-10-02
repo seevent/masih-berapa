@@ -13,6 +13,8 @@ export interface ActiveDutyPersonelResult {
   shiftInfo: ShiftInfo;
 }
 
+const ABSENT_STATUSES = ['izin', 'sakit', 'cuti', 'alpa', 'alpha', 'off', 'libur', 'tidak hadir'];
+
 /**
  * Formats Date to local YYYY-MM-DD
  */
@@ -93,7 +95,11 @@ export const getActiveDutyPersonel = (
         matchesShift = shiftStr === 'm' || shiftStr.includes('malam');
       }
 
-      return matchesDate && matchesShift;
+      // Scheduled but absent (izin/sakit/cuti/...) is not on duty
+      const status = (s.status_kehadiran || '').trim().toLowerCase();
+      const isPresent = !ABSENT_STATUSES.some((absent) => status.startsWith(absent));
+
+      return matchesDate && matchesShift && isPresent;
     });
 
     return {

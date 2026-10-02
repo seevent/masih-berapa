@@ -14,6 +14,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, AreaChart, Area } from 'recharts';
+import { getTotalStockDelta, isLowStock } from '../utils/stock';
 
 export const DashboardPage: React.FC = () => {
   const { spareparts, mutations, personelList } = useInventory();
@@ -45,42 +46,33 @@ export const DashboardPage: React.FC = () => {
     return 100 - newStockPct;
   }, [newStockPct, totalPartsInStock]);
 
-  // Historical Monthly Stock Trend Data for Interactive Recharts Sparkline
+  // Total physical stock at the end of each of the last 6 months, reconstructed backwards
+  // from the current stock by undoing every mutation recorded after that month ended.
   const stockTrendData = useMemo(() => {
-    const monthsMap: Record<string, number> = {};
     const now = new Date();
-    
+    const points: { month: string; stock: number }[] = [];
+
     for (let i = 5; i >= 0; i--) {
-      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-      const key = d.toLocaleDateString('id-ID', { month: 'short' });
-      monthsMap[key] = Math.max(10, Math.round(totalPartsInStock * (0.8 + i * 0.04)));
-    }
+      const monthStart = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const monthEnd = new Date(now.getFullYear(), now.getMonth() - i + 1, 1).getTime();
+      const label = monthStart.toLocaleDateString('id-ID', { month: 'short', year: '2-digit' });
 
-    if (mutations.length > 0) {
-      let runningTotal = Math.max(10, Math.round(totalPartsInStock * 0.7));
-      mutations.forEach((m) => {
-        const date = new Date(m.created_at || Date.now());
-        const key = date.toLocaleDateString('id-ID', { month: 'short' });
-        if (key in monthsMap) {
-          if (m.mutation_type === 'Masuk' || m.mutation_type === 'Bekas') {
-            runningTotal += m.qty || 1;
-          } else if (m.mutation_type === 'Pakai' || m.mutation_type === 'Rusak') {
-            runningTotal = Math.max(0, runningTotal - (m.qty || 1));
-          }
-          monthsMap[key] = runningTotal;
-        }
-      });
-    }
+      const changeAfterMonthEnd = mutations.reduce((sum, m) => {
+        const t = new Date(m.created_at).getTime();
+        return t >= monthEnd ? sum + getTotalStockDelta(m.mutation_type, m.qty) : sum;
+      }, 0);
 
-    return Object.entries(monthsMap).map(([month, stock]) => ({ month, stock }));
+      points.push({ month: label, stock: Math.max(0, totalPartsInStock - changeAfterMonthEnd) });
+    }
+    return points;
   }, [mutations, totalPartsInStock]);
 
-  // Stock Growth Percentage Calculation (vs previous month baseline)
-  const stockGrowthPct = useMemo(() => {
-    if (stockTrendData.length < 2) return '+3.2%';
+  // Stock growth vs. the end of the previous month (null when there is no baseline)
+  const stockGrowthPct = useMemo((): string | null => {
+    if (stockTrendData.length < 2) return null;
     const current = stockTrendData[stockTrendData.length - 1].stock;
     const previous = stockTrendData[stockTrendData.length - 2].stock;
-    if (previous === 0) return '+0.0%';
+    if (previous === 0) return null;
     const diff = ((current - previous) / previous) * 100;
     const formatted = Math.abs(Math.round(diff * 10) / 10).toFixed(1);
     return diff >= 0 ? `+${formatted}%` : `-${formatted}%`;
@@ -88,7 +80,7 @@ export const DashboardPage: React.FC = () => {
 
   // 2. Low Stock & Critical Alerts calculation (Live Supabase DB)
   const criticalSpareparts = useMemo(
-    () => spareparts.filter((p) => (p.stok_aktual || 0) <= (p.minimum_stok || 1)),
+    () => spareparts.filter((p) => isLowStock(p.stok_aktual, p.minimum_stok)),
     [spareparts]
   );
 
@@ -102,10 +94,9 @@ export const DashboardPage: React.FC = () => {
 
     spareparts.forEach((p) => {
       const total = (p.stok_aktual || 0) + (p.stok_bekas || 0);
-      const min = p.minimum_stok || 1;
       if (total === 0) {
         outOfStock++;
-      } else if (p.stok_aktual <= min) {
+      } else if (isLowStock(p.stok_aktual, p.minimum_stok)) {
         critical++;
       } else {
         healthy++;
@@ -121,42 +112,37 @@ export const DashboardPage: React.FC = () => {
     ];
   }, [spareparts]);
 
-  // 4. Top Moving Parts List (Live Supabase DB computed from mutation volume)
+  // 4. Top Moving Parts List (total qty moved per sparepart, from real mutations only)
   const topMovingParts = useMemo(() => {
     const movedMap = new Map<string, number>();
 
     mutations.forEach((m) => {
-      const key = m.sparepart_id || m.sparepart_name || '';
-      if (key) {
-        movedMap.set(key, (movedMap.get(key) || 0) + (m.qty || 1));
+      if (m.sparepart_id) {
+        movedMap.set(m.sparepart_id, (movedMap.get(m.sparepart_id) || 0) + (m.qty || 0));
       }
     });
 
-    const list = spareparts.map((p) => {
-      const volume = movedMap.get(p.id) || movedMap.get(p.name) || (p.stok_aktual % 15) + 5;
-      const totalStock = (p.stok_aktual || 0) + (p.stok_bekas || 0);
-      const minStock = p.minimum_stok || 1;
-      const stockRatio = Math.min(100, Math.max(15, Math.round((p.stok_aktual / Math.max(1, minStock * 2)) * 100)));
+    return spareparts
+      .map((p) => {
+        const minStock = p.minimum_stok || 0;
+        const stockRatio = Math.min(100, Math.round((p.stok_aktual / Math.max(1, minStock * 2)) * 100));
 
-      return {
-        id: p.id,
-        sku: p.sku || 'SKU-UNSET',
-        name: p.name,
-        quant: volume,
-        stok_aktual: p.stok_aktual,
-        stok_bekas: p.stok_bekas,
-        totalStock,
-        minStock,
-        location: p.location || '-',
-        rack: p.rack || p.location_rack || '-',
-        supplier: p.supplier_type || '-',
-        stockRatio,
-        color: p.stok_aktual <= minStock ? 'bg-amber-400' : 'bg-emerald-500'
-      };
-    });
-
-    list.sort((a, b) => b.quant - a.quant);
-    return list.slice(0, 5);
+        return {
+          id: p.id,
+          sku: p.sku || 'SKU-UNSET',
+          name: p.name,
+          quant: movedMap.get(p.id) || 0,
+          stok_aktual: p.stok_aktual,
+          stok_bekas: p.stok_bekas,
+          location: p.lokasi || '-',
+          rack: p.rack || '-',
+          stockRatio,
+          color: isLowStock(p.stok_aktual, minStock) ? 'bg-amber-400' : 'bg-emerald-500'
+        };
+      })
+      .filter((item) => item.quant > 0)
+      .sort((a, b) => b.quant - a.quant)
+      .slice(0, 5);
   }, [spareparts, mutations]);
 
   // 5. Recent Transactions Timeline List (Live Supabase DB)
@@ -197,6 +183,11 @@ export const DashboardPage: React.FC = () => {
         iconType = 'received';
         statusColor = 'bg-emerald-400';
         qtySign = `+${m.qty}`;
+      } else {
+        typeLabel = m.mutation_type;
+        iconType = 'handover';
+        statusColor = 'bg-slate-400';
+        qtySign = `${m.qty}`;
       }
 
       return {
@@ -274,9 +265,13 @@ export const DashboardPage: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-1.5 text-xs font-semibold mt-1">
-                  <span className={`inline-flex items-center ${stockGrowthPct.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'}`}>
-                    {stockGrowthPct.startsWith('+') ? '▲' : '▼'} {stockGrowthPct}
-                  </span>
+                  {stockGrowthPct ? (
+                    <span className={`inline-flex items-center ${stockGrowthPct.startsWith('+') ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      {stockGrowthPct.startsWith('+') ? '▲' : '▼'} {stockGrowthPct}
+                    </span>
+                  ) : (
+                    <span className="text-slate-500">— vs bulan lalu</span>
+                  )}
                   <span className="text-[10px] text-slate-500">({spareparts.length} Active SKU)</span>
                 </div>
               </div>
@@ -468,6 +463,13 @@ export const DashboardPage: React.FC = () => {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-800/40">
+                      {topMovingParts.length === 0 && (
+                        <tr>
+                          <td colSpan={4} className="py-6 text-center text-slate-500">
+                            Belum ada pergerakan stok tercatat.
+                          </td>
+                        </tr>
+                      )}
                       {topMovingParts.map((item) => (
                         <tr
                           key={item.id || item.sku}
@@ -515,6 +517,10 @@ export const DashboardPage: React.FC = () => {
               <span>Status</span>
             </div>
 
+            {recentTransactions.length === 0 && (
+              <p className="text-xs text-slate-500 text-center py-6">Belum ada transaksi mutasi.</p>
+            )}
+
             {/* Vertical Timeline List */}
             <div className="relative space-y-6 before:absolute before:left-[4.5rem] before:top-3 before:bottom-3 before:w-0.5 before:bg-slate-800">
               {recentTransactions.map((tx) => (
@@ -541,8 +547,8 @@ export const DashboardPage: React.FC = () => {
                         <ArrowUpRight className="w-3.5 h-3.5" />
                       </div>
                     )}
-                    {tx.iconType === 'ordered' && (
-                      <div className="p-1 rounded-md bg-amber-500/20 text-amber-400">
+                    {tx.iconType === 'handover' && (
+                      <div className="p-1 rounded-md bg-slate-500/20 text-slate-300">
                         <ShoppingCart className="w-3.5 h-3.5" />
                       </div>
                     )}
