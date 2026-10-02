@@ -539,7 +539,7 @@ export const ScannerPage: React.FC = () => {
                 >
                   {personelOptions.map((p) => (
                     <option key={p.id} value={p.id}>
-                      {p.formattedName} {!isFallback && p.isDutyActive ? ' ✨ (Dinas Aktif)' : ''}
+                      {p.formattedName}
                     </option>
                   ))}
                 </select>
