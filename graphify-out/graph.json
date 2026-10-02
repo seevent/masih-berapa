@@ -3800,8 +3800,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L41",
       "_origin": "ast",
-      "community": 247,
-      "community_name": "1",
+      "community": 50,
+      "community_name": "spacing",
       "norm_label": "1",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_1"
     },
@@ -3811,8 +3811,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L41",
       "_origin": "ast",
-      "community": 247,
-      "community_name": "1",
+      "community": 50,
+      "community_name": "spacing",
       "norm_label": "$value",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_1_value"
     },
@@ -3822,8 +3822,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L41",
       "_origin": "ast",
-      "community": 247,
-      "community_name": "1",
+      "community": 50,
+      "community_name": "spacing",
       "norm_label": "$type",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_1_type"
     },
@@ -3866,8 +3866,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L43",
       "_origin": "ast",
-      "community": 50,
-      "community_name": "spacing",
+      "community": 250,
+      "community_name": "3",
       "norm_label": "3",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_3"
     },
@@ -3877,8 +3877,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L43",
       "_origin": "ast",
-      "community": 50,
-      "community_name": "spacing",
+      "community": 250,
+      "community_name": "3",
       "norm_label": "$value",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_3_value"
     },
@@ -3888,8 +3888,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L43",
       "_origin": "ast",
-      "community": 50,
-      "community_name": "spacing",
+      "community": 250,
+      "community_name": "3",
       "norm_label": "$type",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_3_type"
     },
@@ -3965,8 +3965,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L46",
       "_origin": "ast",
-      "community": 250,
-      "community_name": "6",
+      "community": 50,
+      "community_name": "spacing",
       "norm_label": "6",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_6"
     },
@@ -3976,8 +3976,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L46",
       "_origin": "ast",
-      "community": 250,
-      "community_name": "6",
+      "community": 50,
+      "community_name": "spacing",
       "norm_label": "$value",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_6_value"
     },
@@ -3987,8 +3987,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L46",
       "_origin": "ast",
-      "community": 250,
-      "community_name": "6",
+      "community": 50,
+      "community_name": "spacing",
       "norm_label": "$type",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_6_type"
     },
@@ -4031,8 +4031,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L48",
       "_origin": "ast",
-      "community": 50,
-      "community_name": "spacing",
+      "community": 247,
+      "community_name": "10",
       "norm_label": "10",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_10"
     },
@@ -4042,8 +4042,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L48",
       "_origin": "ast",
-      "community": 50,
-      "community_name": "spacing",
+      "community": 247,
+      "community_name": "10",
       "norm_label": "$value",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_10_value"
     },
@@ -4053,8 +4053,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L48",
       "_origin": "ast",
-      "community": 50,
-      "community_name": "spacing",
+      "community": 247,
+      "community_name": "10",
       "norm_label": "$type",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_10_type"
     },
@@ -10454,8 +10454,8 @@
       "source_file": "package.json",
       "source_location": "L15",
       "_origin": "ast",
-      "community": 0,
-      "community_name": "dependencies",
+      "community": 254,
+      "community_name": "clsx",
       "norm_label": "clsx",
       "id": "package_dependencies_clsx"
     },
@@ -10465,8 +10465,8 @@
       "source_file": "package.json",
       "source_location": "L15",
       "_origin": "ast",
-      "community": 0,
-      "community_name": "dependencies",
+      "community": 254,
+      "community_name": "clsx",
       "norm_label": "clsx",
       "id": "clsx"
     },
@@ -10476,8 +10476,8 @@
       "source_file": "package.json",
       "source_location": "L16",
       "_origin": "ast",
-      "community": 254,
-      "community_name": "core-js",
+      "community": 0,
+      "community_name": "dependencies",
       "norm_label": "core-js",
       "id": "package_dependencies_core_js"
     },
@@ -10487,8 +10487,8 @@
       "source_file": "package.json",
       "source_location": "L16",
       "_origin": "ast",
-      "community": 254,
-      "community_name": "core-js",
+      "community": 0,
+      "community_name": "dependencies",
       "norm_label": "core-js",
       "id": "core_js"
     },
@@ -72448,5 +72448,5 @@
     }
   ],
   "hyperedges": [],
-  "built_at_commit": "6a84b6372f8f0aa6393218b109c51c16a89bb809"
+  "built_at_commit": "7cbbe3e9a1b64ad2921fa23e161b80ad252aef23"
 }

@@ -9,7 +9,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6a84b637`
+- Built from commit: `7cbbe3e9`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -255,14 +255,14 @@
 - 8
 - tailwind-merge
 - motion
-- 1
+- 10
 - destructive
 - primary
-- 6
+- 3
 - secondary
 - muted-foreground
 - secondary-foreground
-- core-js
+- clsx
 - tailwindcss
 
 ## God Nodes (most connected - your core abstractions)
@@ -296,7 +296,7 @@
 
 ### Community 0 - "dependencies"
 Cohesion: 0.11
-Nodes (19): clsx, html2canvas-pro, html5-qrcode, lucide-react, dependencies, clsx, html2canvas-pro, html5-qrcode (+11 more)
+Nodes (19): core-js, html2canvas-pro, html5-qrcode, lucide-react, dependencies, core-js, html2canvas-pro, html5-qrcode (+11 more)
 
 ### Community 1 - "sparepartAnalytics.ts"
 Cohesion: 0.13
@@ -1006,9 +1006,9 @@ Nodes (3): foreground, $type, $value
 Cohesion: 0.67
 Nodes (3): $type, $value, 8
 
-### Community 247 - "1"
+### Community 247 - "10"
 Cohesion: 0.67
-Nodes (3): $type, $value, 1
+Nodes (3): $type, $value, 10
 
 ### Community 248 - "destructive"
 Cohesion: 0.67
@@ -1018,9 +1018,9 @@ Nodes (3): destructive, $type, $value
 Cohesion: 0.67
 Nodes (3): primary, $type, $value
 
-### Community 250 - "6"
+### Community 250 - "3"
 Cohesion: 0.67
-Nodes (3): $type, $value, 6
+Nodes (3): $type, $value, 3
 
 ### Community 251 - "secondary"
 Cohesion: 0.67
@@ -1044,7 +1044,7 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `primitive` connect `primitive` to `shadow`, `gray`, `fontSize`, `spacing`, `radius`?**
   _High betweenness centrality (0.009) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `dependencies` to `useInventory`, `@supabase/supabase-js`, `tailwind-merge`, `motion`, `package.json`, `core-js`, `jspdf`?**
+- **Why does `dependencies` connect `dependencies` to `useInventory`, `@supabase/supabase-js`, `tailwind-merge`, `motion`, `package.json`, `clsx`, `jspdf`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Why does `color` connect `gray` to `primitive`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._

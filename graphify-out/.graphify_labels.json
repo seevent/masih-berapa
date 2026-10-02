@@ -246,13 +246,13 @@
   "244": "2026-10-02_kompatibilitas_dari_tipe_utama.sql",
   "245": "2026-10-02_current_stock_security_invoker.sql",
   "246": "motion",
-  "247": "1",
+  "247": "10",
   "248": "destructive",
   "249": "primary",
-  "250": "6",
+  "250": "3",
   "251": "secondary",
   "252": "muted-foreground",
   "253": "secondary-foreground",
-  "254": "core-js",
+  "254": "clsx",
   "255": "tailwindcss"
 }

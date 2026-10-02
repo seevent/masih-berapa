@@ -414,7 +414,7 @@ export const CatalogPage: React.FC = () => {
                 <tr>
                   <th className="py-3.5 px-4">SKU</th>
                   <th className="py-3.5 px-4">Nama Sparepart & Deskripsi</th>
-                  <th className="py-3.5 px-4">Jenis & Tipe Peralatan</th>
+                  <th className="py-3.5 px-4">Jenis & Tipe Peralatan (Kompatibel)</th>
                   <th className="py-3.5 px-4">Gudang & Rak</th>
                   <th className="py-3.5 px-4 text-center">Stok Baru (Min)</th>
                   <th className="py-3.5 px-4 text-center">Stok Bekas</th>
@@ -445,7 +445,18 @@ export const CatalogPage: React.FC = () => {
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap">
                           <div className="text-cyan-300 font-semibold">{sp.jenis_name}</div>
-                          <div className="text-slate-300 text-xs max-w-xs whitespace-normal">{sp.equipment_type_name}</div>
+                          {/* Jenis & tipe diturunkan dari daftar tipe peralatan kompatibel */}
+                          <div className="flex flex-wrap gap-1 mt-1 max-w-xs whitespace-normal">
+                            {sp.tipe_ids.length === 0 ? (
+                              <span className="text-[10px] text-slate-500">Belum ada tipe kompatibel</span>
+                            ) : (
+                              sp.tipe_ids.map((id) => (
+                                <span key={id} className="text-[10px] bg-slate-800 text-slate-300 px-2 py-0.5 rounded border border-slate-700">
+                                  {tipePeralatan.find((t) => t.id === id)?.nama || id}
+                                </span>
+                              ))
+                            )}
+                          </div>
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap">
                           <div className="text-slate-200 font-medium">{sp.lokasi || '-'}</div>

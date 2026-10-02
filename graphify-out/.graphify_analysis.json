@@ -1,12 +1,12 @@
 {
   "communities": {
     "0": [
-      "clsx",
+      "core_js",
       "html2canvas_pro",
       "html5_qrcode",
       "lucide_react",
       "package_dependencies",
-      "package_dependencies_clsx",
+      "package_dependencies_core_js",
       "package_dependencies_html2canvas_pro",
       "package_dependencies_html5_qrcode",
       "package_dependencies_lucide_react",
@@ -1338,26 +1338,26 @@
     "50": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_0_type",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_0_value",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_10_type",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_10_value",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_12_type",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_12_value",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_16_type",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_16_value",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_3_type",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_3_value",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_1_type",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_1_value",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_4_type",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_4_value",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_5_type",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_5_value",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_6_type",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_6_value",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_primitive_spacing",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_0",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_10",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_1",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_12",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_16",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_3",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_4",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_5"
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_5",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_6"
     ],
     "51": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_using_git_worktrees_skill_1a_native_worktree_tools_preferred",
@@ -3425,9 +3425,9 @@
       "package_dependencies_motion"
     ],
     "247": [
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_1_type",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_1_value",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_1"
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_10_type",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_10_value",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_10"
     ],
     "248": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_color_destructive",
@@ -3440,9 +3440,9 @@
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_primary_value"
     ],
     "250": [
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_6_type",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_6_value",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_6"
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_3_type",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_3_value",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_spacing_3"
     ],
     "251": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_color_secondary",
@@ -3460,8 +3460,8 @@
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_secondary_foreground_value"
     ],
     "254": [
-      "core_js",
-      "package_dependencies_core_js"
+      "clsx",
+      "package_dependencies_clsx"
     ],
     "255": [
       "package_devdependencies_tailwindcss",
@@ -3843,7 +3843,7 @@
     },
     {
       "type": "bridge_node",
-      "question": "Why does `dependencies` connect `dependencies` to `useInventory`, `@supabase/supabase-js`, `tailwind-merge`, `motion`, `package.json`, `core-js`, `jspdf`?",
+      "question": "Why does `dependencies` connect `dependencies` to `useInventory`, `@supabase/supabase-js`, `tailwind-merge`, `motion`, `package.json`, `clsx`, `jspdf`?",
       "why": "High betweenness centrality (0.004) - this node is a cross-community bridge."
     },
     {
