@@ -27,7 +27,7 @@ Versi dokumen 1.0 · 2 Oktober 2026 · Status produk: v1.0.0 (produksi di Vercel
 
 ## 1. Ringkasan
 
-**Masih Berapa** menjawab pertanyaan yang sering muncul di gudang sparepart: *"barang ini masih berapa?"*. Aplikasi web ini mencatat setiap pergerakan sparepart (masuk, dipakai, dikembalikan bekas, rusak, serah terima), menghitung stok baru, bekas, dan rusak secara otomatis dari riwayat itu, dan memberi peringatan sebelum stok atau umur pakai suatu komponen habis. Barang diidentifikasi dengan **label QR** yang dipindai dari kamera HP.
+**Masih Berapa** menjawab pertanyaan yang sering muncul di gudang sparepart: *"barang ini masih berapa?"*. Aplikasi web ini mencatat setiap pergerakan sparepart (masuk baru/bekas/rusak, dipakai dari stok baru atau bekas, serah terima), menghitung stok baru, bekas, dan rusak secara otomatis dari riwayat itu, dan memberi peringatan sebelum stok atau umur pakai suatu komponen habis. Barang diidentifikasi dengan **label QR** yang dipindai dari kamera HP.
 
 Aplikasi dipakai oleh unit **SSES T2** untuk suku cadang peralatan di Terminal 2 **[Asumsi: lingkungan bandara; database memakai pemilik bawaan "Injourney / AP2"]**. Aplikasi berbagi database dengan aplikasi SSES T2 lain (jadwal PM, laporan operasional, checklist).
 
@@ -73,7 +73,7 @@ Konteks pemakaian: bekerja dua shift (PS 08.00–20.00 dan M 20.00–08.00), seb
 
 ## 5. Ruang lingkup
 
-**Dalam lingkup (sudah ada):** katalog sparepart; pencatatan lima tipe transaksi; riwayat, edit, hapus, dan ekspor; scan QR; cetak label; dashboard; peringatan prediktif (MTBF otomatis); perencanaan kebutuhan; laporan rotasi.
+**Dalam lingkup (sudah ada):** katalog sparepart; pencatatan tiga tipe transaksi (banyak sparepart per transaksi); riwayat, edit, hapus, dan ekspor; scan QR; cetak label; dashboard; peringatan prediktif (MTBF otomatis); perencanaan kebutuhan; laporan rotasi.
 
 **Di luar lingkup v1:** harga/anggaran, proses pengadaan, banyak gudang, offline, notifikasi push, **pengelolaan data master dari aplikasi ini** (menu Pengaturan dihapus pada 2 Oktober 2026; data master hanya dibaca), login/peran (direncanakan, lihat [bagian 12](#12-status-dan-roadmap)).
 
@@ -83,25 +83,27 @@ Status: ✅ selesai · ⚠ sebagian · ❌ belum.
 
 ### F-01 Katalog sparepart — ✅
 Pengguna mengelola master sparepart.
-- Daftar dalam tampilan grid atau tabel; pencarian (SKU, nama, deskripsi); filter jenis dan tipe peralatan.
-- Tambah/ubah: SKU otomatis berurutan (`SP-001`, `SP-002`, …) dan tidak bisa diedit; nama, deskripsi, satuan, stok minimum, gudang, rak; pilih **satu atau lebih tipe peralatan kompatibel** (yang pertama = tipe utama).
+- Daftar dalam tampilan **list (bawaan)** atau grid; pencarian (SKU, nama, deskripsi); filter jenis dan tipe peralatan.
+- Tambah/ubah: SKU otomatis berurutan (`SP-001`, `SP-002`, …) dan tidak bisa diedit; nama, deskripsi, satuan (bawaan `UNIT`), gudang, rak; **stok minimum tidak diisi**: dihitung otomatis dari pemakaian ([7.4](#74-peringatan-prediktif-mtbf-otomatis), BR-15); pilih **satu atau lebih tipe peralatan kompatibel**. Tidak ada lagi "tipe utama" (dihapus 2 Okt 2026): daftar kompatibel adalah satu-satunya hubungan sparepart ↔ tipe. Jenis dan tipe yang tampil di katalog, filter, label, dan laporan diturunkan dari daftar itu; pilihan jenis di form hanya mempersempit daftar tipe.
 - Stok awal (baru/bekas) saat mendaftarkan sparepart dicatat otomatis sebagai transaksi. **Stok tidak dapat diedit langsung** setelah itu.
 - Hapus sparepart meminta konfirmasi dan menyebut jumlah riwayat mutasi yang ikut terhapus.
 - MTBF **tidak diisi manual**: kartu dan form menampilkan MTBF hasil hitung ([7.4](#74-peringatan-prediktif-mtbf-otomatis)) beserta jumlah penggantian dan tingkat keyakinannya, atau "Belum cukup data".
-- **Kriteria:** mendaftarkan sparepart dengan stok awal 3 baru dan 2 bekas menghasilkan dua transaksi (`Masuk` 3, `Bekas` 2) dan katalog menampilkan 3 / 2.
+- **Kriteria:** mendaftarkan sparepart dengan stok awal 3 baru dan 2 bekas menghasilkan dua transaksi (`Masuk` baru 3, `Masuk` bekas 2) dan katalog menampilkan 3 / 2.
 
 ### F-02 Pencatatan transaksi — ✅
-Lima tipe transaksi; detail aturan di [bagian 7](#7-aturan-bisnis).
+Tiga tipe transaksi (keputusan pemilik 2 Okt 2026; tipe **Bekas** dan **Rusak** dihapus dari form). Satu transaksi ("nota") berisi **satu atau lebih baris sparepart**; tiap baris punya sparepart, jumlah, dan kondisi sendiri. Detail aturan di [bagian 7](#7-aturan-bisnis).
 
-| Tipe | Kegunaan | Isian khusus |
-|---|---|---|
-| Masuk | menerima barang baru | sumber: IASS, SUP API, SISA PEKERJAAN, MANDIRI, DARI UNIT LAIN, VENDOR |
-| Pakai | memasang barang baru ke peralatan | lokasi, titik (filter), **unit peralatan wajib**: unit kompatibel di atas, unit lain di grup terpisah |
-| Bekas | mengembalikan barang copotan layak pakai | lokasi, titik, unit (opsional) |
-| Rusak | memindahkan barang yang tidak layak pakai ke stok rusak | **asal: stok baru atau stok bekas**; lokasi/unit (opsional) |
-| Serah Terima | menyerahkan atau menerima barang ke/dari pihak lain | **arah** (serahkan/terima), **kondisi** (baru/bekas/rusak), **pihak** (wajib), unit pihak |
+| Tipe | Kegunaan | Isian sekali per transaksi | Isian per baris |
+|---|---|---|---|
+| Masuk | barang masuk gudang: baru, copotan layak pakai (bekas), atau copotan rusak | sumber (untuk baris baru): IASS, SUP API, SISA PEKERJAAN, MANDIRI, DARI UNIT LAIN, VENDOR | sparepart, jumlah, kondisi **baru / bekas / rusak**, unit asal copotan (opsional, untuk bekas/rusak) |
+| Pakai | memasang barang ke peralatan | **satu unit peralatan wajib** untuk semua baris (lokasi/titik sebagai filter; "unit kompatibel" = cocok dengan semua sparepart di nota) | sparepart, jumlah, ambil dari **baru / bekas** |
+| Serah Terima | menyerahkan atau menerima barang ke/dari pihak lain | **arah** (serahkan/terima), **pihak** (wajib), unit pihak | sparepart, jumlah, kondisi **baru / bekas / rusak** |
 
-- Setiap transaksi wajib punya petugas; pilihan petugas = personel yang berdinas pada shift saat ini (bila jadwal kosong, semua personel + peringatan).
+- Sparepart yang sama boleh muncul di beberapa baris dengan kondisi berbeda. Form memperingatkan bila total baris dengan sparepart dan kondisi yang sama melebihi stok.
+- Seluruh baris disimpan dalam **satu permintaan**: bila satu baris ditolak, tidak ada yang tersimpan. Di database tiap baris menjadi satu record `stock_mutations` dengan waktu, petugas, dan catatan yang sama (belum ada pengelompokan per nota).
+
+- Setiap transaksi wajib punya petugas; pilihan petugas = personel yang berdinas pada shift saat ini (bila jadwal kosong, semua personel + peringatan), diurutkan **API dulu, lalu IAS**, di dalam unit menurut nomor urut.
+- **Fallback tulis manual:** bila jadwal shift belum diunggah, daftar petugas menambahkan pilihan "Tulis nama manual…" dengan isian nama (wajib). Nama disimpan di awal catatan sebagai `[Petugas: Nama]` (tabel `stock_mutations` tidak punya kolom khusus; `personel_id` kosong), tampil sebagai petugas di History/Dashboard, dan tidak ditampilkan ganda di kolom catatan. Pilihan ini hanya muncul saat jadwal kosong dan bisa diedit dari History.
 - Ada kolom catatan.
 - **Kriteria:** transaksi yang membuat stok kantong mana pun minus **ditolak** dengan pesan jelas dan tidak tersimpan.
 - **Kriteria:** `Pakai` tanpa unit tidak bisa dikirim dari form dan ditolak oleh aplikasi (BR-13).
@@ -109,13 +111,13 @@ Lima tipe transaksi; detail aturan di [bagian 7](#7-aturan-bisnis).
 ### F-03 Riwayat dan audit — ✅
 - Tabel semua transaksi (waktu, tipe + aliran stok, SKU/nama, sumber, tipe peralatan, qty, petugas, lokasi, catatan).
 - Pencarian dan filter tipe; **ekspor Excel**.
-- Edit (tipe, sumber, jumlah, petugas, **unit peralatan**, catatan, dan field Rusak/Serah Terima) dan hapus dengan konfirmasi. Mengubah tipe menjadi `Pakai` wajib memilih unit.
+- Edit per baris (tipe Masuk/Pakai/Serah Terima, **kondisi**, sumber, jumlah, petugas, **unit peralatan**, catatan, field Serah Terima) dan hapus dengan konfirmasi. Mengubah tipe menjadi `Pakai` wajib memilih unit. Baris lama bertipe Bekas/Rusak tetap bisa diedit dengan tipenya.
 - **Kriteria:** edit atau hapus yang membuat stok minus **ditolak**; baris `Serah Terima` tanpa arah (ditulis aplikasi lain) ditandai dan tidak mengubah stok.
 
 ### F-04 Scanner QR — ✅
 - Pindai QR dengan kamera, atau ketik SKU / tempel URL.
 - Membuka URL dari label (`...?sku=SP-001`) otomatis menuju Scanner dengan sparepart terisi.
-- Menampilkan detail dan stok (baru, bekas, rusak), lalu form transaksi lengkap yang sama dengan F-02.
+- Mode **keranjang**: setiap scan menambah sparepart ke daftar transaksi (scan ulang sparepart yang sama = jumlah +1; kamera mengabaikan QR yang sama selama 3 detik), lalu simpan sekaligus dengan form yang sama dengan F-02 (bawaan: Pakai).
 - **Kriteria:** SKU yang tidak ada menampilkan pesan "tidak ditemukan", bukan galat.
 
 ### F-05 Cetak label — ✅ (⚠ ukuran lembar)
@@ -130,17 +132,17 @@ KPI total stok tersedia (dengan tren 6 bulan), jumlah SKU di bawah minimum, rasi
 ### F-07 Peringatan prediktif — ✅ (v2, Oktober 2026)
 Dua bagian ([7.4](#74-peringatan-prediktif-mtbf-otomatis)), spesifikasi: [specs/predictive-maintenance.md](specs/predictive-maintenance.md).
 - **Umur komponen terpasang**: satu baris per sparepart × unit yang beroperasi; terpasang sejak, umur, MTBF otomatis, rasio umur/MTBF, status NORMAL / PERHATIAN / KRITIS / LEWAT / BELUM CUKUP DATA.
-- **Kecukupan stok 30 hari @ SLA 98%** per sparepart: kebutuhan per hari, perkiraan 30 hari, titik pesan, stok baru, status PESAN dan jumlah usulan; tautan ke Input Transaksi.
+- **Kecukupan stok 30 hari @ SLA 98%** per sparepart: kebutuhan per hari, perkiraan 30 hari, titik pesan, stok tersedia (baru + bekas), status PESAN dan jumlah usulan; tautan ke Input Transaksi.
 - Header menampilkan jumlah "perlu tindakan" = posisi KRITIS + LEWAT + sparepart PESAN.
-- **Kriteria:** tanpa transaksi `Pakai`, semua MTBF dan kebutuhan berstatus "Belum cukup data" dan hanya stok minimum yang memicu PESAN.
+- **Kriteria:** tanpa transaksi `Pakai`, semua MTBF dan kebutuhan berstatus "Belum cukup data" dan stok minimum = 0, sehingga PESAN hanya bila stok tersedia habis.
 
 ### F-08 Perencanaan kebutuhan — ✅
-Estimasi kebutuhan tahunan dari pemakaian riil, stok baru, dan rekomendasi order per sparepart ([7.5](#75-kebutuhan-tahunan)); ekspor Excel; tanpa pemakaian ditampilkan "Belum cukup data" (tidak ada lagi estimasi dari MTBF manual).
+Estimasi kebutuhan tahunan dari pemakaian riil, stok tersedia (baru + bekas), dan rekomendasi order per sparepart ([7.5](#75-kebutuhan-tahunan)); ekspor Excel; tanpa pemakaian ditampilkan "Belum cukup data" (tidak ada lagi estimasi dari MTBF manual).
 
 ### F-09 Laporan rotasi — ✅
 Klasifikasi *fast / medium / slow moving* dari **pemakaian** ([7.5](#75-kebutuhan-tahunan)), total stok bekas, total stok fisik.
 - **Fast**: rata-rata ≥ 1 buah `Pakai` per bulan. **Medium**: ada pemakaian, kurang dari itu. **Slow**: tidak ada pemakaian. **Belum cukup data**: tidak ada pemakaian dan sparepart baru dikenal < 30 hari.
-- Dasar hitung: qty `Pakai` dalam jendela 12 bulan terakhir (atau sejak transaksi pertama bila lebih singkat, minimal 30 hari), sama dengan kebutuhan tahunan. Transaksi lain (Masuk, Bekas, Rusak, Serah Terima, termasuk stok awal) **tidak** dihitung.
+- Dasar hitung: qty `Pakai` dalam jendela 12 bulan terakhir (atau sejak transaksi pertama bila lebih singkat, minimal 30 hari), sama dengan kebutuhan tahunan. Transaksi lain (Masuk, Serah Terima, termasuk stok awal, dan tipe lama Bekas/Rusak) **tidak** dihitung. `Pakai` dari stok bekas **dihitung**.
 - Kartu menampilkan jumlah Fast, rincian Medium/Slow, dan berapa Slow yang masih menyimpan stok.
 - *Perubahan 2 Okt 2026:* sebelumnya dihitung dari jumlah transaksi apa pun sepanjang masa (≥ 2 = Fast), sehingga sparepart yang baru didaftarkan dengan stok baru + bekas langsung tampil Fast.
 
@@ -162,16 +164,18 @@ Tidak ada saldo tersimpan. Stok = hasil seluruh transaksi (BR-1). Tiga kantong: 
 
 | Tipe | Berkurang dari | Bertambah ke |
 |---|---|---|
-| Masuk | luar gudang | baru |
-| Pakai | baru | keluar gudang |
-| Bekas | luar gudang | bekas |
-| Rusak | baru **atau** bekas | rusak |
+| Masuk | luar gudang | baru / bekas / rusak |
+| Pakai | baru **atau** bekas | keluar gudang |
 | Serah Terima, serahkan | baru / bekas / rusak | keluar gudang |
 | Serah Terima, terima | luar gudang | baru / bekas / rusak |
+| *Bekas (tipe lama)* | luar gudang | bekas |
+| *Rusak (tipe lama)* | baru atau bekas | rusak |
+
+Tipe lama tidak lagi ada di form, tetapi baris lama (atau dari aplikasi lain) tetap dihitung. Kejadian yang dulu dicatat dengan tipe itu: copotan layak pakai → **Masuk bekas**; copotan rusak → **Masuk rusak**; barang baru dipasang lalu ternyata cacat → **Pakai baru** lalu **Masuk rusak** (dihitung sebagai penggantian pada MTBF); barang rusak dibuang/diklaim → **Serah Terima** serahkan rusak. Mengubah kondisi barang yang tetap di gudang (mis. bekas di rak ternyata rusak) tidak lagi tersedia.
 
 - **BR-2** Stok di kantong mana pun tidak boleh minus.
 - **BR-3** Jumlah transaksi bilangan bulat > 0.
-- **BR-4** `sumber` hanya berlaku untuk `Masuk`.
+- **BR-4** `sumber` hanya berlaku untuk `Masuk` kondisi baru.
 - **BR-5** `Serah Terima` wajib mencatat pihak lain.
 - **BR-6** Aturan ini harus identik di aplikasi dan di database (`current_stock`); lihat [DATABASE.md 3.3](DATABASE.md#33-dua-implementasi-yang-harus-selalu-sama).
 
@@ -185,20 +189,21 @@ Rumus lengkap dan contoh angka: [specs/predictive-maintenance.md bagian 4](specs
 - **MTBF** per sparepart = total paparan semua posisi ÷ total penggantian. Paparan posisi = (akhir − pemasangan pertama) × qty pemasangan pertama; akhir = hari ini, atau tanggal unit berubah status bila unit kini `gudang`/`rusak`. Tanpa penggantian → "Belum cukup data". Keyakinan: 1–2 penggantian rendah, 3–9 sedang, ≥ 10 tinggi.
 - **Status umur** posisi = umur (hari sejak `Pakai` terakhir di posisi itu) ÷ MTBF: NORMAL < 70%, PERHATIAN 70–90%, KRITIS 90–100%, LEWAT > 100%. Hanya unit yang tidak berstatus `gudang`/`rusak` yang ditampilkan.
 - **Kecukupan stok**: kebutuhan per hari `r` = qty `Pakai` dalam jendela ÷ jendela (hari sejak transaksi pertama sparepart, 30–365 hari); `λ = r × 30` (horizon 30 hari pengganti lead time yang belum ada datanya); titik pesan SLA = angka terkecil `s` dengan `P(Poisson(λ) ≤ s) ≥ 98%`.
-- **BR-14** Titik pesan = `max(titik pesan SLA, stok minimum + 1)`; **PESAN** bila stok baru < titik pesan, usulan = titik pesan − stok baru. Dengan "+1", aturan ini selalu memesan bila stok rendah menurut BR-10. Hanya **stok baru** yang dihitung karena `Pakai` mengambil stok baru.
+- **BR-14** Titik pesan = `max(titik pesan SLA, stok minimum + 1)`; **PESAN** bila stok tersedia (baru + bekas) < titik pesan, usulan = titik pesan − stok tersedia. Dengan "+1", aturan ini selalu memesan bila stok rendah menurut BR-10.
+- **BR-15** Stok minimum **otomatis** = titik pesan SLA − 1 (karena stok rendah = stok tersedia ≤ minimum); tanpa pemakaian = 0 (rendah hanya bila habis). Contoh: 6 `Pakai` dalam 180 hari → titik pesan 3 → minimum 2. Kolom `spareparts.minimum_stok` tidak dibaca dan tidak ditulis lagi; hasil hitung menggantikan nilainya di seluruh aplikasi (katalog, dashboard, peringatan). Yang dihitung **stok tersedia = baru + bekas**, karena `Pakai` bisa mengambil keduanya.
 
 ### 7.5 Kebutuhan tahunan
 - Kebutuhan tahunan = `ceil(r × 365)` dengan `r` seperti di 7.4. Tanpa pemakaian: "Belum cukup data" dan tidak ada rekomendasi.
-- Rekomendasi order = `kebutuhan − stok baru`, minimal 0 (stok bekas tidak dihitung, sama dengan 7.4). Total rekomendasi di kartu dijumlahkan **per satuan** (mis. `7 PCS + 2 UNIT`), tidak dicampur.
+- Rekomendasi order = `kebutuhan − stok tersedia (baru + bekas)`, minimal 0 (sama dengan 7.4). Total rekomendasi di kartu dijumlahkan **per satuan** (mis. `7 PCS + 2 UNIT`), tidak dicampur.
 - Pembulatan ke atas mengabaikan galat desimal (`29/365 × 365` tidak menjadi 30).
 - **Klasifikasi rotasi** (F-09) memakai `r` yang sama: Fast bila `qty Pakai × 30 ≥ jendela` (rata-rata ≥ 1 per bulan).
 - **BR-9** `Serah Terima` dan `Rusak` **tidak** dihitung sebagai pemakaian.
 
 ### 7.6 Lain-lain
-- **BR-10** Stok rendah = stok baru ≤ stok minimum (satu definisi di seluruh aplikasi).
+- **BR-10** Stok rendah = **stok tersedia (baru + bekas)** ≤ stok minimum (satu definisi di seluruh aplikasi); stok minimum dihitung otomatis (BR-15). Bekas ikut dihitung karena `Pakai` bisa mengambil stok bekas.
 - **BR-11** SKU otomatis berformat `SP-NNN`, berurutan dari angka terbesar yang ada.
 - **BR-12** Menghapus sparepart menghapus riwayat mutasinya; pengguna harus mengonfirmasi.
-- **BR-13** `Pakai` wajib mencatat unit peralatan (dasar perhitungan MTBF per unit). Untuk `Bekas` dan `Rusak` unit tetap opsional.
+- **BR-13** `Pakai` wajib mencatat unit peralatan (dasar perhitungan MTBF per unit). Untuk `Masuk` bekas/rusak unit asal copotan opsional. Diberlakukan di aplikasi **dan** di database (trigger `stock_mutations_pakai_wajib_unit`, diterapkan 2 Okt 2026), sehingga penulis lain juga ditolak bila mengirim `Pakai` tanpa `unit_id`.
 
 ## 8. Kebutuhan non-fungsional
 
@@ -231,7 +236,7 @@ Rumus lengkap dan contoh angka: [specs/predictive-maintenance.md bagian 4](specs
 | Waktu mencatat satu transaksi dari HP | uji dengan teknisi | di bawah 30 detik |
 | Porsi transaksi yang dicatat dalam shift yang sama dengan kejadiannya | bandingkan `created_at` dengan kejadian | naik |
 | Kejadian stok habis tak terduga untuk sparepart kritis | jumlah per kuartal | turun |
-| Barang bekas layak pakai yang dipakai kembali | jumlah `Pakai` dari stok bekas (perlu pencatatan terpisah) | naik |
+| Barang bekas layak pakai yang dipakai kembali | jumlah `Pakai` dari stok bekas | naik |
 
 ## 11. Asumsi, risiko, ketergantungan
 
@@ -271,7 +276,6 @@ F-01 sampai F-09. Pada Oktober 2026 menu Pengaturan (F-10) dihapus, lalu: perbai
 | **P1** | Perluas tes `vitest` ke `utils/stock.ts`, `shiftUtils.ts`, `compatibility.ts` | K6 |
 | **P1** | Bila pengelolaan data master dibutuhkan lagi di aplikasi ini: bangun kembali dengan login (CRUD lengkap, nonaktifkan) | F-10 dihapus |
 | **P1** | Modul pengajuan pembelian (PR) dari rekomendasi order | dashboard sudah menyebut "perlu pengajuan ulang (PR)" |
-| **P1** | Guard database `Pakai` wajib unit (trigger, [migrasi siap](migrations/2026-10-02_pakai_wajib_unit.sql), menunggu persetujuan) | BR-13 juga untuk penulis lain |
 | **P1** | Catat lead time per sparepart, lalu ganti horizon 30 hari dengan lead time | F-07, 7.4 |
 | **P2** | Model Weibull untuk sparepart dengan ≥ 10 penggantian | MTBF konstan tidak menangkap "makin tua makin rawan" |
 | **P1** | Soft-delete sparepart (arsip) agar riwayat tidak hilang | BR-12 |

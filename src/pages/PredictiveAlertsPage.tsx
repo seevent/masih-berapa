@@ -86,7 +86,7 @@ export const PredictiveAlertsPage: React.FC = () => {
           </div>
           <div className="mt-3">
             <span className="text-3xl font-bold text-white">{orderCount}</span>
-            <span className="text-xs text-cyan-400 ml-2 font-medium">SKU, stok baru di bawah titik pesan</span>
+            <span className="text-xs text-cyan-400 ml-2 font-medium">SKU, stok tersedia di bawah titik pesan</span>
           </div>
         </div>
       </div>
@@ -197,7 +197,7 @@ export const PredictiveAlertsPage: React.FC = () => {
           <p className="text-xs text-slate-400 mt-1">
             Kebutuhan per hari (r) = total Pakai dalam jendela pengamatan ÷ panjang jendela (30–365 hari). Titik pesan = jumlah
             terkecil yang mencukupi kebutuhan {PLANNING_HORIZON_DAYS} hari dengan peluang {pct(SERVICE_LEVEL)} (distribusi Poisson),
-            minimal stok minimum + 1. Hanya stok baru yang dihitung karena Pakai mengambil stok baru.
+            sehingga stok minimum = titik pesan − 1 (dihitung otomatis, tidak diisi manual). Stok tersedia = baru + bekas, karena Pakai bisa mengambil keduanya.
           </p>
         </div>
 
@@ -217,7 +217,7 @@ export const PredictiveAlertsPage: React.FC = () => {
                 <th className="py-3.5 px-4 text-center">Pakai / Jendela</th>
                 <th className="py-3.5 px-4 text-center">Perkiraan {PLANNING_HORIZON_DAYS} Hari</th>
                 <th className="py-3.5 px-4 text-center">Titik Pesan</th>
-                <th className="py-3.5 px-4 text-center">Stok Baru</th>
+                <th className="py-3.5 px-4 text-center">Stok Tersedia</th>
                 <th className="py-3.5 px-4 text-center">Usulan Pesan</th>
                 <th className="py-3.5 px-4 text-right">Aksi</th>
               </tr>
@@ -263,12 +263,12 @@ export const PredictiveAlertsPage: React.FC = () => {
                     <td className="py-3.5 px-4 text-center whitespace-nowrap">
                       <div className="font-bold text-white">{c.reorder_level} {sp.unit}</div>
                       <div className="text-[10px] text-slate-500">
-                        {hasData ? `SLA ${c.reorder_point_sla} · minimum ${sp.minimum_stok}` : `dari stok minimum ${sp.minimum_stok}`}
+                        {hasData ? `SLA 98% · stok minimum ${sp.minimum_stok}` : 'belum ada pemakaian: pesan saat habis'}
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-center whitespace-nowrap">
                       <span className={`font-bold ${c.needs_order ? 'text-rose-400' : 'text-emerald-400'}`}>
-                        {c.stok_baru} {sp.unit}
+                        {c.stok_tersedia} {sp.unit}
                       </span>
                     </td>
                     <td className="py-3.5 px-4 text-center whitespace-nowrap">

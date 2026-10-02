@@ -19,8 +19,11 @@ import {
 import * as XLSX from 'xlsx';
 import { useInventory } from '../context/InventoryContext';
 import { MutationType, StockMutation, SupplierType } from '../types';
+import { extractManualPetugas, stripManualPetugas, withManualPetugas } from '../utils/shiftUtils';
+import { ACTIVE_MUTATION_TYPES } from '../utils/stock';
 import { describeFlow, flowToOptions, isIncompleteSerahTerima, resolveStockFlow } from '../utils/stock';
 import {
+  KondisiPicker,
   StockFlowFields,
   StockFlowFormState,
   initialStockFlowForm,
@@ -28,6 +31,14 @@ import {
 } from '../components/mutation/StockFlowFields';
 import { EquipmentUnitSelect } from '../components/mutation/EquipmentUnitSelect';
 import { getCompatibleEquipment, requiresEquipmentUnit, usesEquipmentUnit } from '../utils/compatibility';
+
+const EDIT_TYPE_LABEL: Record<MutationType, string> = {
+  Masuk: 'Masuk (Baru / Bekas / Rusak)',
+  Pakai: 'Pakai (Dipasang ke Unit)',
+  'Serah Terima': 'Serah Terima (Serahkan / Terima)',
+  Bekas: 'Bekas (tipe lama)',
+  Rusak: 'Rusak (tipe lama)'
+};
 
 export const HistoryPage: React.FC = () => {
   const {
@@ -54,6 +65,8 @@ export const HistoryPage: React.FC = () => {
   const [editSumber, setEditSumber] = useState<SupplierType>('VENDOR');
   const [editQty, setEditQty] = useState<number>(1);
   const [editPersonelId, setEditPersonelId] = useState<string>('');
+  // Hand-written officer kept in the notes as "[Petugas: ...]" (set when the schedule was missing)
+  const [editManualPetugas, setEditManualPetugas] = useState<string>('');
   const [editUnitId, setEditUnitId] = useState<string>('');
   const [editNotes, setEditNotes] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -67,8 +80,8 @@ export const HistoryPage: React.FC = () => {
     const persObj = personelList.find((p) => p.id === m.personel_id);
 
     // Determine Tipe Peralatan
-    const tipeId = unit?.id_tipe || sp?.id_tipe;
-    const tipeObj = tipePeralatan.find((t) => t.id === tipeId);
+    // The unit's own tipe when known, otherwise the compatible tipe of the sparepart
+    const tipeObj = unit ? tipePeralatan.find((t) => t.id === unit.id_tipe) : undefined;
     const tipeName = tipeObj ? tipeObj.nama : sp?.equipment_type_name || '-';
 
     // Determine Lokasi & Titik
@@ -128,7 +141,7 @@ export const HistoryPage: React.FC = () => {
       'Lokasi & Titik': m.locationStr,
       'Aliran Stok': m.flowStr,
       'Pihak Serah Terima': m.penerimaStr || '-',
-      Catatan: m.notes || '-'
+      Catatan: stripManualPetugas(m.notes) || '-'
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -146,12 +159,13 @@ export const HistoryPage: React.FC = () => {
     setEditQty(m.qty);
     setEditPersonelId(m.personel_id || '');
     setEditUnitId(m.unit_id || '');
-    setEditNotes(m.notes || '');
+    setEditManualPetugas(extractManualPetugas(m.notes) || '');
+    setEditNotes(stripManualPetugas(m.notes));
   };
 
   const editPart = editingMutation ? spareparts.find((s) => s.id === editingMutation.sparepart_id) : undefined;
   const { availableUnits: editCompatibleUnits, otherUnits: editOtherUnits } = getCompatibleEquipment({
-    part: editPart,
+    parts: [editPart],
     sparepartCompatibility,
     lokasiList,
     titikLokasiList,
@@ -161,6 +175,16 @@ export const HistoryPage: React.FC = () => {
     selectedTitikId: ''
   });
   const editUnitMissing = requiresEquipmentUnit(editType) && !editUnitId;
+  // Pakai: unit it was installed in · Masuk bekas/rusak: unit it came out of · legacy Bekas/Rusak rows
+  const editShowsUnit =
+    usesEquipmentUnit(editType) || (editType === 'Masuk' && editFlow.kondisi !== 'baru');
+  const editTypeOptions: MutationType[] = Array.from(
+    new Set<MutationType>([...ACTIVE_MUTATION_TYPES, ...(editingMutation ? [editingMutation.mutation_type] : [])])
+  );
+  const changeEditType = (type: MutationType) => {
+    setEditType(type);
+    if (type === 'Pakai' && editFlow.kondisi === 'rusak') setEditFlow({ ...editFlow, kondisi: 'baru' });
+  };
 
   const handleSaveEdit = async () => {
     if (!editingMutation || !isStockFlowFormComplete(editType, editFlow) || editUnitMissing) return;
@@ -171,12 +195,13 @@ export const HistoryPage: React.FC = () => {
         flow: resolveStockFlow(editType, editFlow),
         penerima: editFlow.pihak,
         unit_penerima: editFlow.unitPihak,
-        sumber: editType === 'Masuk' ? editSumber : null,
+        sumber: editType === 'Masuk' && editFlow.kondisi === 'baru' ? editSumber : null,
         qty: editQty,
         personel_id: editPersonelId || null,
         // Types without a unit field keep whatever unit the row already had
-        unit_id: usesEquipmentUnit(editType) ? editUnitId || null : editingMutation.unit_id || null,
-        notes: editNotes || null
+        unit_id: editShowsUnit ? editUnitId || null : editingMutation.unit_id || null,
+        // The hand-written officer is only kept while no personel is chosen
+        notes: (editPersonelId ? editNotes : withManualPetugas(editNotes, editManualPetugas)) || null
       });
       // Keep the modal open when the change was rejected so the user can correct it
       if (success) setEditingMutation(null);
@@ -283,8 +308,8 @@ export const HistoryPage: React.FC = () => {
             <option value="">Semua Tipe Transaksi</option>
             <option value="Masuk">Masuk (Penerimaan)</option>
             <option value="Pakai">Pakai (Pemakaian)</option>
-            <option value="Bekas">Bekas (Pengembalian)</option>
-            <option value="Rusak">Rusak (Afkir)</option>
+            <option value="Bekas">Bekas (tipe lama)</option>
+            <option value="Rusak">Rusak (tipe lama)</option>
             <option value="Serah Terima">Serah Terima</option>
           </select>
         </div>
@@ -368,7 +393,7 @@ export const HistoryPage: React.FC = () => {
                       {m.locationStr}
                     </td>
                     <td className="py-3.5 px-4 text-slate-400 max-w-xs truncate">
-                      {m.notes || '-'}
+                      {stripManualPetugas(m.notes) || '-'}
                     </td>
                     <td className="py-3.5 px-4 text-center whitespace-nowrap">
                       <div className="flex items-center justify-center gap-1.5">
@@ -420,14 +445,14 @@ export const HistoryPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-300 mb-1">Tipe Mutasi</label>
                 <select
                   value={editType}
-                  onChange={(e) => setEditType(e.target.value as MutationType)}
+                  onChange={(e) => changeEditType(e.target.value as MutationType)}
                   className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white"
                 >
-                  <option value="Masuk">Masuk (Penerimaan Stok Baru)</option>
-                  <option value="Pakai">Pakai (Pemakaian Unit)</option>
-                  <option value="Bekas">Bekas (Pengembalian Rotable)</option>
-                  <option value="Rusak">Rusak (Pindah ke Stok Rusak)</option>
-                  <option value="Serah Terima">Serah Terima (Serahkan / Terima)</option>
+                  {editTypeOptions.map((t) => (
+                    <option key={t} value={t}>
+                      {EDIT_TYPE_LABEL[t]}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -438,7 +463,22 @@ export const HistoryPage: React.FC = () => {
                 part={editPart}
               />
 
-              {usesEquipmentUnit(editType) && (
+              {ACTIVE_MUTATION_TYPES.includes(editType) && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    {editType === 'Pakai' ? 'Diambil dari stok' : 'Kondisi barang'}
+                  </label>
+                  <KondisiPicker
+                    mutationType={editType}
+                    value={editFlow.kondisi}
+                    onChange={(kondisi) => setEditFlow({ ...editFlow, kondisi })}
+                    arah={editFlow.arah}
+                    part={editPart}
+                  />
+                </div>
+              )}
+
+              {editShowsUnit && (
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">
                     Unit Peralatan{requiresEquipmentUnit(editType) && <span className="text-amber-400"> *</span>}
@@ -460,7 +500,7 @@ export const HistoryPage: React.FC = () => {
                 </div>
               )}
 
-              {editType === 'Masuk' && (
+              {editType === 'Masuk' && editFlow.kondisi === 'baru' && (
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Sumber Asal Barang</label>
                   <select
@@ -503,6 +543,16 @@ export const HistoryPage: React.FC = () => {
                     </option>
                   ))}
                 </select>
+                {!editPersonelId && (
+                  <input
+                    type="text"
+                    maxLength={80}
+                    value={editManualPetugas}
+                    onChange={(e) => setEditManualPetugas(e.target.value.replace(/[\[\]]/g, ''))}
+                    placeholder="Nama petugas (tulis manual)"
+                    className="mt-2 w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white"
+                  />
+                )}
               </div>
 
               <div>

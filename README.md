@@ -1,6 +1,6 @@
 # Masih Berapa
 
-**Manajemen sparepart SSES T2** — catat setiap barang masuk, dipakai, dikembalikan bekas, rusak, atau diserahterimakan, dan lihat stoknya *saat itu juga*. Barang diidentifikasi dengan label QR yang dipindai dari kamera HP.
+**Manajemen sparepart SSES T2** — catat setiap barang masuk (baru, bekas, atau rusak), dipakai, atau diserahterimakan, dan lihat stoknya *saat itu juga*. Barang diidentifikasi dengan label QR yang dipindai dari kamera HP.
 
 Produksi: **https://masih-berapa.vercel.app** · Repo: `seevent/masih-berapa`
 
@@ -9,10 +9,10 @@ Produksi: **https://masih-berapa.vercel.app** · Repo: `seevent/masih-berapa`
 | Modul | Rute | Fungsi |
 |---|---|---|
 | Dashboard | `/` | total stok dan tren 6 bulan, SKU di bawah minimum, rasio baru vs bekas, level inventaris, top moving (pemakaian), transaksi terbaru |
-| Katalog | `/catalog` | CRUD sparepart (grid/list), SKU otomatis `SP-001`, banyak tipe peralatan kompatibel |
-| Input Transaksi | `/input-sparepart` | catat **Masuk, Pakai, Bekas, Rusak, Serah Terima**; pilih lokasi/unit (**Pakai wajib unit**); petugas = personel yang sedang berdinas |
+| Katalog | `/catalog` | CRUD sparepart (tampilan list bawaan, bisa grid), satuan bawaan `UNIT`, stok minimum otomatis, SKU otomatis `SP-001`, tipe peralatan lewat daftar kompatibel (banyak tipe, tanpa "tipe utama") |
+| Input Transaksi | `/input-sparepart` | catat **Masuk, Pakai, Serah Terima**; satu transaksi bisa berisi **banyak sparepart**, tiap baris dengan kondisi baru / bekas / rusak; Pakai wajib satu unit; petugas = personel berdinas (atau tulis manual bila jadwal kosong) |
 | History & Audit | `/history` | riwayat dengan aliran stok, edit, hapus, ekspor Excel |
-| Scanner QR | `/scanner` | pindai QR dengan kamera atau ketik SKU/URL, lalu catat transaksi |
+| Scanner QR | `/scanner` | pindai QR berkali-kali: tiap scan menambah sparepart ke daftar (scan ulang = jumlah +1), lalu simpan sekaligus |
 | Cetak Label | `/print` | label thermal 50×30 / 70×40 mm dan lembar stiker Tom & Jerry, keluaran PDF |
 | Peringatan | `/alerts` | umur komponen terpasang per unit vs **MTBF otomatis** dari data; kecukupan stok 30 hari @ SLA 98% (titik pesan Poisson) |
 | Kebutuhan | `/needs` | kebutuhan tahunan dari pemakaian riil dan rekomendasi order, ekspor Excel |
@@ -24,14 +24,12 @@ Aplikasi **tidak menyimpan saldo**. Stok dihitung dari seluruh riwayat transaksi
 
 | Transaksi | Berkurang dari | Bertambah ke |
 |---|---|---|
-| Masuk | luar gudang | baru |
-| Pakai | baru | keluar gudang |
-| Bekas | luar gudang | bekas |
-| Rusak | baru **atau** bekas | rusak |
+| Masuk | luar gudang | baru / bekas / rusak (dipilih per baris) |
+| Pakai | baru **atau** bekas (dipilih per baris) | keluar gudang (dipasang ke unit) |
 | Serah Terima (serahkan) | baru / bekas / rusak | keluar gudang |
 | Serah Terima (terima) | luar gudang | baru / bekas / rusak |
 
-Stok di kantong mana pun tidak boleh minus; transaksi yang membuatnya minus ditolak.
+Stok di kantong mana pun tidak boleh minus; transaksi yang membuatnya minus ditolak seluruhnya (semua baris atau tidak sama sekali). "Stok tersedia" = baru + bekas. Tipe lama **Bekas** dan **Rusak** sudah dihapus dari form (2 Okt 2026) tetapi baris lama tetap dihitung.
 
 ## Predictive maintenance
 

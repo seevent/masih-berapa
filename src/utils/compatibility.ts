@@ -15,7 +15,8 @@ export const usesEquipmentUnit = (type: MutationType) => type === 'Pakai' || typ
 export const requiresEquipmentUnit = (type: MutationType) => type === 'Pakai';
 
 interface CompatibilityInput {
-  part: Sparepart | undefined | null;
+  /** Spareparts of the transaction; a unit is compatible when it fits all of them */
+  parts: Array<Sparepart | undefined | null>;
   sparepartCompatibility: SparepartCompatibility[];
   lokasiList: Lokasi[];
   titikLokasiList: TitikLokasi[];
@@ -26,11 +27,12 @@ interface CompatibilityInput {
 }
 
 /**
- * Resolves which locations, titik and equipment units are compatible with a sparepart,
- * using the primary id_tipe + sparepart_compatibility rows and active penempatan records.
+ * Resolves which locations, titik and equipment units are compatible with the given spareparts
+ * (intersection: a unit must fit every part), using the sparepart_compatibility rows (the only
+ * sparepart ↔ tipe link) and active penempatan records.
  */
 export const getCompatibleEquipment = ({
-  part,
+  parts,
   sparepartCompatibility,
   lokasiList,
   titikLokasiList,
@@ -39,14 +41,16 @@ export const getCompatibleEquipment = ({
   selectedLokasiId,
   selectedTitikId
 }: CompatibilityInput) => {
-  const compatTypeIds: string[] = part
-    ? Array.from(
-        new Set([
-          part.id_tipe || '',
-          ...sparepartCompatibility.filter((c) => c.sparepart_id === part.id).map((c) => c.id_tipe)
-        ])
-      ).filter(Boolean)
-    : [];
+  const chosen = parts.filter((p): p is Sparepart => Boolean(p));
+  const tipeSetOf = (part: Sparepart) =>
+    new Set(sparepartCompatibility.filter((c) => c.sparepart_id === part.id).map((c) => c.id_tipe).filter(Boolean));
+  const compatTypeIds: string[] =
+    chosen.length === 0
+      ? []
+      : chosen.slice(1).reduce<string[]>((acc, part) => {
+          const set = tipeSetOf(part);
+          return acc.filter((id) => set.has(id));
+        }, Array.from(tipeSetOf(chosen[0])));
 
   const activePenempatanByUnit = new Map(
     penempatanList.filter((p) => p.is_active && p.id_unit).map((p) => [p.id_unit as string, p])

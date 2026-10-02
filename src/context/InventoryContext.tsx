@@ -19,8 +19,9 @@ import {
 } from '../types';
 import { getSupabaseClient, fetchAllRows } from '../lib/supabase';
 import { computeStockBySparepart, findNegativeStock, StockFlow } from '../utils/stock';
-import { buildPredictiveReport, PredictiveReport } from '../utils/reliability';
+import { autoMinimumStock, buildPredictiveReport, demandRate, PredictiveReport, ReliabilityMutation } from '../utils/reliability';
 import { requiresEquipmentUnit } from '../utils/compatibility';
+import { extractManualPetugas, withManualPetugas } from '../utils/shiftUtils';
 import { useNotification } from './NotificationContext';
 
 /** Fields of a sparepart that are stored in the `spareparts` table. */
@@ -29,16 +30,43 @@ export interface SparepartFormInput {
   name: string;
   description?: string;
   unit?: string;
-  minimum_stok: number;
   lokasi?: string;
   rack?: string;
-  /** Selected tipe peralatan; the first one becomes the primary `id_tipe`. */
+  /** Compatible tipe peralatan (written to sparepart_compatibility). */
   tipeIds: string[];
 }
 
 export interface NewSparepartInput extends SparepartFormInput {
   stok_awal_baru: number;
   stok_awal_bekas: number;
+}
+
+/** One sparepart line of a transaction ("nota"). */
+export interface MutationLineInput {
+  sparepart_id: string;
+  qty: number;
+  /** Which stock bucket decreases / increases (see resolveStockFlow) */
+  flow: StockFlow;
+  /** Masuk bekas/rusak: unit the part was removed from (optional) */
+  unit_id?: string | null;
+}
+
+/** A transaction with one or more lines; saved as one stock_mutations row per line, all or nothing. */
+export interface NewTransactionInput {
+  mutation_type: MutationType;
+  lines: MutationLineInput[];
+  personel_id?: string;
+  /** Hand-written officer name, only when no schedule/personel is available; stored as "[Petugas: ...]" in notes */
+  petugas_manual?: string;
+  /** Pakai: the unit all lines are installed in (required) */
+  unit_id?: string;
+  /** Masuk: origin of the new stock (only written on lines going to stok baru) */
+  sumber?: SupplierType;
+  /** Serah Terima: the other party and their unit */
+  penerima?: string;
+  unit_penerima?: string;
+  reference_no?: string;
+  notes?: string;
 }
 
 export interface MutationUpdateInput {
@@ -87,21 +115,7 @@ interface InventoryContextType {
   updateSparepart: (id: string, part: SparepartFormInput) => Promise<boolean>;
   deleteSparepart: (id: string) => Promise<boolean>;
 
-  addMutation: (mutation: {
-    sparepart_id: string;
-    unit_id?: string;
-    personel_id?: string;
-    mutation_type: MutationType;
-    /** Which stock bucket decreases / increases (see resolveStockFlow) */
-    flow: StockFlow;
-    sumber?: SupplierType;
-    qty: number;
-    /** Serah Terima: the other party and their unit */
-    penerima?: string;
-    unit_penerima?: string;
-    reference_no?: string;
-    notes?: string;
-  }) => Promise<boolean>;
+  addMutations: (input: NewTransactionInput) => Promise<boolean>;
   updateMutation: (id: string, data: MutationUpdateInput) => Promise<boolean>;
   deleteMutation: (id: string) => Promise<boolean>;
 
@@ -128,6 +142,16 @@ const fetchSparepartMutations = (supabase: SupabaseClient, sparepartId: string) 
       .from('stock_mutations')
       .select('id, sparepart_id, mutation_type, qty, stok_asal, stok_tujuan')
       .eq('sparepart_id', sparepartId)
+      .order('id', { ascending: true })
+  );
+
+/** Reads all mutations of several spareparts straight from the database. */
+const fetchMutationsOf = (supabase: SupabaseClient, sparepartIds: string[]) =>
+  fetchAllRows<StockRow>(() =>
+    supabase
+      .from('stock_mutations')
+      .select('id, sparepart_id, mutation_type, qty, stok_asal, stok_tujuan')
+      .in('sparepart_id', sparepartIds)
       .order('id', { ascending: true })
   );
 
@@ -270,19 +294,45 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       // Stock per sparepart is the sum of its stock_mutations history
       const stockMap = computeStockBySparepart(mutsData);
 
+      // Compatible tipe per sparepart (the only link between a sparepart and equipment types)
+      const compatBySparepart = new Map<string, Set<string>>();
+      compatRes.data.forEach((c) => {
+        const set = compatBySparepart.get(c.sparepart_id);
+        if (set) set.add(c.id_tipe);
+        else compatBySparepart.set(c.sparepart_id, new Set([c.id_tipe]));
+      });
+      const jpMap = new Map(jpRes.data.map((j) => [j.id, j]));
+
+      // Minimum stock is derived from usage (reliability.ts), not read from the manual column
+      const mutsBySparepart = new Map<string, ReliabilityMutation[]>();
+      mutsData.forEach((m: any) => {
+        const list = mutsBySparepart.get(m.sparepart_id);
+        if (list) list.push(m);
+        else mutsBySparepart.set(m.sparepart_id, [m]);
+      });
+      const nowMs = Date.now();
+
       const formattedParts: Sparepart[] = spRes.data.map((sp: any) => {
-        const tipe = sp.id_tipe ? tpMap.get(sp.id_tipe) : undefined;
+        const tipes = Array.from(compatBySparepart.get(sp.id) || [])
+          .map((id) => tpMap.get(id))
+          .filter((t): t is TipePeralatan => Boolean(t))
+          .sort((a, b) => a.nama.localeCompare(b.nama));
+        const jenisIds = Array.from(new Set(tipes.map((t) => t.id_jenis).filter(Boolean)));
         const stock = stockMap[sp.id] || { baru: 0, bekas: 0, rusak: 0 };
-        // Legacy manual columns: MTBF is now derived from stock_mutations (utils/reliability.ts)
-        const { mtbf_days, last_replaced_at, ...row } = sp;
+        // Legacy columns that are no longer used: MTBF is derived from stock_mutations
+        // (utils/reliability.ts) and the equipment type comes from sparepart_compatibility.
+        const { mtbf_days, last_replaced_at, id_tipe, minimum_stok: legacyMinimum, ...row } = sp;
 
         return {
           ...row,
-          id_jenis: tipe?.id_jenis || '',
-          equipment_type_name: tipe?.nama || 'Umum',
+          tipe_ids: tipes.map((t) => t.id),
+          jenis_ids: jenisIds,
+          equipment_type_name: tipes.length > 0 ? tipes.map((t) => t.nama).join(', ') : 'Umum',
+          jenis_name:
+            jenisIds.length > 0 ? jenisIds.map((id) => jpMap.get(id)?.nama || '-').join(', ') : 'Umum',
           lokasi: sp.lokasi || '',
           rack: sp.rack || '',
-          minimum_stok: Number(sp.minimum_stok) || 0,
+          minimum_stok: autoMinimumStock(demandRate(mutsBySparepart.get(sp.id) || [], nowMs)),
           stok_aktual: Math.max(0, stock.baru),
           stok_bekas: Math.max(0, stock.bekas),
           stok_rusak: Math.max(0, stock.rusak)
@@ -294,7 +344,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         ...mut,
         qty: Number(mut.qty) || 0,
         sumber: mut.sumber || null,
-        operator_name: (mut.personel_id && persMap.get(mut.personel_id)) || mut.penerima || 'Teknisi',
+        operator_name:
+          (mut.personel_id && persMap.get(mut.personel_id)) || extractManualPetugas(mut.notes) || mut.penerima || 'Teknisi',
         sparepart_sku: spMap.get(mut.sparepart_id)?.sku || 'UNKNOWN',
         sparepart_name: spMap.get(mut.sparepart_id)?.name || 'Sparepart Removed'
       }));
@@ -414,9 +465,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     sku: input.sku.trim(),
     name: input.name.trim(),
     description: input.description?.trim() || null,
-    id_tipe: input.tipeIds[0] || null,
-    unit: input.unit?.trim().toUpperCase() || 'PCS',
-    minimum_stok: Math.max(0, Number(input.minimum_stok) || 0),
+    unit: input.unit?.trim().toUpperCase() || 'UNIT',
     lokasi: input.lokasi?.trim() || null,
     rack: input.rack?.trim() || null
   });
@@ -439,10 +488,10 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (uniqueIds.length === 0) return null;
 
     const { error: upsertErr } = await supabase.from('sparepart_compatibility').upsert(
-      uniqueIds.map((idTipe, idx) => ({
+      // is_primary is left out: there is no primary tipe any more (existing values stay as they are)
+      uniqueIds.map((idTipe) => ({
         sparepart_id: sparepartId,
-        id_tipe: idTipe,
-        is_primary: idx === 0
+        id_tipe: idTipe
       })),
       { onConflict: 'sparepart_id,id_tipe' }
     );
@@ -484,7 +533,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       input.stok_awal_bekas > 0 && {
         id: crypto.randomUUID(),
         sparepart_id: newId,
-        mutation_type: 'Bekas',
+        mutation_type: 'Masuk',
         stok_asal: null,
         stok_tujuan: 'bekas',
         sumber: null,
@@ -550,78 +599,103 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // --- Stock mutations ---
 
-  const addMutation: InventoryContextType['addMutation'] = async (mutationData) => {
+  const addMutations: InventoryContextType['addMutations'] = async (input) => {
     const supabase = requireClient();
     if (!supabase) return false;
 
-    const targetPart = spareparts.find((s) => s.id === mutationData.sparepart_id);
-    if (!targetPart) {
-      showToast('Gagal Mutasi', 'Sparepart tidak ditemukan', 'error');
+    const type = input.mutation_type;
+    if (input.lines.length === 0) {
+      showToast('Daftar Kosong', 'Tambahkan minimal satu sparepart.', 'error');
       return false;
     }
 
-    const qty = Math.floor(Number(mutationData.qty));
-    if (!Number.isFinite(qty) || qty <= 0) {
-      showToast('Jumlah Tidak Valid', 'Jumlah mutasi harus lebih dari 0.', 'error');
-      return false;
+    const lines: Array<MutationLineInput & { part: Sparepart }> = [];
+    for (const [idx, line] of input.lines.entries()) {
+      const part = spareparts.find((s) => s.id === line.sparepart_id);
+      if (!part) {
+        showToast('Gagal Transaksi', `Baris ${idx + 1}: sparepart belum dipilih atau tidak ditemukan.`, 'error');
+        return false;
+      }
+      const qty = Math.floor(Number(line.qty));
+      if (!Number.isFinite(qty) || qty <= 0) {
+        showToast('Jumlah Tidak Valid', `Baris ${idx + 1} (${part.sku}): jumlah harus lebih dari 0.`, 'error');
+        return false;
+      }
+      lines.push({ ...line, qty, part });
     }
 
-    if (requiresEquipmentUnit(mutationData.mutation_type) && !mutationData.unit_id) {
+    if (requiresEquipmentUnit(type) && !input.unit_id) {
       showToast('Unit Wajib Dipilih', 'Transaksi Pakai harus mencatat unit peralatan tempat sparepart dipasang.', 'error');
       return false;
     }
 
-    // Validate against the latest stock in the database (another user may have changed it)
-    const { data: currentMuts, error: readErr } = await fetchSparepartMutations(supabase, targetPart.id);
+    // Validate every sparepart against the latest stock in the database, all lines combined
+    const partIds = Array.from(new Set(lines.map((l) => l.part.id)));
+    const { data: currentMuts, error: readErr } = await fetchMutationsOf(supabase, partIds);
     if (readErr) {
       showToast('Gagal Membaca Stok', readErr.message, 'error');
       return false;
     }
-    const stockError = validateStock(
-      [
-        ...currentMuts,
-        {
-          id: 'new',
-          sparepart_id: targetPart.id,
-          mutation_type: mutationData.mutation_type,
-          qty,
-          stok_asal: mutationData.flow.asal,
-          stok_tujuan: mutationData.flow.tujuan
-        }
-      ],
-      targetPart.id
-    );
-    if (stockError) {
-      showToast('Stok Tidak Cukup', stockError, 'error');
+    const newRows: StockRow[] = lines.map((l, idx) => ({
+      id: `new-${idx}`,
+      sparepart_id: l.part.id,
+      mutation_type: type,
+      qty: l.qty,
+      stok_asal: l.flow.asal,
+      stok_tujuan: l.flow.tujuan
+    }));
+    const stockErrors = partIds
+      .map((id) => {
+        const err = validateStock([...currentMuts, ...newRows], id);
+        return err ? `${lines.find((l) => l.part.id === id)?.part.sku}: ${err}` : null;
+      })
+      .filter(Boolean);
+    if (stockErrors.length > 0) {
+      showToast('Stok Tidak Cukup', `${stockErrors.join(' | ')} Tidak ada baris yang disimpan.`, 'error');
       return false;
     }
 
-    let finalNotes = mutationData.notes?.trim() || '';
-    if (mutationData.reference_no?.trim()) {
-      finalNotes = `[Ref: ${mutationData.reference_no.trim()}] ${finalNotes}`.trim();
+    let finalNotes = input.notes?.trim() || '';
+    if (input.reference_no?.trim()) {
+      finalNotes = `[Ref: ${input.reference_no.trim()}] ${finalNotes}`.trim();
     }
+    if (!input.personel_id && input.petugas_manual?.trim()) {
+      finalNotes = withManualPetugas(finalNotes, input.petugas_manual);
+    }
+    const now = new Date().toISOString();
 
-    const dbMutPayload = {
+    const rows = lines.map((l) => ({
       id: crypto.randomUUID(),
-      sparepart_id: mutationData.sparepart_id,
-      unit_id: mutationData.unit_id || null,
-      personel_id: mutationData.personel_id || null,
-      mutation_type: mutationData.mutation_type,
-      ...flowColumns(mutationData.mutation_type, mutationData.flow, mutationData.penerima, mutationData.unit_penerima),
-      // Sumber (asal barang) only applies to incoming stock
-      sumber: mutationData.mutation_type === 'Masuk' ? mutationData.sumber || 'VENDOR' : null,
-      qty,
+      sparepart_id: l.part.id,
+      // Pakai: the unit the parts go into · Masuk bekas/rusak: the unit they came out of
+      unit_id:
+        type === 'Pakai'
+          ? input.unit_id || null
+          : type === 'Masuk' && l.flow.tujuan !== 'baru'
+            ? l.unit_id || null
+            : null,
+      personel_id: input.personel_id || null,
+      mutation_type: type,
+      ...flowColumns(type, l.flow, input.penerima, input.unit_penerima),
+      // Sumber (asal barang) only applies to new stock coming in
+      sumber: type === 'Masuk' && l.flow.tujuan === 'baru' ? input.sumber || 'VENDOR' : null,
+      qty: l.qty,
       notes: finalNotes || null,
-      created_at: new Date().toISOString()
-    };
+      created_at: now
+    }));
 
-    const { error: mutErr } = await supabase.from('stock_mutations').insert([dbMutPayload]);
+    // One request: PostgREST inserts all rows in a single statement, so it is all or nothing
+    const { error: mutErr } = await supabase.from('stock_mutations').insert(rows);
     if (mutErr) {
-      showToast('Gagal Transaksi Supabase', mutErr.message, 'error');
+      showToast('Gagal Transaksi Supabase', `${mutErr.message} Tidak ada baris yang disimpan.`, 'error');
       return false;
     }
 
-    showToast('Transaksi Berhasil', `Stok ${targetPart.name} diperbarui`, 'success');
+    showToast(
+      'Transaksi Berhasil',
+      lines.length === 1 ? `Stok ${lines[0].part.name} diperbarui` : `${lines.length} baris sparepart tersimpan`,
+      'success'
+    );
     await refreshData();
     return true;
   };
@@ -670,7 +744,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .update({
         mutation_type: data.mutation_type,
         ...flowColumns(data.mutation_type, data.flow, data.penerima, data.unit_penerima),
-        sumber: data.mutation_type === 'Masuk' ? data.sumber || 'VENDOR' : null,
+        sumber: data.mutation_type === 'Masuk' && data.flow.tujuan === 'baru' ? data.sumber || 'VENDOR' : null,
         qty,
         personel_id: data.personel_id || null,
         unit_id: data.unit_id || null,
@@ -758,7 +832,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         addSparepart,
         updateSparepart,
         deleteSparepart,
-        addMutation,
+        addMutations,
         updateMutation,
         deleteMutation,
         predictive,

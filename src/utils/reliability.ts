@@ -8,6 +8,7 @@
  * - Stock coverage: Poisson reorder point for a planning horizon at a service level (SLA).
  */
 import { MutationType, Sparepart, UnitStatus } from '../types';
+import { usableStock } from './stock';
 
 /** Planning horizon in days; replaces lead time until lead time data exists. */
 export const PLANNING_HORIZON_DAYS = 30;
@@ -193,6 +194,18 @@ export const demandRate = (mutations: ReliabilityMutation[], now: number): Deman
   };
 };
 
+/**
+ * Minimum stock (stok baru) derived from usage instead of a manual number. A part is "low" when
+ * usable stock (baru + bekas) <= minimum (isLowStock), i.e. when it is below the reorder point,
+ * so minimum = reorder point − 1.
+ * Without 'Pakai' history there is nothing to base it on: 0, so it is only low when it runs out.
+ */
+export const autoMinimumStock = (demand: DemandRate): number => {
+  if (!(demand.usage_qty > 0)) return 0;
+  const reorderPoint = poissonReorderPoint(demand.rate_per_day * PLANNING_HORIZON_DAYS, SERVICE_LEVEL);
+  return Math.max(0, reorderPoint - 1);
+};
+
 export type MovementClass = 'FAST_MOVING' | 'MEDIUM_MOVING' | 'SLOW_MOVING' | 'BELUM_CUKUP_DATA';
 
 /**
@@ -267,9 +280,10 @@ export interface StockCoverage {
   lambda: number;
   /** Poisson reorder point at SERVICE_LEVEL; null without 'Pakai' history */
   reorder_point_sla: number | null;
-  /** Stock baru must stay at or above this: max(SLA point, minimum_stok + 1) */
+  /** Stock baru must stay at or above this: max(SLA point, minimum_stok + 1); minimum_stok is itself derived (autoMinimumStock) */
   reorder_level: number;
-  stok_baru: number;
+  /** Usable stock: baru + bekas (Pakai can take from both) */
+  stok_tersedia: number;
   needs_order: boolean;
   order_qty: number;
 }
@@ -279,7 +293,8 @@ export interface AnnualNeed {
   demand: DemandRate;
   /** ceil(rate × 365); null without 'Pakai' history */
   annual_forecast_qty: number | null;
-  stok_baru: number;
+  /** Usable stock: baru + bekas (Pakai can take from both) */
+  stok_tersedia: number;
   order_needed_qty: number;
 }
 
@@ -361,19 +376,20 @@ export const buildPredictiveReport = (
     const hasDemand = demand.usage_qty > 0;
     const lambda = demand.rate_per_day * PLANNING_HORIZON_DAYS;
     const reorderPointSla = hasDemand ? poissonReorderPoint(lambda, SERVICE_LEVEL) : null;
-    const stokBaru = Math.max(0, sp.stok_aktual);
-    // minimum_stok stays a manual floor; "+1" keeps this identical to isLowStock (baru <= minimum)
+    const stokTersedia = usableStock(sp);
+    // minimum_stok = SLA point − 1 (autoMinimumStock), so this equals the SLA point; the max() only guards
+    // the no-data case (minimum 0 → order when empty). "+1" keeps it identical to isLowStock (tersedia <= minimum)
     const reorderLevel = Math.max(reorderPointSla ?? 0, sp.minimum_stok + 1);
-    const needsOrder = stokBaru < reorderLevel;
+    const needsOrder = stokTersedia < reorderLevel;
     stockCoverage.push({
       sparepart: sp,
       demand,
       lambda,
       reorder_point_sla: reorderPointSla,
       reorder_level: reorderLevel,
-      stok_baru: stokBaru,
+      stok_tersedia: stokTersedia,
       needs_order: needsOrder,
-      order_qty: needsOrder ? reorderLevel - stokBaru : 0
+      order_qty: needsOrder ? reorderLevel - stokTersedia : 0
     });
 
     movements.push({
@@ -388,8 +404,8 @@ export const buildPredictiveReport = (
       sparepart: sp,
       demand,
       annual_forecast_qty: annual,
-      stok_baru: stokBaru,
-      order_needed_qty: annual === null ? 0 : Math.max(0, annual - stokBaru)
+      stok_tersedia: stokTersedia,
+      order_needed_qty: annual === null ? 0 : Math.max(0, annual - stokTersedia)
     });
   });
 

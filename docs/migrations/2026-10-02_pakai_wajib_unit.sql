@@ -2,7 +2,8 @@
 -- MIGRASI: Transaksi Pakai wajib mencatat unit peralatan (keputusan K1,
 --          docs/specs/predictive-maintenance.md, tiket T8)
 -- Tanggal : 2026-10-02
--- Status  : BELUM DITERAPKAN, menunggu persetujuan pemilik atas pilihan trigger
+-- Status  : SUDAH DITERAPKAN di Supabase pada 2026-10-02 sebagai "pakai_wajib_unit"
+--           (versi 20261002152932) atas persetujuan pemilik
 --
 -- Aplikasi sudah menolak Pakai tanpa unit (InventoryContext). Migrasi ini membuat
 -- aturan yang sama berlaku bagi semua penulis ke stock_mutations.
@@ -20,6 +21,14 @@
 --   ubah catatan diterima · hapus unit berhasil, unit_id mutasi menjadi NULL.
 --   Setelah uji: 0 mutasi, 135 unit, tanpa trigger/fungsi tersisa.
 -- Data saat ini: 0 transaksi, jadi tidak ada baris lama yang melanggar.
+--
+-- Verifikasi setelah diterapkan (database sebenarnya, sebagai anon, transaksi dibatalkan):
+--   Pakai tanpa unit ditolak (pesan: "Transaksi Pakai wajib mencatat unit_id ...") ·
+--   Pakai dengan unit diterima · mengosongkan unit pada Pakai ditolak ·
+--   ubah Masuk -> Pakai tanpa unit ditolak · ubah catatan diterima · Bekas tanpa unit diterima.
+--   Setelah itu 0 mutasi dan 135 unit (tidak berubah).
+--   Catatan: penghapusan unit tidak diuji ulang setelah diterapkan karena alat uji menggantung pada
+--   perintah DELETE; perilakunya sudah terbukti pada uji sebelum diterapkan (definisi identik).
 -- ====================================================================
 
 CREATE OR REPLACE FUNCTION public.stock_mutations_pakai_wajib_unit()

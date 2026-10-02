@@ -6,6 +6,7 @@ import {
   ReliabilityMutation,
   ReliabilityUnit,
   buildPositions,
+  autoMinimumStock,
   buildPredictiveReport,
   classifyMovement,
   demandRate,
@@ -30,7 +31,10 @@ const part = (overrides: Partial<Sparepart> = {}): Sparepart => ({
   id: 'sp1',
   sku: 'SP-001',
   name: 'Bearing',
-  id_tipe: null,
+  tipe_ids: [],
+  jenis_ids: [],
+  equipment_type_name: 'Umum',
+  jenis_name: 'Umum',
   minimum_stok: 0,
   stok_aktual: 0,
   stok_bekas: 0,
@@ -200,11 +204,20 @@ describe('Laporan gabungan', () => {
     expect(report.urgentCount).toBe(0);
   });
 
-  it('kebutuhan tahunan = ceil(r × 365), dikurangi stok baru', () => {
+  it('kebutuhan tahunan = ceil(r × 365), dikurangi stok tersedia (baru + bekas)', () => {
     const muts = [0, 30, 60, 90, 120, 150].map((d) => pakai('sp1', 'A', d));
-    const report = buildPredictiveReport([part({ stok_aktual: 3, stok_bekas: 10 })], muts, activeUnits, DAY0 + 180 * DAY_MS);
+    const report = buildPredictiveReport([part({ stok_aktual: 3, stok_bekas: 4 })], muts, activeUnits, DAY0 + 180 * DAY_MS);
     expect(report.annualNeeds[0].annual_forecast_qty).toBe(13); // 6/180 × 365 = 12,17
-    expect(report.annualNeeds[0].order_needed_qty).toBe(10);
+    expect(report.annualNeeds[0].stok_tersedia).toBe(7);
+    expect(report.annualNeeds[0].order_needed_qty).toBe(6);
+  });
+
+  it('kecukupan stok menghitung stok bekas karena Pakai bisa mengambil bekas', () => {
+    const muts = [0, 30, 60, 90, 120, 150].map((d) => pakai('sp1', 'A', d));
+    // titik pesan SLA 3: baru 1 + bekas 2 = 3 tersedia → cukup
+    const report = buildPredictiveReport([part({ stok_aktual: 1, stok_bekas: 2 })], muts, activeUnits, DAY0 + 180 * DAY_MS);
+    expect(report.stockCoverage[0].stok_tersedia).toBe(3);
+    expect(report.stockCoverage[0].needs_order).toBe(false);
   });
 
   it('kebutuhan tahunan tidak terdorong naik oleh galat pembulatan desimal', () => {
@@ -296,5 +309,32 @@ describe('Klasifikasi rotasi stok', () => {
     expect(report.movements.map((m) => m.sparepart.id)).toEqual(['sp1', 'sp2']);
     expect(report.movements[0].category).toBe('FAST_MOVING');
     expect(report.movements[0].per_month).toBeCloseTo((13 / 365) * 30);
+  });
+});
+
+describe('Stok minimum otomatis', () => {
+  const now = DAY0 + 180 * DAY_MS;
+
+  it('tanpa pemakaian: 0 (baru rendah saat habis)', () => {
+    expect(autoMinimumStock(demandRate([], now))).toBe(0);
+    expect(autoMinimumStock(demandRate([{ ...pakai('sp1', null, 0), mutation_type: 'Masuk' }], now))).toBe(0);
+  });
+
+  it('titik pesan SLA dikurangi 1: 6 Pakai / 180 hari → titik pesan 3 → minimum 2', () => {
+    const muts = [0, 30, 60, 90, 120, 150].map((d) => pakai('sp1', 'A', d));
+    expect(autoMinimumStock(demandRate(muts, now))).toBe(2);
+  });
+
+  it('selaras dengan isLowStock dan status PESAN di setiap stok', () => {
+    const muts = [0, 30, 60, 90, 120, 150].map((d) => pakai('sp1', 'A', d));
+    const min = autoMinimumStock(demandRate(muts, now));
+    for (let stok = 0; stok <= 6; stok++) {
+      const report = buildPredictiveReport([part({ stok_aktual: stok, minimum_stok: min })], muts, activeUnits, now);
+      expect(report.stockCoverage[0].needs_order).toBe(isLowStock(stok, min));
+    }
+  });
+
+  it('pemakaian sangat jarang tidak menghasilkan minimum negatif', () => {
+    expect(autoMinimumStock(demandRate([pakai('sp1', 'A', 0)], DAY0 + 365 * DAY_MS))).toBe(0);
   });
 });

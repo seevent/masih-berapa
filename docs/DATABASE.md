@@ -49,7 +49,7 @@ Isi dokumen ini diambil dari **database live** (project "SSES T2 Project", regio
 erDiagram
     jenis_peralatan ||--o{ tipe_peralatan : "id_jenis (CASCADE)"
     tipe_peralatan ||--o{ unit_peralatan : "id_tipe"
-    tipe_peralatan ||--o{ spareparts : "id_tipe = tipe utama (SET NULL)"
+    tipe_peralatan ||--o{ spareparts : "id_tipe (TIDAK DIPAKAI lagi, SET NULL)"
     spareparts ||--o{ sparepart_compatibility : "sparepart_id (CASCADE)"
     tipe_peralatan ||--o{ sparepart_compatibility : "id_tipe (CASCADE)"
     lokasi ||--o{ titik_lokasi : "id_lokasi (CASCADE)"
@@ -64,7 +64,7 @@ erDiagram
     personel ||--o{ stock_mutations : "personel_id (SET NULL)"
 ```
 
-Catatan: `sparepart_compatibility` adalah tabel penghubung banyak-ke-banyak antara sparepart dan tipe peralatan. Kolom `spareparts.id_tipe` adalah tipe **utama** (yang dipilih pertama di form katalog); semua tipe yang cocok, termasuk yang utama, ada di `sparepart_compatibility`.
+Catatan: `sparepart_compatibility` adalah tabel penghubung banyak-ke-banyak antara sparepart dan tipe peralatan. Kolom `spareparts.id_tipe` (dulu "tipe utama") **tidak dipakai lagi sejak 2 Okt 2026**: aplikasi tidak membaca maupun menulisnya, dan satu-satunya hubungan sparepart ↔ tipe adalah `sparepart_compatibility`. Kolom tetap ada (penghapusan butuh migrasi terpisah setelah dipastikan aplikasi lain tidak membacanya). Per 2 Okt 2026 keempat sparepart sudah punya baris kompatibel yang memuat tipe utamanya, jadi tidak ada data yang perlu dipindahkan ([`migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql`](migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql) disimpan untuk sparepart baru dari penulis lain).
 
 ## 3. Model stok (paling penting)
 
@@ -86,10 +86,10 @@ Kolom `stok_asal` (kantong yang berkurang) dan `stok_tujuan` (kantong yang berta
 
 | `mutation_type` | `stok_asal` | `stok_tujuan` | Keterangan |
 |---|---|---|---|
-| `Masuk` | NULL | `baru` | penerimaan barang baru; kolom `sumber` diisi |
-| `Pakai` | `baru` | NULL | dipasang ke peralatan; aplikasi **mewajibkan `unit_id`** (dasar MTBF per unit) |
-| `Bekas` | NULL | `bekas` | barang copotan layak pakai dikembalikan ke gudang |
-| `Rusak` | `baru` atau `bekas` | `rusak` | barang tidak layak pakai; boleh langsung dari baru |
+| `Masuk` | NULL | `baru`, `bekas`, atau `rusak` | barang masuk gudang; `sumber` hanya untuk baru; `unit_id` opsional = unit asal copotan (bekas/rusak) |
+| `Pakai` | `baru` atau `bekas` | NULL | dipasang ke peralatan; **`unit_id` wajib** (aplikasi + trigger; dasar MTBF per unit) |
+| `Bekas` *(tipe lama)* | NULL | `bekas` | tidak lagi ditulis aplikasi ini (sejak 2 Okt 2026); diganti `Masuk` bekas |
+| `Rusak` *(tipe lama)* | `baru` atau `bekas` | `rusak` | tidak lagi ditulis aplikasi ini; diganti `Masuk` rusak / `Serah Terima` |
 | `Serah Terima` (terima) | NULL | `baru`, `bekas`, atau `rusak` | menerima barang dari pihak lain |
 | `Serah Terima` (serahkan) | `baru`, `bekas`, atau `rusak` | NULL | menyerahkan barang ke pihak lain |
 
@@ -97,7 +97,9 @@ Untuk `Serah Terima`, kolom `penerima` dan `unit_penerima` berisi **pihak lain**
 
 **Baris tanpa `stok_asal`/`stok_tujuan`** (baris lama atau ditulis aplikasi lain) memakai default tipenya: `Masuk`→baru, `Pakai`←baru, `Bekas`→bekas, `Rusak` dari bekas ke rusak. `Serah Terima` tanpa arah **tidak mengubah stok** (aplikasi menandainya kuning di History).
 
-Constraint `stock_mutations_aliran_stok_check` menolak kombinasi yang tidak masuk akal (contoh: `Masuk` dengan `stok_asal`, `Pakai` ke `rusak`, `Serah Terima` dua arah sekaligus).
+Constraint `stock_mutations_aliran_stok_check` menolak kombinasi yang tidak masuk akal (contoh: `Masuk` dengan `stok_asal`, `Pakai` dari `rusak` atau ke kantong mana pun, `Serah Terima` dua arah sekaligus). Masuk ke bekas/rusak dan Pakai dari bekas diizinkan sejak migrasi [`2026-10-02_transaksi_tiga_tipe.sql`](migrations/2026-10-02_transaksi_tiga_tipe.sql) (diterapkan 2 Okt 2026). View `current_stock` tidak perlu diubah karena sudah membaca kolom asal/tujuan.
+
+Satu transaksi di aplikasi (nota) bisa berisi banyak baris; semuanya dikirim dalam satu `INSERT` (satu statement), jadi bila satu baris melanggar constraint, seluruh nota batal.
 
 ### 3.3 Dua implementasi yang harus selalu sama
 
@@ -217,9 +219,9 @@ Master sparepart. **Tidak ada kolom stok.**
 | `sku` | varchar(100) | tidak | | UNIQUE; aplikasi membuat urutan `SP-001`, `SP-002`, … |
 | `name` | varchar(255) | tidak | | |
 | `description` | text | ya | | |
-| `id_tipe` | uuid | ya | | FK → `tipe_peralatan` (SET NULL); tipe utama |
-| `unit` | varchar(50) | ya | `'PCS'` | satuan |
-| `minimum_stok` | integer | tidak | `1` | CHECK ≥ 0; batas stok baru minimum |
+| `id_tipe` | uuid | ya | | FK → `tipe_peralatan` (SET NULL); **tidak dipakai lagi** (dulu tipe utama), lihat 2 |
+| `unit` | varchar(50) | ya | `'PCS'` | satuan; aplikasi mengisi `UNIT` bila kosong saat tambah sparepart |
+| `minimum_stok` | integer | tidak | `1` | CHECK ≥ 0; **tidak dipakai lagi** sejak 2 Okt 2026: stok minimum dihitung aplikasi dari pemakaian (PRD BR-15). Sparepart baru terisi default `1` |
 | `lokasi` | varchar | ya | | nama gudang (teks bebas) |
 | `rack` | varchar | ya | | kode rak |
 | `mtbf_days` | integer | ya | `180` | **tidak dipakai lagi** sejak 2 Okt 2026 (MTBF dihitung dari `stock_mutations`); belum dihapus |
@@ -235,11 +237,11 @@ Log semua pergerakan stok. **Sumber kebenaran stok.**
 |---|---|---|---|---|
 | `id` | uuid | tidak | `gen_random_uuid()` | PK |
 | `sparepart_id` | uuid | tidak | | FK → `spareparts` (**CASCADE**: menghapus sparepart menghapus riwayatnya) |
-| `unit_id` | uuid | ya | | FK → `unit_peralatan` (SET NULL); unit tempat sparepart dipasang/dicopot. **Wajib untuk `Pakai`** di aplikasi; di database baru diwajibkan bila migrasi `pakai_wajib_unit` diterapkan |
+| `unit_id` | uuid | ya | | FK → `unit_peralatan` (SET NULL); unit tempat sparepart dipasang/dicopot. **Wajib untuk `Pakai`**, di aplikasi dan di database (trigger `stock_mutations_pakai_wajib_unit`, lihat 5.2) |
 | `personel_id` | uuid | ya | | FK → `personel` (SET NULL); petugas |
 | `mutation_type` | varchar(50) | tidak | | CHECK: `Masuk`, `Pakai`, `Bekas`, `Rusak`, `Serah Terima` |
 | `qty` | integer | tidak | | CHECK > 0 |
-| `notes` | text | ya | | |
+| `notes` | text | ya | | catatan bebas; aplikasi dapat menaruh tag di awalnya: `[Petugas: Nama]` (petugas tulis manual saat jadwal shift kosong, `personel_id` NULL) dan `[Ref: ...]` (nomor referensi) |
 | `created_at` | timestamptz | ya | `now()` | |
 | `sumber` | varchar | ya | `'VENDOR'` | asal barang (hanya bermakna untuk `Masuk`): `IASS`, `SUP API`, `SISA PEKERJAAN`, `MANDIRI`, `DARI UNIT LAIN`, `VENDOR`. **Tidak ada CHECK**; aplikasi yang membatasi |
 | `location` | varchar | ya | | lokasi teks bebas; tidak ditulis aplikasi ini, tetapi ditampilkan bila ada |
@@ -253,7 +255,7 @@ Log semua pergerakan stok. **Sumber kebenaran stok.**
 | `id` | uuid | tidak | `gen_random_uuid()` | PK |
 | `sparepart_id` | uuid | tidak | | FK → `spareparts` (CASCADE) |
 | `id_tipe` | uuid | tidak | | FK → `tipe_peralatan` (CASCADE) |
-| `is_primary` | boolean | ya | `true` | aplikasi mengisi `true` hanya untuk tipe pertama |
+| `is_primary` | boolean | ya | `true` | **tidak bermakna lagi** (tidak ada tipe utama); aplikasi tidak menulisnya, sehingga baris baru memakai default `true` |
 | `created_at` | timestamptz | ya | `now()` | |
 
 UNIQUE (`sparepart_id`, `id_tipe`). Aplikasi menyamakan isi tabel ini dengan pilihan di form katalog (hapus yang tidak dipilih, upsert yang dipilih).
@@ -273,7 +275,7 @@ Rekap stok per sparepart dengan aturan [bagian 3](#3-model-stok-paling-penting):
 ### 5.2 Fungsi dan trigger
 - Fungsi `update_updated_at_column()` mengisi `updated_at = now()`. Trigger `update_unit_peralatan_updated_at` (BEFORE UPDATE) memakainya pada `unit_peralatan`. Catatan keamanan: fungsi ini belum mengunci `search_path` (peringatan Supabase advisor).
 - Tidak ada trigger pada `spareparts` atau `stock_mutations`. Aplikasi mengisi `updated_at` sendiri.
-- **Disiapkan, belum diterapkan:** trigger `stock_mutations_pakai_wajib_unit` ([migrasi](migrations/2026-10-02_pakai_wajib_unit.sql)) yang menolak `Pakai` tanpa `unit_id` pada INSERT/UPDATE langsung, tetapi membiarkan `ON DELETE SET NULL` saat unit dihapus. CHECK constraint sengaja tidak dipakai: dengan CHECK, unit yang punya riwayat `Pakai` tidak bisa dihapus (terbukti dalam uji yang dibatalkan).
+- **Diterapkan 2 Okt 2026:** trigger `stock_mutations_pakai_wajib_unit` (BEFORE INSERT OR UPDATE OF `mutation_type`, `unit_id`; fungsi dengan `search_path` terkunci; [migrasi](migrations/2026-10-02_pakai_wajib_unit.sql)) yang menolak `Pakai` tanpa `unit_id` pada INSERT/UPDATE langsung, tetapi membiarkan `ON DELETE SET NULL` saat unit dihapus. CHECK constraint sengaja tidak dipakai: dengan CHECK, unit yang punya riwayat `Pakai` tidak bisa dihapus (terbukti dalam uji yang dibatalkan).
 
 ### 5.3 Index (selain primary key dan UNIQUE)
 `spareparts`: `sku`, `id_tipe` (2 index), `lokasi`, `rack` · `stock_mutations`: `sparepart_id`, `created_at DESC` · `sparepart_compatibility`: `sparepart_id`, `id_tipe` · `unit_peralatan`: `status`, `id_tipe` · tabel aplikasi lain: `jadwal_pm`, `laporan_*`.
@@ -308,10 +310,12 @@ Tabel `supabase_migrations.schema_migrations` mencatat:
 | 20260723123349 | `spareparts_view_indexes_and_constraints` | FK `ON DELETE CASCADE` dan index pada `sparepart_compatibility`, index `spareparts.id_tipe`; juga membuat view `v_spareparts` yang **sudah tidak ada** di database sekarang |
 | 20261002052637 | `aliran_stok_per_transaksi` | kolom `stok_asal`/`stok_tujuan`, constraint, view `current_stock` baru |
 | 20261002053010 | `current_stock_security_invoker` | view `security_invoker`, hak hanya `SELECT` |
+| 20261002152932 | `pakai_wajib_unit` | trigger yang menolak `Pakai` tanpa `unit_id` |
+| 20261002185618 | `transaksi_tiga_tipe` | constraint aliran stok: Masuk ke baru/bekas/rusak, Pakai dari baru/bekas |
 
 Perubahan skema sebelum 23 Juli 2026 dibuat lewat dashboard dan tidak tercatat di tabel ini. Salinan kedua migrasi Oktober ada di [`docs/migrations/`](migrations/) beserta perintah rollback.
 
-**Belum diterapkan:** [`2026-10-02_pakai_wajib_unit.sql`](migrations/2026-10-02_pakai_wajib_unit.sql) (trigger `Pakai` wajib unit), menunggu persetujuan pemilik. Kode aplikasi tidak bergantung padanya.
+**Tidak perlu diterapkan:** [`2026-10-02_kompatibilitas_dari_tipe_utama.sql`](migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql) (data: pindahkan `id_tipe` ke `sparepart_compatibility`) sudah no-op karena keempat sparepart sudah punya baris kompatibel yang memuat tipe utamanya.
 
 ## 8. Prosedur mengubah database
 
@@ -362,5 +366,7 @@ Sparepart sudah terdaftar tetapi belum ada satu pun transaksi stok, jadi semua s
 | `docs/schema_relational_supabase.sql` | **Acuan skema** (disinkronkan dengan database live). Aman dibaca; jangan dijalankan ulang di produksi. |
 | `docs/migrations/2026-10-02_aliran_stok.sql` | Sudah diterapkan. |
 | `docs/migrations/2026-10-02_current_stock_security_invoker.sql` | Sudah diterapkan. |
-| `docs/migrations/2026-10-02_pakai_wajib_unit.sql` | **Belum diterapkan**; sudah diuji dalam transaksi yang dibatalkan. |
+| `docs/migrations/2026-10-02_pakai_wajib_unit.sql` | Sudah diterapkan (2 Okt 2026). |
+| `docs/migrations/2026-10-02_transaksi_tiga_tipe.sql` | Sudah diterapkan (2 Okt 2026). |
+| `docs/migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql` | Tidak perlu diterapkan (no-op, data sudah lengkap); disimpan sebagai catatan. |
 | `docs/schema_relational_supabase_v2.sql` | **Usang. Jangan dijalankan.** Skrip migrasi lama TEXT→UUID; database sudah memakai UUID. |

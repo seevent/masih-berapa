@@ -1,6 +1,6 @@
 # Spesifikasi: Predictive Maintenance v2 — MTBF otomatis dari data
 
-**Status: DISETUJUI (U1–U8, 2 Oktober 2026) dan DIIMPLEMENTASIKAN (T1–T7)** · T8 (guard database) siap, belum diterapkan · 2 Oktober 2026
+**Status: DISETUJUI (U1–U8, 2 Oktober 2026) dan DIIMPLEMENTASIKAN (T1–T7)** · T8 (guard database) juga **diterapkan** · 2 Oktober 2026
 Dokumen aktif (bukan bagian dari spesifikasi lama yang historis di folder ini).
 
 > Terkait: [PRD F-07 dan F-08](../PRD.md#6-kebutuhan-fungsional) · [ARCHITECTURE 6.3–6.4](../ARCHITECTURE.md#6-logika-domain-lainnya) · [DATABASE 4.7–4.8](../DATABASE.md#4-kamus-tabel)
@@ -99,9 +99,10 @@ titik_pesan     = max(titik_pesan_SLA, minimum_stok + 1)    [Usulan: minimum_sto
 PESAN bila stok_baru < titik_pesan;  jumlah usulan = titik_pesan − stok_baru
 ```
 
-- Yang dihitung **stok baru** saja, karena `Pakai` hanya mengambil dari stok baru.
+- ~~Yang dihitung stok baru saja~~ **Sejak 2 Okt 2026 yang dihitung stok tersedia = baru + bekas**, karena `Pakai` bisa mengambil keduanya (`stok_baru` di rumus di atas dibaca "stok tersedia").
 - **Penjelasan implementasi:** batas bawahnya `minimum_stok + 1` (bukan `minimum_stok`) agar PESAN selalu muncul bila stok rendah menurut definisi aplikasi (`isLowStock`: stok baru **≤** minimum). Tanpa "+1", stok yang tepat sama dengan minimum dianggap rendah di Dashboard tetapi tidak dipesan di sini.
-- Tanpa transaksi `Pakai` sama sekali, hanya aturan `minimum_stok` yang berlaku, dengan keterangan "belum cukup data".
+- Tanpa transaksi `Pakai` sama sekali, titik pesan SLA kosong dan stok minimum = 0 (PESAN hanya bila stok baru habis), dengan keterangan "belum cukup data".
+- **Perubahan 2 Okt 2026:** `minimum_stok` tidak lagi diisi manual. Nilainya `titik_pesan_SLA − 1` (`autoMinimumStock`), sehingga `titik_pesan = max(titik_pesan_SLA, minimum + 1)` sama dengan titik pesan SLA.
 
 **Contoh.** 6 kali `Pakai` dalam 180 hari → r = 0,0333/hari → λ = 1,0 untuk 30 hari.
 Poisson(1,0): P(≤2) = 92,0%, **P(≤3) = 98,1%** → titik pesan SLA = **3**. Dengan stok baru 1 → PESAN 2.
@@ -123,7 +124,7 @@ Memakai `r` dan jendela yang sama dengan 4.3/4.4, supaya laporan rotasi, kebutuh
 | Slow | tanpa `Pakai`, riwayat sparepart ≥ 30 hari |
 | Belum cukup data | tanpa `Pakai`, riwayat < 30 hari |
 
-Hanya `Pakai` yang dihitung; Masuk, Bekas, Rusak, dan Serah Terima (termasuk stok awal saat mendaftar) bukan perputaran.
+Hanya `Pakai` (dari baru maupun bekas) yang dihitung; Masuk, Serah Terima, tipe lama Bekas/Rusak, dan stok awal saat mendaftar bukan perputaran.
 
 ## 5. Perubahan aplikasi
 
@@ -144,7 +145,7 @@ Hanya `Pakai` yang dihitung; Masuk, Bekas, Rusak, dan Serah Terima (termasuk sto
 - `spareparts.mtbf_days` dan `spareparts.last_replaced_at` **tidak dipakai lagi** tetapi **tidak dihapus** dulu (tanpa migrasi destruktif). Penghapusan kolom bisa jadi migrasi terpisah setelah dipastikan tidak ada aplikasi lain yang membacanya.
 - **[Usulan, disetujui]** guard database agar aturan K1 juga berlaku bagi penulis lain. Aman untuk data sekarang (0 transaksi), tetapi akan menolak `Pakai` tanpa unit dari aplikasi lain bila ada.
   - Saat diuji, bentuk `CHECK (mutation_type <> 'Pakai' OR unit_id IS NOT NULL)` ternyata **mencegah penghapusan unit** yang punya riwayat `Pakai`, karena FK `unit_id ON DELETE SET NULL` melanggar CHECK.
-  - Penggantinya adalah **trigger** yang hanya memeriksa penulisan langsung, sehingga penghapusan unit tetap berjalan: [`migrations/2026-10-02_pakai_wajib_unit.sql`](../migrations/2026-10-02_pakai_wajib_unit.sql). Belum diterapkan; menunggu konfirmasi pemilik atas perubahan bentuk ini.
+  - Penggantinya adalah **trigger** yang hanya memeriksa penulisan langsung, sehingga penghapusan unit tetap berjalan: [`migrations/2026-10-02_pakai_wajib_unit.sql`](../migrations/2026-10-02_pakai_wajib_unit.sql). Diterapkan pada 2 Okt 2026 atas persetujuan pemilik.
 
 ## 7. Tiket
 
@@ -157,7 +158,7 @@ Hanya `Pakai` yang dihitung; Masuk, Bekas, Rusak, dan Serah Terima (termasuk sto
 | T5 | Katalog: hapus isian manual, tampilkan MTBF otomatis | payload tambah/ubah sparepart tidak lagi berisi `mtbf_days`/`last_replaced_at` |
 | T6 | Kebutuhan tahunan dan header | sesuai 4.4 dan bagian 5 |
 | T7 | Dokumen: PRD (F-07, F-08, aturan 7.4–7.5), ARCHITECTURE (6.3–6.4), DATABASE (4.7), README, AGENTS; `graphify update` | tautan valid; isi sesuai kode |
-| T8 | (opsional, butuh persetujuan) guard database untuk K1 | diuji dalam transaksi yang dibatalkan, juga sebagai `anon` — **selesai diuji, belum diterapkan** |
+| T8 | (opsional, butuh persetujuan) guard database untuk K1 | diuji dalam transaksi yang dibatalkan, juga sebagai `anon` — **diterapkan 2 Okt 2026** (migrasi `pakai_wajib_unit`) |
 
 Verifikasi: `typecheck`, `build`, tes `vitest`, uji browser dengan penulisan dicegat, dan perbandingan hasil terhadap contoh di bagian 4.
 
@@ -172,7 +173,7 @@ Semua usulan U1–U8 **disetujui pemilik** pada 2 Oktober 2026. Untuk U8, bentuk
 | U2 | Horizon 30 hari sampai lead time ada | 14 / 60 / 90 hari |
 | U3 | Ambang umur 70% / 90% / 100% MTBF | angka lain |
 | U4 | Hapus juga isian **Terakhir Diganti** (ikut tidak dipakai) | biarkan sebagai catatan saja |
-| U5 | `minimum_stok` tetap sebagai batas bawah manual titik pesan | hapus, hanya pakai SLA 98% |
+| U5 | ~~`minimum_stok` tetap sebagai batas bawah manual titik pesan~~ **Diganti (2 Okt 2026, atas permintaan pemilik): stok minimum dihitung otomatis** = titik pesan SLA − 1, 0 tanpa pemakaian; isian manual dihapus | hapus, hanya pakai SLA 98% |
 | U6 | Daftar unit untuk `Pakai` mencakup unit non-kompatibel (di grup terpisah) | hanya unit kompatibel |
 | U7 | Tambah `vitest` untuk menguji rumus | tanpa tes otomatis |
 | U8 | Constraint database `Pakai` wajib unit (T8) | hanya di aplikasi |
@@ -182,5 +183,5 @@ Semua usulan U1–U8 **disetujui pemilik** pada 2 Oktober 2026. Untuk U8, bentuk
 - Model Weibull (pola "makin tua makin rawan"): setelah ada sparepart dengan ≥ 10 penggantian.
 - Lead time per sparepart: setelah datanya tersedia (akan menggantikan H = 30).
 - Riwayat sebelum aplikasi dipakai: tidak diketahui; umur posisi dimulai dari pemasangan pertama yang tercatat.
-- `Pakai` dari stok bekas (rotable dipasang ulang): model aliran stok saat ini belum mendukungnya.
+- ~~`Pakai` dari stok bekas~~: **sudah didukung sejak 2 Okt 2026** (Pakai memilih baru/bekas). `Pakai` dari bekas dihitung sebagai pemasangan/penggantian dan sebagai pemakaian; kecukupan stok dan kebutuhan memakai stok tersedia = baru + bekas.
 - Jumlah komponen sejenis per unit: diambil dari qty pemasangan pertama, bukan dari data master.
