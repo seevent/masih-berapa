@@ -234,7 +234,6 @@ export const ScannerPage: React.FC = () => {
           defaultType="Pakai"
           incomingPart={incomingPart}
           showPartFilters={false}
-          fallbackNotes={(type) => `Transaksi via Scan Barcode/QR (${type})`}
           onSaved={() => {
             setFoundPartId(null);
             setScannedSku('');
