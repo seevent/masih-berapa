@@ -185,7 +185,8 @@ CREATE TABLE IF NOT EXISTS public.sparepart_compatibility (
 
 -- View current_stock: stok_aktual (baru), stok_bekas, stok_rusak per sparepart, dihitung dengan
 -- aturan yang sama persis dengan aplikasi (src/utils/stock.ts). Definisi lengkap ada di
--- docs/migrations/2026-10-02_aliran_stok.sql.
+-- docs/migrations/2026-10-02_aliran_stok.sql. View memakai security_invoker = true dan hanya
+-- SELECT untuk anon/authenticated (docs/migrations/2026-10-02_current_stock_security_invoker.sql).
 
 -- Row Level Security: RLS AKTIF di semua tabel. Tabel spareparts, stock_mutations dan
 -- sparepart_compatibility memakai policy "Public full access" untuk role anon & authenticated

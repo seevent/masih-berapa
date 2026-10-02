@@ -51,6 +51,8 @@ COMMENT ON COLUMN public.stock_mutations.unit_penerima IS
   'Serah Terima: unit pihak lain (penerima saat diserahkan, pemberi saat diterima).';
 
 -- Rekap stok di database, memakai aturan yang sama dengan aplikasi (src/utils/stock.ts)
+-- Catatan: pengamanan view (security_invoker, hanya SELECT) ada di
+-- 2026-10-02_current_stock_security_invoker.sql; jalankan setelah file ini.
 CREATE OR REPLACE VIEW public.current_stock AS
 WITH aliran AS (
   SELECT
