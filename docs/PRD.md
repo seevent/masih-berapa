@@ -102,6 +102,7 @@ Lima tipe transaksi; detail aturan di [bagian 7](#7-aturan-bisnis).
 | Serah Terima | menyerahkan atau menerima barang ke/dari pihak lain | **arah** (serahkan/terima), **kondisi** (baru/bekas/rusak), **pihak** (wajib), unit pihak |
 
 - Setiap transaksi wajib punya petugas; pilihan petugas = personel yang berdinas pada shift saat ini (bila jadwal kosong, semua personel + peringatan), diurutkan **API dulu, lalu IAS**, di dalam unit menurut nomor urut.
+- **Fallback tulis manual:** bila jadwal shift belum diunggah, daftar petugas menambahkan pilihan "Tulis nama manual…" dengan isian nama (wajib). Nama disimpan di awal catatan sebagai `[Petugas: Nama]` (tabel `stock_mutations` tidak punya kolom khusus; `personel_id` kosong), tampil sebagai petugas di History/Dashboard, dan tidak ditampilkan ganda di kolom catatan. Pilihan ini hanya muncul saat jadwal kosong dan bisa diedit dari History.
 - Ada kolom catatan.
 - **Kriteria:** transaksi yang membuat stok kantong mana pun minus **ditolak** dengan pesan jelas dan tidak tersimpan.
 - **Kriteria:** `Pakai` tanpa unit tidak bisa dikirim dari form dan ditolak oleh aplikasi (BR-13).

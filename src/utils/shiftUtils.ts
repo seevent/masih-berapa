@@ -59,6 +59,35 @@ export const getCurrentShiftInfo = (nowDate: Date = new Date()): ShiftInfo => {
   };
 };
 
+/** Select value for "write the officer's name by hand" (only offered when no shift schedule exists). */
+export const MANUAL_PETUGAS_ID = '__manual__';
+
+const MANUAL_PETUGAS_TAG = /^\[Petugas: ([^\]]+)\]\s*/;
+
+/** Cleans a hand-written officer name: single line, no brackets, trimmed, max 80 characters. */
+export const cleanManualPetugas = (name: string): string =>
+  name.replace(/[\[\]\r\n]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80);
+
+/**
+ * stock_mutations has no column for a hand-written officer, so the name is kept at the start of
+ * the notes as "[Petugas: Nama]" (same style as the "[Ref: ...]" tag of reference numbers).
+ */
+export const withManualPetugas = (notes: string | null | undefined, name: string): string => {
+  const clean = cleanManualPetugas(name);
+  const rest = (notes || '').trim();
+  return clean ? `[Petugas: ${clean}]${rest ? ` ${rest}` : ''}` : rest;
+};
+
+/** The hand-written officer of a mutation, or null. */
+export const extractManualPetugas = (notes: string | null | undefined): string | null => {
+  const match = MANUAL_PETUGAS_TAG.exec(notes || '');
+  return match ? match[1].trim() : null;
+};
+
+/** Notes without the "[Petugas: ...]" tag (for display and editing). */
+export const stripManualPetugas = (notes: string | null | undefined): string =>
+  (notes || '').replace(MANUAL_PETUGAS_TAG, '').trim();
+
 /**
  * Display order of work units in the personel list: API first, then IAS (e.g. "OM/IAS T2"),
  * then any other unit by name, and personnel without a unit last.

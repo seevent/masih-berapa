@@ -196,6 +196,7 @@ Untuk sebuah sparepart: kumpulkan semua tipe di `sparepart_compatibility` (kolom
 - Bila tidak ada jadwal sama sekali, daftar personel jatuh kembali ke **semua personel** dan UI menampilkan peringatan.
 - Nama ditampilkan dengan awalan unit kerja, mis. `[OM/IAS T2] Nama`.
 - **Urutan daftar:** unit **API** dulu, lalu **IAS**, lalu unit lain (menurut nama unit), lalu personel tanpa unit; di dalam unit menurut `personel.urutan` (kosong di akhir), lalu nama (`compareDutyPersonel`). Berlaku juga pada daftar cadangan.
+- **Petugas manual:** saat daftar cadangan (jadwal kosong), `PetugasSelect` menambahkan pilihan `MANUAL_PETUGAS_ID` + isian nama. Karena `stock_mutations` tidak punya kolom untuk itu, nama disimpan di awal `notes` sebagai `[Petugas: Nama]` (`withManualPetugas`, `extractManualPetugas`, `stripManualPetugas`, `cleanManualPetugas` di `shiftUtils.ts`); `InventoryContext` memakainya untuk `operator_name`, dan History/Dashboard menyembunyikan tag dari kolom catatan. `addMutation` menerima `petugas_manual`.
 
 ### 6.3 Predictive maintenance (`utils/reliability.ts`)
 Fungsi murni, diuji dengan `vitest`. Spesifikasi dan contoh angka: [specs/predictive-maintenance.md](specs/predictive-maintenance.md).

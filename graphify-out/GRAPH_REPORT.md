@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 2963 nodes · 3574 edges · 256 communities (191 shown, 65 thin omitted)
+- 2971 nodes · 3610 edges · 252 communities (187 shown, 65 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 92 edges (avg confidence: 0.72)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `a82f0723`
+- Built from commit: `ced56506`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -104,12 +104,12 @@
 - Brand Voice Framework
 - Layout Patterns
 - Tailwind Integration
-- duration
+- primitive
 - Layout Patterns
 - extract-colors.cjs
 - validate-asset.cjs
 - Task Dependency Hierarchy
-- useInventory
+- HistoryPage.tsx
 - update.md
 - Logo Design Reference
 - Writing Plans
@@ -142,7 +142,7 @@
 - ._base_config
 - BM25
 - helper.js
-- md
+- lg
 - sync-brand-to-tokens.cjs
 - test_validate_tokens.py
 - Technical Specification: SSES T2 Sparepart Management - "Masih Berapa" (v1.0.0)
@@ -171,7 +171,7 @@
 - Testing All Skill Types
 - RED-GREEN-REFACTOR for Skills
 - VERIFY GREEN: Pressure Testing
-- sm
+- shadow
 - padding-y
 - codex-tools.md
 - App.tsx
@@ -235,7 +235,7 @@
 - radius
 - plan-document-reviewer-prompt.md
 - jspdf
-- NotificationContext.tsx
+- useInventory
 - shiftUtils.ts
 - vercel.json
 - Path
@@ -244,25 +244,21 @@
 - Path
 - InventoryProvider
 - Core principles
-- ReportsPage.tsx
-- 2
+- core-js
+- default
 - none
 - radius
 - 2026-10-02_aliran_stok.sql
 - @supabase/supabase-js
 - xl
 - foreground
-- 8
 - tailwind-merge
-- 12
-- 6
 - destructive-foreground
 - primary
 - muted
 - secondary
 - primary-foreground
 - motion
-- clsx
 - tailwindcss
 
 ## God Nodes (most connected - your core abstractions)
@@ -280,27 +276,27 @@
 ## Surprising Connections (you probably didn't know these)
 - `PrintLabelPage()` --references--> `jspdf`  [EXTRACTED]
   src/pages/PrintLabelPage.tsx → package.json
+- `HistoryPage()` --references--> `xlsx`  [EXTRACTED]
+  src/pages/HistoryPage.tsx → package.json
 - `TestShadcnInstaller` --uses--> `ShadcnInstaller`  [INFERRED]
   .agents/skills/ui-styling/scripts/tests/test_shadcn_add.py → .agents/skills/ui-styling/scripts/shadcn_add.py
 - `TestGeneratedConfigIsValidJs` --uses--> `TailwindConfigGenerator`  [INFERRED]
   .agents/skills/ui-styling/scripts/tests/test_tailwind_config_gen.py → .agents/skills/ui-styling/scripts/tailwind_config_gen.py
 - `TestTailwindConfigGenerator` --uses--> `TailwindConfigGenerator`  [INFERRED]
   .agents/skills/ui-styling/scripts/tests/test_tailwind_config_gen.py → .agents/skills/ui-styling/scripts/tailwind_config_gen.py
-- `_generate_intelligent_overrides()` --calls--> `search()`  [INFERRED]
-  .agents/skills/ui-ux-pro-max/scripts/design_system.py → .agents/skills/ui-ux-pro-max/scripts/core.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (256 total, 65 thin omitted)
+## Communities (252 total, 65 thin omitted)
 
 ### Community 0 - "dependencies"
 Cohesion: 0.11
-Nodes (19): core-js, html2canvas-pro, html5-qrcode, lucide-react, dependencies, core-js, html2canvas-pro, html5-qrcode (+11 more)
+Nodes (19): clsx, html2canvas-pro, html5-qrcode, lucide-react, dependencies, clsx, html2canvas-pro, html5-qrcode (+11 more)
 
 ### Community 1 - "sparepartAnalytics.ts"
 Cohesion: 0.13
-Nodes (10): ABCAnalysisChartProps, PhysicalMovementChartProps, ReorderPriorityTableProps, SparepartMetricsCardsProps, ABCItemPhysical, ABCPhysicalBreakdown, CategoryPhysicalBreakdown, MonthlyPhysicalTrend (+2 more)
+Nodes (9): ABCAnalysisChartProps, PhysicalMovementChartProps, ReorderPriorityTableProps, SparepartMetricsCardsProps, ABCPhysicalBreakdown, CategoryPhysicalBreakdown, MonthlyPhysicalTrend, ReorderPriorityItemPhysical (+1 more)
 
 ### Community 2 - "compilerOptions"
 Cohesion: 0.09
@@ -355,8 +351,8 @@ Cohesion: 0.05
 Nodes (37): 1. Color Palette, 2. Typography, 3. Logo Usage, 4. Voice & Tone, 5. Imagery Guidelines, 6. Design Components, Accessibility, AI Image Generation (+29 more)
 
 ### Community 22 - "reliability.ts"
-Cohesion: 0.13
-Nodes (27): Sparepart, UnitStatus, AnnualNeed, autoMinimumStock(), buildPositions(), buildPredictiveReport(), ceilQty(), classifyMovement() (+19 more)
+Cohesion: 0.12
+Nodes (28): ABCItemPhysical, Sparepart, UnitStatus, AnnualNeed, autoMinimumStock(), buildPositions(), buildPredictiveReport(), ceilQty() (+20 more)
 
 ### Community 25 - "Design"
 Cohesion: 0.06
@@ -459,8 +455,8 @@ Cohesion: 0.09
 Nodes (22): @apply Directive, Best Practices, Color Customization, Complete Tailwind Config, Configuration Examples, Content Configuration, Custom Color Palette, Custom Font Sizes (+14 more)
 
 ### Community 50 - "spacing"
-Cohesion: 0.09
-Nodes (22): $type, $value, $type, $value, $type, $value, $type, $value (+14 more)
+Cohesion: 0.06
+Nodes (34): $type, $value, $type, $value, $type, $value, $type, $value (+26 more)
 
 ### Community 51 - "Using Git Worktrees"
 Cohesion: 0.10
@@ -626,9 +622,9 @@ Nodes (13): Card Styles, Component Variants, CSS Structures, Feature Grid (3 col
 Cohesion: 0.14
 Nodes (13): Animation Tokens, Base Layer, Button Example, Component Classes, CSS Variables Setup, Dark Mode Toggle, HSL Format Benefits, shadcn/ui Alignment (+5 more)
 
-### Community 92 - "duration"
-Cohesion: 0.20
-Nodes (10): fast, normal, slow, $type, $value, $type, $value, duration (+2 more)
+### Community 92 - "primitive"
+Cohesion: 0.18
+Nodes (11): fast, normal, slow, $type, $value, $type, $value, primitive (+3 more)
 
 ### Community 93 - "Layout Patterns"
 Cohesion: 0.14
@@ -646,9 +642,9 @@ Nodes (13): checkManifest(), formatBytes(), formatOutput(), fs, main(), parseFil
 Cohesion: 0.14
 Nodes (14): Development Tickets: SSES T2 Sparepart Management - "Masih Berapa", Task Dependency Hierarchy, [TICKET-10]: Predictive Alerts (MTBF) & Demand Planning (`/alerts`, `/needs`), [TICKET-11]: Inventory Analytics & Cost Valuation (`/reports`), [TICKET-12]: System Settings, Supabase Config & Database Seed (`/settings`), [TICKET-1]: Project Scaffold & Tech Stack Setup, [TICKET-2]: Data Types & Supabase Database Layer, [TICKET-3]: App Layout, Sidebar & Toast Notification Context (+6 more)
 
-### Community 97 - "useInventory"
-Cohesion: 0.23
-Nodes (20): xlsx, EquipmentUnitSelect(), initialStockFlowForm, isStockFlowFormComplete(), optionClass(), StockFlowFields(), StockFlowFormState, stockOf() (+12 more)
+### Community 97 - "HistoryPage.tsx"
+Cohesion: 0.19
+Nodes (24): EquipmentUnitSelect(), PetugasOption, PetugasSelect(), PetugasSelectProps, initialStockFlowForm, isStockFlowFormComplete(), optionClass(), StockFlowFields() (+16 more)
 
 ### Community 98 - "update.md"
 Cohesion: 0.15
@@ -778,9 +774,9 @@ Nodes (5): BM25, BM25 ranking algorithm for text search, Lowercase, split, remov
 Cohesion: 0.42
 Nodes (7): connect(), nextReconnectDelay(), reloadAfterRecovery(), sessionKey(), setStatus(), showTombstone(), websocketUrl()
 
-### Community 130 - "md"
-Cohesion: 0.67
-Nodes (4): $type, $value, md, md
+### Community 130 - "lg"
+Cohesion: 0.60
+Nodes (5): lg, $type, $value, lg, lg
 
 ### Community 131 - "sync-brand-to-tokens.cjs"
 Cohesion: 0.33
@@ -863,8 +859,8 @@ Cohesion: 0.40
 Nodes (4): Choose A, B, or C, Pressure Test 1: Emergency Production Fix, Scenario, Your Options
 
 ### Community 151 - "stock.ts"
-Cohesion: 0.18
-Nodes (19): validateStock(), getReorderPriorityListPhysical(), CatalogPage(), DashboardPage(), BUCKETS, computeStockBySparepart(), describeFlow(), findNegativeStock() (+11 more)
+Cohesion: 0.20
+Nodes (18): validateStock(), getReorderPriorityListPhysical(), CatalogPage(), DashboardPage(), stripManualPetugas(), BUCKETS, computeStockBySparepart(), describeFlow() (+10 more)
 
 ### Community 152 - "Pressure Test 2: Sunk Cost + Exhaustion"
 Cohesion: 0.40
@@ -894,9 +890,9 @@ Nodes (5): GREEN: Write Minimal Skill, Micro-Test Wording Before Full Scenarios,
 Cohesion: 0.40
 Nodes (5): Key Elements of Good Scenarios, Pressure Types, Testing Setup, VERIFY GREEN: Pressure Testing, Writing Pressure Scenarios
 
-### Community 159 - "sm"
-Cohesion: 0.60
-Nodes (5): sm, sm, sm, $type, $value
+### Community 159 - "shadow"
+Cohesion: 0.47
+Nodes (6): sm, shadow, sm, sm, $type, $value
 
 ### Community 160 - "padding-y"
 Cohesion: 0.67
@@ -959,12 +955,12 @@ Cohesion: 0.20
 Nodes (10): fg, font-size, hover-bg, button, $type, $value, $type, $value (+2 more)
 
 ### Community 221 - "radius"
-Cohesion: 0.18
-Nodes (15): $type, $value, lg, $type, $value, $type, $value, primitive (+7 more)
+Cohesion: 0.29
+Nodes (8): $type, $value, $type, $value, radius, full, md, md
 
-### Community 224 - "NotificationContext.tsx"
-Cohesion: 0.21
-Nodes (10): NotificationContext, NotificationContextType, NotificationProvider(), ToastMessage, ToastType, useNotification(), LABEL_PRESETS, LabelPreset (+2 more)
+### Community 224 - "useInventory"
+Cohesion: 0.12
+Nodes (18): xlsx, AppLayout(), HeaderStats(), HeaderStatsProps, Sidebar(), SidebarProps, useInventory(), useNotification() (+10 more)
 
 ### Community 225 - "shiftUtils.ts"
 Cohesion: 0.20
@@ -978,13 +974,9 @@ Nodes (6): fetchSparepartMutations(), flowColumns(), InventoryProvider(), fetchA
 Cohesion: 0.50
 Nodes (4): Concise is key, Core principles, Set appropriate degrees of freedom, Test with all models you plan to use
 
-### Community 234 - "ReportsPage.tsx"
-Cohesion: 0.50
-Nodes (4): CATEGORY_STYLE, formatPerMonth(), ReportsPage(), MovementClass
-
-### Community 235 - "2"
+### Community 235 - "default"
 Cohesion: 0.67
-Nodes (3): $type, $value, 2
+Nodes (4): $type, $value, default, default
 
 ### Community 236 - "none"
 Cohesion: 0.67
@@ -1001,18 +993,6 @@ Nodes (4): xl, xl, $type, $value
 ### Community 241 - "foreground"
 Cohesion: 0.67
 Nodes (3): foreground, $type, $value
-
-### Community 242 - "8"
-Cohesion: 0.67
-Nodes (3): $type, $value, 8
-
-### Community 246 - "12"
-Cohesion: 0.67
-Nodes (3): $type, $value, 12
-
-### Community 247 - "6"
-Cohesion: 0.67
-Nodes (3): $type, $value, 6
 
 ### Community 248 - "destructive-foreground"
 Cohesion: 0.67
@@ -1035,24 +1015,24 @@ Cohesion: 0.67
 Nodes (3): primary-foreground, $type, $value
 
 ## Knowledge Gaps
-- **1536 isolated node(s):** `crypto`, `http`, `fs`, `path`, `OPCODES` (+1531 more)
+- **1538 isolated node(s):** `crypto`, `http`, `fs`, `path`, `OPCODES` (+1533 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **65 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `primitive` connect `radius` to `gray`, `fontSize`, `design-tokens-starter.json`, `spacing`, `duration`?**
+- **Why does `primitive` connect `primitive` to `gray`, `fontSize`, `design-tokens-starter.json`, `spacing`, `radius`, `shadow`?**
   _High betweenness centrality (0.008) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `dependencies` to `useInventory`, `@supabase/supabase-js`, `tailwind-merge`, `package.json`, `motion`, `clsx`, `jspdf`?**
+- **Why does `dependencies` connect `dependencies` to `useInventory`, `core-js`, `@supabase/supabase-js`, `tailwind-merge`, `package.json`, `motion`, `jspdf`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
-- **Why does `color` connect `gray` to `radius`?**
+- **Why does `color` connect `gray` to `primitive`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Are the 36 inferred relationships involving `TailwindConfigGenerator` (e.g. with `TestGeneratedConfigIsValidJs` and `.test_node_check_parses_generated_config()`) actually correct?**
   _`TailwindConfigGenerator` has 36 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 23 inferred relationships involving `ShadcnInstaller` (e.g. with `TestShadcnInstaller` and `.test_add_all_components_dry_run()`) actually correct?**
   _`ShadcnInstaller` has 23 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `crypto`, `http`, `fs` to the rest of the system?**
-  _1536 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1538 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.10526315789473684 - nodes in this community are weakly interconnected._

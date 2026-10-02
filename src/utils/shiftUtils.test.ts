@@ -1,6 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { JadwalShift, Personel, UnitKerja } from '../types';
-import { compareDutyPersonel, getActiveDutyPersonel } from './shiftUtils';
+import {
+  cleanManualPetugas,
+  compareDutyPersonel,
+  extractManualPetugas,
+  getActiveDutyPersonel,
+  stripManualPetugas,
+  withManualPetugas
+} from './shiftUtils';
 
 const units: UnitKerja[] = [
   { id: 'u-ias', nama: 'OM/IAS T2' },
@@ -63,5 +70,33 @@ describe('Urutan personel berdinas', () => {
       { unitName: 'API T2', nama: 'D' }
     ];
     expect([...list].sort(compareDutyPersonel).map((p) => p.nama)).toEqual(['D', 'B', 'C', 'A']);
+  });
+});
+
+describe('Petugas tulis manual (jadwal belum diunggah)', () => {
+  it('nama disimpan sebagai tag di awal catatan dan bisa dibaca kembali', () => {
+    const notes = withManualPetugas('ganti generator', 'Budi Santoso');
+    expect(notes).toBe('[Petugas: Budi Santoso] ganti generator');
+    expect(extractManualPetugas(notes)).toBe('Budi Santoso');
+    expect(stripManualPetugas(notes)).toBe('ganti generator');
+  });
+
+  it('tanpa catatan: hanya tag; tag ikut sebelum tag Ref', () => {
+    expect(withManualPetugas('', 'Budi')).toBe('[Petugas: Budi]');
+    expect(withManualPetugas('[Ref: PO-1] baru', 'Budi')).toBe('[Petugas: Budi] [Ref: PO-1] baru');
+    expect(stripManualPetugas('[Petugas: Budi] [Ref: PO-1] baru')).toBe('[Ref: PO-1] baru');
+  });
+
+  it('catatan tanpa tag tidak berubah', () => {
+    expect(extractManualPetugas('catatan biasa')).toBeNull();
+    expect(extractManualPetugas(null)).toBeNull();
+    expect(stripManualPetugas('catatan biasa')).toBe('catatan biasa');
+    expect(stripManualPetugas(null)).toBe('');
+  });
+
+  it('nama dibersihkan: tanpa kurung siku/baris baru, rapat, maksimal 80 karakter', () => {
+    expect(cleanManualPetugas('  Budi [Teknisi]\n Santoso ')).toBe('Budi Teknisi Santoso');
+    expect(cleanManualPetugas('x'.repeat(200))).toHaveLength(80);
+    expect(withManualPetugas('catatan', '  [] ')).toBe('catatan');
   });
 });

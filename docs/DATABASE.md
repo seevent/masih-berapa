@@ -239,7 +239,7 @@ Log semua pergerakan stok. **Sumber kebenaran stok.**
 | `personel_id` | uuid | ya | | FK → `personel` (SET NULL); petugas |
 | `mutation_type` | varchar(50) | tidak | | CHECK: `Masuk`, `Pakai`, `Bekas`, `Rusak`, `Serah Terima` |
 | `qty` | integer | tidak | | CHECK > 0 |
-| `notes` | text | ya | | |
+| `notes` | text | ya | | catatan bebas; aplikasi dapat menaruh tag di awalnya: `[Petugas: Nama]` (petugas tulis manual saat jadwal shift kosong, `personel_id` NULL) dan `[Ref: ...]` (nomor referensi) |
 | `created_at` | timestamptz | ya | `now()` | |
 | `sumber` | varchar | ya | `'VENDOR'` | asal barang (hanya bermakna untuk `Masuk`): `IASS`, `SUP API`, `SISA PEKERJAAN`, `MANDIRI`, `DARI UNIT LAIN`, `VENDOR`. **Tidak ada CHECK**; aplikasi yang membatasi |
 | `location` | varchar | ya | | lokasi teks bebas; tidak ditulis aplikasi ini, tetapi ditampilkan bila ada |

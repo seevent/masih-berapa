@@ -29,7 +29,8 @@ import {
 } from '../components/mutation/StockFlowFields';
 import { getCompatibleEquipment, requiresEquipmentUnit, usesEquipmentUnit } from '../utils/compatibility';
 import { EquipmentUnitSelect } from '../components/mutation/EquipmentUnitSelect';
-import { getActiveDutyPersonel } from '../utils/shiftUtils';
+import { MANUAL_PETUGAS_ID, cleanManualPetugas, getActiveDutyPersonel } from '../utils/shiftUtils';
+import { PetugasSelect } from '../components/mutation/PetugasSelect';
 
 export const MutationPage: React.FC = () => {
   const {
@@ -60,6 +61,7 @@ export const MutationPage: React.FC = () => {
 
   // 3. Personel State
   const [selectedPersonelId, setSelectedPersonelId] = useState('');
+  const [manualPetugas, setManualPetugas] = useState('');
 
   // 4. Conditional Location & Equipment Unit State (Only for 'Pakai' & 'Bekas')
   const [selectedLokasiId, setSelectedLokasiId] = useState('');
@@ -85,10 +87,12 @@ export const MutationPage: React.FC = () => {
   // Default select first available personnel
   // (also re-selects when the active shift changes and the chosen person is no longer on duty)
   useEffect(() => {
+    // A hand-written name stays selected while no schedule exists (isFallback)
+    if (isFallback && selectedPersonelId === MANUAL_PETUGAS_ID) return;
     if (personelOptions.length > 0 && !personelOptions.some((p) => p.id === selectedPersonelId)) {
       setSelectedPersonelId(personelOptions[0].id);
     }
-  }, [personelOptions, selectedPersonelId]);
+  }, [personelOptions, selectedPersonelId, isFallback]);
 
   // Available Tipe filter options based on selected Jenis filter
   const availableTipesForFilter = selectedJenisFilter
@@ -123,6 +127,8 @@ export const MutationPage: React.FC = () => {
     });
 
   const selectedPersonelObj = personelOptions.find((p) => p.id === selectedPersonelId);
+  const isManualPetugas = isFallback && selectedPersonelId === MANUAL_PETUGAS_ID;
+  const petugasMissing = isManualPetugas ? !cleanManualPetugas(manualPetugas) : !selectedPersonelObj;
 
   // Equipment unit / location applies when a part goes into or comes out of a machine; 'Pakai' requires it
   const showsEquipmentUnit = usesEquipmentUnit(mutationType);
@@ -130,7 +136,7 @@ export const MutationPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedSparepartId || qty <= 0 || !selectedPersonelObj) return;
+    if (!selectedSparepartId || qty <= 0 || petugasMissing) return;
     if (!isStockFlowFormComplete(mutationType, flowForm) || unitMissing) return;
 
     setIsSubmitting(true);
@@ -138,7 +144,8 @@ export const MutationPage: React.FC = () => {
     const success = await addMutation({
       sparepart_id: selectedSparepartId,
       unit_id: showsEquipmentUnit ? selectedUnitId || undefined : undefined,
-      personel_id: selectedPersonelObj.id,
+      personel_id: isManualPetugas ? undefined : selectedPersonelObj?.id,
+      petugas_manual: isManualPetugas ? manualPetugas : undefined,
       mutation_type: mutationType,
       flow: resolveStockFlow(mutationType, flowForm),
       sumber: mutationType === 'Masuk' ? sumber : undefined,
@@ -449,24 +456,18 @@ export const MutationPage: React.FC = () => {
             {isFallback && (
               <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-medium">
                 <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>Jadwal shift untuk tanggal ini ({operationalDate}) belum diisi. Menampilkan semua personel sebagai pilihan.</span>
+                <span>Jadwal shift untuk tanggal ini ({operationalDate}) belum diisi. Menampilkan semua personel sebagai pilihan; bila nama tidak ada, pilih "Tulis nama manual".</span>
               </div>
             )}
 
-            <div>
-              <select
-                required
-                value={selectedPersonelId}
-                onChange={(e) => setSelectedPersonelId(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-sm text-white focus:border-cyan-500 cursor-pointer font-bold"
-              >
-                {personelOptions.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.formattedName}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <PetugasSelect
+              options={personelOptions}
+              value={selectedPersonelId}
+              onChange={setSelectedPersonelId}
+              isFallback={isFallback}
+              manualName={manualPetugas}
+              onManualNameChange={setManualPetugas}
+            />
           </div>
 
           {/* 5. Transaction Quantity, Sumber & Notes */}
@@ -527,7 +528,7 @@ export const MutationPage: React.FC = () => {
           <div className="pt-4 border-t border-slate-800 flex justify-end">
             <button
               type="submit"
-              disabled={isSubmitting || !selectedSparepartId || !selectedPersonelId || !isStockFlowFormComplete(mutationType, flowForm) || unitMissing}
+              disabled={isSubmitting || !selectedSparepartId || petugasMissing || !isStockFlowFormComplete(mutationType, flowForm) || unitMissing}
               className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-xl shadow-cyan-500/25 transition-all cursor-pointer disabled:opacity-50"
             >
               <CheckCircle2 className="w-5 h-5" />

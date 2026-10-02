@@ -19,6 +19,7 @@ import {
 import * as XLSX from 'xlsx';
 import { useInventory } from '../context/InventoryContext';
 import { MutationType, StockMutation, SupplierType } from '../types';
+import { extractManualPetugas, stripManualPetugas, withManualPetugas } from '../utils/shiftUtils';
 import { describeFlow, flowToOptions, isIncompleteSerahTerima, resolveStockFlow } from '../utils/stock';
 import {
   StockFlowFields,
@@ -54,6 +55,8 @@ export const HistoryPage: React.FC = () => {
   const [editSumber, setEditSumber] = useState<SupplierType>('VENDOR');
   const [editQty, setEditQty] = useState<number>(1);
   const [editPersonelId, setEditPersonelId] = useState<string>('');
+  // Hand-written officer kept in the notes as "[Petugas: ...]" (set when the schedule was missing)
+  const [editManualPetugas, setEditManualPetugas] = useState<string>('');
   const [editUnitId, setEditUnitId] = useState<string>('');
   const [editNotes, setEditNotes] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -128,7 +131,7 @@ export const HistoryPage: React.FC = () => {
       'Lokasi & Titik': m.locationStr,
       'Aliran Stok': m.flowStr,
       'Pihak Serah Terima': m.penerimaStr || '-',
-      Catatan: m.notes || '-'
+      Catatan: stripManualPetugas(m.notes) || '-'
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -146,7 +149,8 @@ export const HistoryPage: React.FC = () => {
     setEditQty(m.qty);
     setEditPersonelId(m.personel_id || '');
     setEditUnitId(m.unit_id || '');
-    setEditNotes(m.notes || '');
+    setEditManualPetugas(extractManualPetugas(m.notes) || '');
+    setEditNotes(stripManualPetugas(m.notes));
   };
 
   const editPart = editingMutation ? spareparts.find((s) => s.id === editingMutation.sparepart_id) : undefined;
@@ -176,7 +180,8 @@ export const HistoryPage: React.FC = () => {
         personel_id: editPersonelId || null,
         // Types without a unit field keep whatever unit the row already had
         unit_id: usesEquipmentUnit(editType) ? editUnitId || null : editingMutation.unit_id || null,
-        notes: editNotes || null
+        // The hand-written officer is only kept while no personel is chosen
+        notes: (editPersonelId ? editNotes : withManualPetugas(editNotes, editManualPetugas)) || null
       });
       // Keep the modal open when the change was rejected so the user can correct it
       if (success) setEditingMutation(null);
@@ -368,7 +373,7 @@ export const HistoryPage: React.FC = () => {
                       {m.locationStr}
                     </td>
                     <td className="py-3.5 px-4 text-slate-400 max-w-xs truncate">
-                      {m.notes || '-'}
+                      {stripManualPetugas(m.notes) || '-'}
                     </td>
                     <td className="py-3.5 px-4 text-center whitespace-nowrap">
                       <div className="flex items-center justify-center gap-1.5">
@@ -503,6 +508,16 @@ export const HistoryPage: React.FC = () => {
                     </option>
                   ))}
                 </select>
+                {!editPersonelId && (
+                  <input
+                    type="text"
+                    maxLength={80}
+                    value={editManualPetugas}
+                    onChange={(e) => setEditManualPetugas(e.target.value.replace(/[\[\]]/g, ''))}
+                    placeholder="Nama petugas (tulis manual)"
+                    className="mt-2 w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white"
+                  />
+                )}
               </div>
 
               <div>

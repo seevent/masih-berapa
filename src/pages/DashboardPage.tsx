@@ -14,6 +14,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, AreaChart, Area } from 'recharts';
+import { stripManualPetugas } from '../utils/shiftUtils';
 import { getEffectiveFlow, getUsableStockDelta, isIncompleteSerahTerima, isLowStock } from '../utils/stock';
 
 export const DashboardPage: React.FC = () => {
@@ -204,7 +205,7 @@ export const DashboardPage: React.FC = () => {
         statusColor,
         operator: operatorName,
         qtySign,
-        notes: m.notes || '-'
+        notes: stripManualPetugas(m.notes) || '-'
       };
     });
   }, [mutations, personelList]);

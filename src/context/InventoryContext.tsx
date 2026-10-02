@@ -21,6 +21,7 @@ import { getSupabaseClient, fetchAllRows } from '../lib/supabase';
 import { computeStockBySparepart, findNegativeStock, StockFlow } from '../utils/stock';
 import { autoMinimumStock, buildPredictiveReport, demandRate, PredictiveReport, ReliabilityMutation } from '../utils/reliability';
 import { requiresEquipmentUnit } from '../utils/compatibility';
+import { extractManualPetugas, withManualPetugas } from '../utils/shiftUtils';
 import { useNotification } from './NotificationContext';
 
 /** Fields of a sparepart that are stored in the `spareparts` table. */
@@ -90,6 +91,8 @@ interface InventoryContextType {
     sparepart_id: string;
     unit_id?: string;
     personel_id?: string;
+    /** Hand-written officer name, only when no schedule/personel is available; stored as "[Petugas: ...]" in notes */
+    petugas_manual?: string;
     mutation_type: MutationType;
     /** Which stock bucket decreases / increases (see resolveStockFlow) */
     flow: StockFlow;
@@ -319,7 +322,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         ...mut,
         qty: Number(mut.qty) || 0,
         sumber: mut.sumber || null,
-        operator_name: (mut.personel_id && persMap.get(mut.personel_id)) || mut.penerima || 'Teknisi',
+        operator_name:
+          (mut.personel_id && persMap.get(mut.personel_id)) || extractManualPetugas(mut.notes) || mut.penerima || 'Teknisi',
         sparepart_sku: spMap.get(mut.sparepart_id)?.sku || 'UNKNOWN',
         sparepart_name: spMap.get(mut.sparepart_id)?.name || 'Sparepart Removed'
       }));
@@ -622,6 +626,9 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     let finalNotes = mutationData.notes?.trim() || '';
     if (mutationData.reference_no?.trim()) {
       finalNotes = `[Ref: ${mutationData.reference_no.trim()}] ${finalNotes}`.trim();
+    }
+    if (!mutationData.personel_id && mutationData.petugas_manual?.trim()) {
+      finalNotes = withManualPetugas(finalNotes, mutationData.petugas_manual);
     }
 
     const dbMutPayload = {
