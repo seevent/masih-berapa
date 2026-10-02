@@ -120,6 +120,18 @@ export const describeFlow = (m: FlowInput): string => {
   return `${label(asal, 'Luar gudang')} → ${label(tujuan, 'Keluar gudang')}`;
 };
 
+/**
+ * Short label under the transaction badge in the history table: the condition for Masuk /
+ * Pakai ("Baru", "Bekas", "Rusak") and the direction for Serah Terima ("Serahkan", "Terima").
+ */
+export const describeFlowShort = (m: FlowInput): string => {
+  if (isIncompleteSerahTerima(m)) return 'Arah belum diisi (tidak mengubah stok)';
+  const { asal, tujuan } = getEffectiveFlow(m);
+  if (m.mutation_type === 'Serah Terima') return asal ? 'Serahkan' : 'Terima';
+  const bucket = tujuan ?? asal;
+  return bucket ? bucket.charAt(0).toUpperCase() + bucket.slice(1) : '-';
+};
+
 /** Effect of one mutation on each stock bucket. */
 export const getMutationDelta = (m: FlowInput & { qty: number }): StockDelta => {
   const q = Number(m.qty) || 0;
