@@ -86,7 +86,7 @@ Kolom `stok_asal` (kantong yang berkurang) dan `stok_tujuan` (kantong yang berta
 
 | `mutation_type` | `stok_asal` | `stok_tujuan` | Keterangan |
 |---|---|---|---|
-| `Masuk` | NULL | `baru`, `bekas`, atau `rusak` | barang masuk gudang; `sumber` hanya untuk baru; `unit_id` opsional = unit asal copotan (bekas/rusak) |
+| `Masuk` | NULL | `baru`, `bekas`, atau `rusak` | barang masuk gudang; `sumber` wajib untuk baru (bawaan `VENDOR`), opsional (boleh NULL) untuk bekas/rusak; `unit_id` opsional = unit asal copotan (bekas/rusak) |
 | `Pakai` | `baru` atau `bekas` | NULL | dipasang ke peralatan; **`unit_id` wajib** (aplikasi + trigger; dasar MTBF per unit) |
 | `Bekas` *(tipe lama)* | NULL | `bekas` | tidak lagi ditulis aplikasi ini (sejak 2 Okt 2026); diganti `Masuk` bekas |
 | `Rusak` *(tipe lama)* | `baru` atau `bekas` | `rusak` | tidak lagi ditulis aplikasi ini; diganti `Masuk` rusak / `Serah Terima` |
@@ -243,7 +243,7 @@ Log semua pergerakan stok. **Sumber kebenaran stok.**
 | `qty` | integer | tidak | | CHECK > 0 |
 | `notes` | text | ya | | catatan bebas; aplikasi dapat menaruh tag di awalnya: `[Petugas: Nama]` (petugas tulis manual saat jadwal shift kosong, `personel_id` NULL) dan `[Ref: ...]` (nomor referensi) |
 | `created_at` | timestamptz | ya | `now()` | |
-| `sumber` | varchar | ya | `'VENDOR'` | asal barang (hanya bermakna untuk `Masuk`): `IASS`, `SUP API`, `SISA PEKERJAAN`, `MANDIRI`, `DARI UNIT LAIN`, `VENDOR`. **Tidak ada CHECK**; aplikasi yang membatasi |
+| `sumber` | varchar | ya | `'VENDOR'` | asal barang (hanya bermakna untuk `Masuk`; untuk bekas/rusak boleh NULL): `IASS`, `SUP API`, `SISA PEKERJAAN`, `MANDIRI`, `DARI UNIT LAIN`, `VENDOR`. **Tidak ada CHECK**; aplikasi yang membatasi |
 | `location` | varchar | ya | | lokasi teks bebas; tidak ditulis aplikasi ini, tetapi ditampilkan bila ada |
 | `penerima`, `unit_penerima` | text | ya | | pihak lain pada `Serah Terima` |
 | `stok_asal`, `stok_tujuan` | varchar | ya | | kantong stok; CHECK `baru`/`bekas`/`rusak` atau NULL |

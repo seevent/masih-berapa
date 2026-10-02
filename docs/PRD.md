@@ -95,7 +95,7 @@ Tiga tipe transaksi (keputusan pemilik 2 Okt 2026; tipe **Bekas** dan **Rusak** 
 
 | Tipe | Kegunaan | Isian sekali per transaksi | Isian per baris |
 |---|---|---|---|
-| Masuk | barang masuk gudang: baru, copotan layak pakai (bekas), atau copotan rusak | sumber (untuk baris baru): IASS, SUP API, SISA PEKERJAAN, MANDIRI, DARI UNIT LAIN, VENDOR | sparepart, jumlah, kondisi **baru / bekas / rusak**, unit asal copotan (opsional, untuk bekas/rusak) |
+| Masuk | barang masuk gudang: baru, copotan layak pakai (bekas), atau copotan rusak | sumber (wajib untuk baris baru, opsional untuk bekas/rusak): IASS, SUP API, SISA PEKERJAAN, MANDIRI, DARI UNIT LAIN, VENDOR | sparepart, jumlah, kondisi **baru / bekas / rusak**, unit asal copotan (opsional, untuk bekas/rusak) |
 | Pakai | memasang barang ke peralatan | **satu unit peralatan wajib** untuk semua baris (lokasi/titik sebagai filter; "unit kompatibel" = cocok dengan semua sparepart di nota) | sparepart, jumlah, ambil dari **baru / bekas** |
 | Serah Terima | menyerahkan atau menerima barang ke/dari pihak lain | **arah** (serahkan/terima), **pihak** (wajib), unit pihak | sparepart, jumlah, kondisi **baru / bekas / rusak** |
 
@@ -175,7 +175,7 @@ Tipe lama tidak lagi ada di form, tetapi baris lama (atau dari aplikasi lain) te
 
 - **BR-2** Stok di kantong mana pun tidak boleh minus.
 - **BR-3** Jumlah transaksi bilangan bulat > 0.
-- **BR-4** `sumber` hanya berlaku untuk `Masuk` kondisi baru.
+- **BR-4** `sumber` hanya berlaku untuk `Masuk`: wajib untuk kondisi baru (bawaan `VENDOR`), opsional untuk bekas/rusak (dipilih per baris, boleh kosong).
 - **BR-5** `Serah Terima` wajib mencatat pihak lain.
 - **BR-6** Aturan ini harus identik di aplikasi dan di database (`current_stock`); lihat [DATABASE.md 3.3](DATABASE.md#33-dua-implementasi-yang-harus-selalu-sama).
 

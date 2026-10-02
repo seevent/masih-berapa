@@ -49,6 +49,8 @@ export interface MutationLineInput {
   flow: StockFlow;
   /** Masuk bekas/rusak: unit the part was removed from (optional) */
   unit_id?: string | null;
+  /** Masuk bekas/rusak: origin of the part (optional); baru lines use the transaction's `sumber` */
+  sumber?: SupplierType | null;
 }
 
 /** A transaction with one or more lines; saved as one stock_mutations row per line, all or nothing. */
@@ -60,7 +62,7 @@ export interface NewTransactionInput {
   petugas_manual?: string;
   /** Pakai: the unit all lines are installed in (required) */
   unit_id?: string;
-  /** Masuk: origin of the new stock (only written on lines going to stok baru) */
+  /** Masuk: origin of the new stock (written on lines going to stok baru; required there, defaults to VENDOR) */
   sumber?: SupplierType;
   /** Serah Terima: the other party and their unit */
   penerima?: string;
@@ -677,8 +679,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       personel_id: input.personel_id || null,
       mutation_type: type,
       ...flowColumns(type, l.flow, input.penerima, input.unit_penerima),
-      // Sumber (asal barang) only applies to new stock coming in
-      sumber: type === 'Masuk' && l.flow.tujuan === 'baru' ? input.sumber || 'VENDOR' : null,
+      // Sumber (asal barang) only applies to Masuk: baru always has one, bekas/rusak optionally
+      sumber: type !== 'Masuk' ? null : l.flow.tujuan === 'baru' ? input.sumber || 'VENDOR' : l.sumber || null,
       qty: l.qty,
       notes: finalNotes || null,
       created_at: now
@@ -744,7 +746,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .update({
         mutation_type: data.mutation_type,
         ...flowColumns(data.mutation_type, data.flow, data.penerima, data.unit_penerima),
-        sumber: data.mutation_type === 'Masuk' && data.flow.tujuan === 'baru' ? data.sumber || 'VENDOR' : null,
+        sumber:
+          data.mutation_type !== 'Masuk' ? null : data.flow.tujuan === 'baru' ? data.sumber || 'VENDOR' : data.sumber || null,
         qty,
         personel_id: data.personel_id || null,
         unit_id: data.unit_id || null,

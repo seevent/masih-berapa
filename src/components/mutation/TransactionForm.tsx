@@ -38,6 +38,8 @@ interface LineState {
   kondisi: StockBucket;
   /** Masuk bekas/rusak: unit the part was removed from (optional) */
   unit_id: string;
+  /** Masuk bekas/rusak: origin of the part (optional) */
+  sumber: SupplierType | '';
 }
 
 const newLine = (sparepartId = ''): LineState => ({
@@ -45,7 +47,8 @@ const newLine = (sparepartId = ''): LineState => ({
   sparepart_id: sparepartId,
   qty: 1,
   kondisi: 'baru',
-  unit_id: ''
+  unit_id: '',
+  sumber: ''
 });
 
 const TYPE_INFO: Record<string, { label: string; desc: string; icon: React.ElementType; color: string }> = {
@@ -234,7 +237,8 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         sparepart_id: l.sparepart_id,
         qty: l.qty,
         flow: resolveStockFlow(mutationType, { ...flowForm, kondisi: l.kondisi }),
-        unit_id: mutationType === 'Masuk' && l.kondisi !== 'baru' ? l.unit_id || null : null
+        unit_id: mutationType === 'Masuk' && l.kondisi !== 'baru' ? l.unit_id || null : null,
+        sumber: mutationType === 'Masuk' && l.kondisi !== 'baru' ? l.sumber || null : null
       })),
       personel_id: isManualPetugas ? undefined : selectedPersonelId,
       petugas_manual: isManualPetugas ? manualPetugas : undefined,
@@ -357,8 +361,9 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
             // Keep the chosen part selectable even when the filter hides it
             const options = part && !filteredParts.includes(part) ? [part, ...filteredParts] : filteredParts;
             const shortage = shortageOf(line);
+            // Masuk bekas/rusak: optional origin (unit it was removed from, and where it came from)
             const lineEquipment =
-              mutationType === 'Masuk' && line.kondisi !== 'baru' && part
+              mutationType === 'Masuk' && line.kondisi !== 'baru'
                 ? getCompatibleEquipment({
                     parts: [part],
                     sparepartCompatibility,
@@ -431,18 +436,37 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
                 )}
 
                 {lineEquipment && (
-                  <div className="pl-7">
-                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
-                      Dicopot dari unit (opsional)
-                    </label>
-                    <EquipmentUnitSelect
-                      value={line.unit_id}
-                      onChange={(unitId) => updateLine(line.key, { unit_id: unitId })}
-                      compatibleUnits={lineEquipment.availableUnits}
-                      otherUnits={lineEquipment.otherUnits}
-                      tipePeralatan={tipePeralatan}
-                      required={false}
-                    />
+                  <div className="pl-7 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                        Unit peralatan asal (opsional)
+                      </label>
+                      <EquipmentUnitSelect
+                        value={line.unit_id}
+                        onChange={(unitId) => updateLine(line.key, { unit_id: unitId })}
+                        compatibleUnits={lineEquipment.availableUnits}
+                        otherUnits={lineEquipment.otherUnits}
+                        tipePeralatan={tipePeralatan}
+                        required={false}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                        Sumber asal barang (opsional)
+                      </label>
+                      <select
+                        value={line.sumber}
+                        onChange={(e) => updateLine(line.key, { sumber: e.target.value as SupplierType | '' })}
+                        className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white focus:border-cyan-500 cursor-pointer"
+                      >
+                        <option value="">-- Tidak diisi --</option>
+                        {SUMBER_OPTIONS.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
                 )}
               </div>

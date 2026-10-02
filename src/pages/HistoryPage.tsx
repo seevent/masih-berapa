@@ -62,7 +62,7 @@ export const HistoryPage: React.FC = () => {
   const [editingMutation, setEditingMutation] = useState<StockMutation | null>(null);
   const [editType, setEditType] = useState<MutationType>('Masuk');
   const [editFlow, setEditFlow] = useState<StockFlowFormState>(initialStockFlowForm);
-  const [editSumber, setEditSumber] = useState<SupplierType>('VENDOR');
+  const [editSumber, setEditSumber] = useState<SupplierType | ''>('VENDOR');
   const [editQty, setEditQty] = useState<number>(1);
   const [editPersonelId, setEditPersonelId] = useState<string>('');
   // Hand-written officer kept in the notes as "[Petugas: ...]" (set when the schedule was missing)
@@ -155,7 +155,8 @@ export const HistoryPage: React.FC = () => {
     setEditingMutation(m);
     setEditType(m.mutation_type);
     setEditFlow({ ...flowToOptions(m), pihak: m.penerima || '', unitPihak: m.unit_penerima || '' });
-    setEditSumber(m.sumber || 'VENDOR');
+    // Baru always has an origin; bekas/rusak may leave it empty
+    setEditSumber(m.sumber || (flowToOptions(m).kondisi === 'baru' ? 'VENDOR' : ''));
     setEditQty(m.qty);
     setEditPersonelId(m.personel_id || '');
     setEditUnitId(m.unit_id || '');
@@ -195,7 +196,7 @@ export const HistoryPage: React.FC = () => {
         flow: resolveStockFlow(editType, editFlow),
         penerima: editFlow.pihak,
         unit_penerima: editFlow.unitPihak,
-        sumber: editType === 'Masuk' && editFlow.kondisi === 'baru' ? editSumber : null,
+        sumber: editType === 'Masuk' ? editSumber || null : null,
         qty: editQty,
         personel_id: editPersonelId || null,
         // Types without a unit field keep whatever unit the row already had
@@ -471,7 +472,11 @@ export const HistoryPage: React.FC = () => {
                   <KondisiPicker
                     mutationType={editType}
                     value={editFlow.kondisi}
-                    onChange={(kondisi) => setEditFlow({ ...editFlow, kondisi })}
+                    onChange={(kondisi) => {
+                      setEditFlow({ ...editFlow, kondisi });
+                      // Baru always has an origin
+                      if (kondisi === 'baru' && !editSumber) setEditSumber('VENDOR');
+                    }}
                     arah={editFlow.arah}
                     part={editPart}
                   />
@@ -500,14 +505,17 @@ export const HistoryPage: React.FC = () => {
                 </div>
               )}
 
-              {editType === 'Masuk' && editFlow.kondisi === 'baru' && (
+              {editType === 'Masuk' && (
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Sumber Asal Barang</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Sumber Asal Barang{editFlow.kondisi !== 'baru' && ' (opsional)'}
+                  </label>
                   <select
                     value={editSumber}
-                    onChange={(e) => setEditSumber(e.target.value as SupplierType)}
+                    onChange={(e) => setEditSumber(e.target.value as SupplierType | '')}
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white"
                   >
+                    {editFlow.kondisi !== 'baru' && <option value="">-- Tidak diisi --</option>}
                     <option value="SUP API">SUP API</option>
                     <option value="SISA PEKERJAAN">SISA PEKERJAAN</option>
                     <option value="IASS">IASS</option>
