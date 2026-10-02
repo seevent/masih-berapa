@@ -82,6 +82,9 @@ export interface DemandRate {
 
 const toTime = (iso: string) => new Date(iso).getTime();
 
+/** Rounds a quantity up, ignoring floating-point noise (29 / 365 × 365 = 29.000000000000004 → 29, not 30). */
+const ceilQty = (x: number) => Math.ceil(x - 1e-9);
+
 /** Groups 'Pakai' transactions per (sparepart, unit). 'Pakai' without a unit is ignored. */
 export const buildPositions = (
   mutations: ReliabilityMutation[],
@@ -335,7 +338,7 @@ export const buildPredictiveReport = (
       order_qty: needsOrder ? reorderLevel - stokBaru : 0
     });
 
-    const annual = hasDemand ? Math.ceil(demand.rate_per_day * 365) : null;
+    const annual = hasDemand ? ceilQty((demand.usage_qty * 365) / demand.window_days) : null;
     annualNeeds.push({
       sparepart: sp,
       demand,

@@ -206,6 +206,16 @@ describe('Laporan gabungan', () => {
     expect(report.annualNeeds[0].order_needed_qty).toBe(10);
   });
 
+  it('kebutuhan tahunan tidak terdorong naik oleh galat pembulatan desimal', () => {
+    // 29 Pakai dalam jendela penuh 365 hari: 29 / 365 × 365 = 29,000000000000004 di JavaScript
+    const now = DAY0 + 400 * DAY_MS;
+    const muts = [pakai('sp1', 'A', 0), ...Array.from({ length: 29 }, (_, i) => pakai('sp1', 'A', 40 + i * 10))];
+    const report = buildPredictiveReport([part()], muts, activeUnits, now);
+    expect(report.annualNeeds[0].demand.window_days).toBe(365);
+    expect(report.annualNeeds[0].demand.usage_qty).toBe(29);
+    expect(report.annualNeeds[0].annual_forecast_qty).toBe(29);
+  });
+
   it('status posisi memakai pemasangan terakhir; hanya unit yang beroperasi ditampilkan', () => {
     const units: ReliabilityUnit[] = [...activeUnits, { id: 'D', status: 'rusak', updated_at: day(200) }];
     const report = buildPredictiveReport(
