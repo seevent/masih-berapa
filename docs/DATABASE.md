@@ -97,7 +97,7 @@ Untuk `Serah Terima`, kolom `penerima` dan `unit_penerima` berisi **pihak lain**
 
 **Baris tanpa `stok_asal`/`stok_tujuan`** (baris lama atau ditulis aplikasi lain) memakai default tipenya: `Masuk`→baru, `Pakai`←baru, `Bekas`→bekas, `Rusak` dari bekas ke rusak. `Serah Terima` tanpa arah **tidak mengubah stok** (aplikasi menandainya kuning di History).
 
-Constraint `stock_mutations_aliran_stok_check` menolak kombinasi yang tidak masuk akal (contoh: `Masuk` dengan `stok_asal`, `Pakai` dari `rusak` atau ke kantong mana pun, `Serah Terima` dua arah sekaligus). **Perluasan untuk Masuk bekas/rusak dan Pakai dari bekas ada di migrasi [`2026-10-02_transaksi_tiga_tipe.sql`](migrations/2026-10-02_transaksi_tiga_tipe.sql), belum diterapkan** (constraint lama hanya mengizinkan Masuk → baru dan Pakai ← baru). View `current_stock` tidak perlu diubah karena sudah membaca kolom asal/tujuan.
+Constraint `stock_mutations_aliran_stok_check` menolak kombinasi yang tidak masuk akal (contoh: `Masuk` dengan `stok_asal`, `Pakai` dari `rusak` atau ke kantong mana pun, `Serah Terima` dua arah sekaligus). Masuk ke bekas/rusak dan Pakai dari bekas diizinkan sejak migrasi [`2026-10-02_transaksi_tiga_tipe.sql`](migrations/2026-10-02_transaksi_tiga_tipe.sql) (diterapkan 2 Okt 2026). View `current_stock` tidak perlu diubah karena sudah membaca kolom asal/tujuan.
 
 Satu transaksi di aplikasi (nota) bisa berisi banyak baris; semuanya dikirim dalam satu `INSERT` (satu statement), jadi bila satu baris melanggar constraint, seluruh nota batal.
 
@@ -311,10 +311,9 @@ Tabel `supabase_migrations.schema_migrations` mencatat:
 | 20261002052637 | `aliran_stok_per_transaksi` | kolom `stok_asal`/`stok_tujuan`, constraint, view `current_stock` baru |
 | 20261002053010 | `current_stock_security_invoker` | view `security_invoker`, hak hanya `SELECT` |
 | 20261002152932 | `pakai_wajib_unit` | trigger yang menolak `Pakai` tanpa `unit_id` |
+| 20261002185618 | `transaksi_tiga_tipe` | constraint aliran stok: Masuk ke baru/bekas/rusak, Pakai dari baru/bekas |
 
 Perubahan skema sebelum 23 Juli 2026 dibuat lewat dashboard dan tidak tercatat di tabel ini. Salinan kedua migrasi Oktober ada di [`docs/migrations/`](migrations/) beserta perintah rollback.
-
-**Belum diterapkan:** [`2026-10-02_transaksi_tiga_tipe.sql`](migrations/2026-10-02_transaksi_tiga_tipe.sql) (constraint aliran stok untuk Masuk bekas/rusak dan Pakai dari bekas; **harus diterapkan sebelum kode tiga tipe transaksi dideploy**).
 
 **Tidak perlu diterapkan:** [`2026-10-02_kompatibilitas_dari_tipe_utama.sql`](migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql) (data: pindahkan `id_tipe` ke `sparepart_compatibility`) sudah no-op karena keempat sparepart sudah punya baris kompatibel yang memuat tipe utamanya.
 
@@ -368,6 +367,6 @@ Sparepart sudah terdaftar tetapi belum ada satu pun transaksi stok, jadi semua s
 | `docs/migrations/2026-10-02_aliran_stok.sql` | Sudah diterapkan. |
 | `docs/migrations/2026-10-02_current_stock_security_invoker.sql` | Sudah diterapkan. |
 | `docs/migrations/2026-10-02_pakai_wajib_unit.sql` | Sudah diterapkan (2 Okt 2026). |
-| `docs/migrations/2026-10-02_transaksi_tiga_tipe.sql` | **Belum diterapkan**; diuji dalam transaksi yang dibatalkan (juga sebagai `anon`). |
+| `docs/migrations/2026-10-02_transaksi_tiga_tipe.sql` | Sudah diterapkan (2 Okt 2026). |
 | `docs/migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql` | Tidak perlu diterapkan (no-op, data sudah lengkap); disimpan sebagai catatan. |
 | `docs/schema_relational_supabase_v2.sql` | **Usang. Jangan dijalankan.** Skrip migrasi lama TEXT→UUID; database sudah memakai UUID. |

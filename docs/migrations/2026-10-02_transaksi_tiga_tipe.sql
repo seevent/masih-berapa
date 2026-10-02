@@ -1,7 +1,12 @@
 -- ====================================================================
 -- MIGRASI: Tiga tipe transaksi (Masuk, Pakai, Serah Terima) dengan kondisi per baris
 -- Tanggal : 2026-10-02
--- Status  : BELUM DITERAPKAN, menunggu persetujuan pemilik
+-- Status  : SUDAH DITERAPKAN di Supabase pada 2026-10-02 sebagai "transaksi_tiga_tipe"
+--           (versi 20261002185618) atas persetujuan pemilik
+-- Verifikasi setelah diterapkan (database sebenarnya, sebagai anon, transaksi dibatalkan):
+--   nota 5 baris (Masuk baru/bekas/rusak, Pakai bekas/baru) diterima · Pakai dari rusak ditolak ·
+--   Pakai tanpa unit tetap ditolak (trigger pakai_wajib_unit) · nota dengan 1 baris salah ditolak
+--   seluruhnya · current_stock = 1/1/1 (sama dengan src/utils/stock.ts). Setelah itu 0 mutasi.
 --
 -- Keputusan pemilik (2 Okt 2026):
 --   * Masuk  : bisa memasukkan stok baru, bekas, ATAU rusak  -> stok_tujuan baru|bekas|rusak

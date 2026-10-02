@@ -156,8 +156,8 @@ CREATE TABLE IF NOT EXISTS public.stock_mutations (
   stok_tujuan character varying CHECK (stok_tujuan IS NULL OR stok_tujuan IN ('baru', 'bekas', 'rusak')),
   CONSTRAINT stock_mutations_aliran_stok_check CHECK (
     CASE mutation_type
-      WHEN 'Masuk' THEN stok_asal IS NULL AND (stok_tujuan IS NULL OR stok_tujuan = 'baru')
-      WHEN 'Pakai' THEN (stok_asal IS NULL OR stok_asal = 'baru') AND stok_tujuan IS NULL
+      WHEN 'Masuk' THEN stok_asal IS NULL                                            -- ke baru/bekas/rusak (2026-10-02)
+      WHEN 'Pakai' THEN (stok_asal IS NULL OR stok_asal IN ('baru', 'bekas')) AND stok_tujuan IS NULL
       WHEN 'Bekas' THEN stok_asal IS NULL AND (stok_tujuan IS NULL OR stok_tujuan = 'bekas')
       WHEN 'Rusak' THEN (stok_asal IS NULL OR stok_asal IN ('baru', 'bekas')) AND (stok_tujuan IS NULL OR stok_tujuan = 'rusak')
       WHEN 'Serah Terima' THEN stok_asal IS NULL OR stok_tujuan IS NULL
