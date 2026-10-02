@@ -61,8 +61,8 @@ export const getFilteredSpareparts = (
   return spareparts.filter((item) => {
     // Filter Category / Equipment Type
     if (filters.categoryFilter && filters.categoryFilter !== 'ALL') {
-      const matchTipe = item.id_tipe === filters.categoryFilter;
-      const matchJenis = item.id_jenis === filters.categoryFilter;
+      const matchTipe = item.tipe_ids.includes(filters.categoryFilter);
+      const matchJenis = item.jenis_ids.includes(filters.categoryFilter);
       const matchName = item.equipment_type_name === filters.categoryFilter;
       if (!matchTipe && !matchJenis && !matchName) return false;
     }

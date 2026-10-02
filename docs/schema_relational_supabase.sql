@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS public.spareparts (
   sku character varying(100) NOT NULL UNIQUE,
   name character varying(255) NOT NULL,
   description text,
-  id_tipe uuid,                       -- tipe utama (tipe tambahan di sparepart_compatibility)
+  id_tipe uuid,                       -- TIDAK DIPAKAI lagi sejak 2026-10-02; hubungan tipe lewat sparepart_compatibility
   unit character varying(50) DEFAULT 'PCS'::character varying,
   minimum_stok integer NOT NULL DEFAULT 1 CHECK (minimum_stok >= 0),
   lokasi character varying,           -- gudang

@@ -101,8 +101,8 @@ export const MutationPage: React.FC = () => {
       sp.name.toLowerCase().includes(sparepartSearch.toLowerCase()) ||
       sp.sku.toLowerCase().includes(sparepartSearch.toLowerCase());
 
-    const matchesJenis = !selectedJenisFilter || sp.id_jenis === selectedJenisFilter;
-    const matchesTipe = !selectedTipeFilter || sp.id_tipe === selectedTipeFilter;
+    const matchesJenis = !selectedJenisFilter || sp.jenis_ids.includes(selectedJenisFilter);
+    const matchesTipe = !selectedTipeFilter || sp.tipe_ids.includes(selectedTipeFilter);
 
     return matchesSearch && matchesJenis && matchesTipe;
   });

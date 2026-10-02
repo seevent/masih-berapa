@@ -53,6 +53,7 @@ Vite **tidak** memeriksa tipe saat `dev`; galat tipe baru muncul di `typecheck`/
 19. Cetak label: PDF memakai `html2canvas-pro` (bukan `html2canvas`, gagal pada warna `oklch()` Tailwind v4); pustaka PDF dimuat dinamis. Ukuran label dalam **mm**, tampilan skala sebenarnya.
 20. Callback kamera (`html5-qrcode`) didaftarkan sekali; baca state lewat `ref` agar tidak basi.
 21. Jangan menambah dependensi tanpa alasan. Sudah terpasang tetapi tidak dipakai: `motion`, `clsx`, `tailwind-merge`, `core-js`.
+22. Hubungan sparepart ↔ tipe peralatan **hanya** lewat `sparepart_compatibility` (`Sparepart.tipe_ids`, `jenis_ids`, `equipment_type_name`). Jangan membaca atau menulis kolom usang `spareparts.id_tipe`, `mtbf_days`, `last_replaced_at`.
 
 ## Cara memverifikasi perubahan
 

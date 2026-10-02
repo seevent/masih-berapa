@@ -84,7 +84,7 @@ Status: ✅ selesai · ⚠ sebagian · ❌ belum.
 ### F-01 Katalog sparepart — ✅
 Pengguna mengelola master sparepart.
 - Daftar dalam tampilan grid atau tabel; pencarian (SKU, nama, deskripsi); filter jenis dan tipe peralatan.
-- Tambah/ubah: SKU otomatis berurutan (`SP-001`, `SP-002`, …) dan tidak bisa diedit; nama, deskripsi, satuan, stok minimum, gudang, rak; pilih **satu atau lebih tipe peralatan kompatibel** (yang pertama = tipe utama).
+- Tambah/ubah: SKU otomatis berurutan (`SP-001`, `SP-002`, …) dan tidak bisa diedit; nama, deskripsi, satuan, stok minimum, gudang, rak; pilih **satu atau lebih tipe peralatan kompatibel**. Tidak ada lagi "tipe utama" (dihapus 2 Okt 2026): daftar kompatibel adalah satu-satunya hubungan sparepart ↔ tipe. Jenis dan tipe yang tampil di katalog, filter, label, dan laporan diturunkan dari daftar itu; pilihan jenis di form hanya mempersempit daftar tipe.
 - Stok awal (baru/bekas) saat mendaftarkan sparepart dicatat otomatis sebagai transaksi. **Stok tidak dapat diedit langsung** setelah itu.
 - Hapus sparepart meminta konfirmasi dan menyebut jumlah riwayat mutasi yang ikut terhapus.
 - MTBF **tidak diisi manual**: kartu dan form menampilkan MTBF hasil hitung ([7.4](#74-peringatan-prediktif-mtbf-otomatis)) beserta jumlah penggantian dan tingkat keyakinannya, atau "Belum cukup data".

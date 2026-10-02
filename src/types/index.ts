@@ -104,16 +104,22 @@ export interface Sparepart {
   sku: string;
   name: string;
   description?: string;
-  id_tipe: string | null;
   unit?: string;
   minimum_stok: number;
   lokasi?: string;
   rack?: string;
   created_at?: string;
   updated_at?: string;
-  // Computed client-side (not database columns)
-  id_jenis?: string;
-  equipment_type_name?: string;
+  // Computed client-side from sparepart_compatibility (not database columns).
+  // The old `spareparts.id_tipe` column is no longer read or written.
+  /** Compatible tipe peralatan, sorted by name */
+  tipe_ids: string[];
+  /** Jenis peralatan of the compatible tipe (unique) */
+  jenis_ids: string[];
+  /** Compatible tipe names joined with ", " ('Umum' when none) */
+  equipment_type_name: string;
+  /** Jenis names joined with ", " ('Umum' when none) */
+  jenis_name: string;
   stok_aktual: number;
   stok_bekas: number;
   stok_rusak: number;

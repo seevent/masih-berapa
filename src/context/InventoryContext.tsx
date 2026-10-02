@@ -32,7 +32,7 @@ export interface SparepartFormInput {
   minimum_stok: number;
   lokasi?: string;
   rack?: string;
-  /** Selected tipe peralatan; the first one becomes the primary `id_tipe`. */
+  /** Compatible tipe peralatan (written to sparepart_compatibility). */
   tipeIds: string[];
 }
 
@@ -270,16 +270,33 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       // Stock per sparepart is the sum of its stock_mutations history
       const stockMap = computeStockBySparepart(mutsData);
 
+      // Compatible tipe per sparepart (the only link between a sparepart and equipment types)
+      const compatBySparepart = new Map<string, Set<string>>();
+      compatRes.data.forEach((c) => {
+        const set = compatBySparepart.get(c.sparepart_id);
+        if (set) set.add(c.id_tipe);
+        else compatBySparepart.set(c.sparepart_id, new Set([c.id_tipe]));
+      });
+      const jpMap = new Map(jpRes.data.map((j) => [j.id, j]));
+
       const formattedParts: Sparepart[] = spRes.data.map((sp: any) => {
-        const tipe = sp.id_tipe ? tpMap.get(sp.id_tipe) : undefined;
+        const tipes = Array.from(compatBySparepart.get(sp.id) || [])
+          .map((id) => tpMap.get(id))
+          .filter((t): t is TipePeralatan => Boolean(t))
+          .sort((a, b) => a.nama.localeCompare(b.nama));
+        const jenisIds = Array.from(new Set(tipes.map((t) => t.id_jenis).filter(Boolean)));
         const stock = stockMap[sp.id] || { baru: 0, bekas: 0, rusak: 0 };
-        // Legacy manual columns: MTBF is now derived from stock_mutations (utils/reliability.ts)
-        const { mtbf_days, last_replaced_at, ...row } = sp;
+        // Legacy columns that are no longer used: MTBF is derived from stock_mutations
+        // (utils/reliability.ts) and the equipment type comes from sparepart_compatibility.
+        const { mtbf_days, last_replaced_at, id_tipe, ...row } = sp;
 
         return {
           ...row,
-          id_jenis: tipe?.id_jenis || '',
-          equipment_type_name: tipe?.nama || 'Umum',
+          tipe_ids: tipes.map((t) => t.id),
+          jenis_ids: jenisIds,
+          equipment_type_name: tipes.length > 0 ? tipes.map((t) => t.nama).join(', ') : 'Umum',
+          jenis_name:
+            jenisIds.length > 0 ? jenisIds.map((id) => jpMap.get(id)?.nama || '-').join(', ') : 'Umum',
           lokasi: sp.lokasi || '',
           rack: sp.rack || '',
           minimum_stok: Number(sp.minimum_stok) || 0,
@@ -414,7 +431,6 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     sku: input.sku.trim(),
     name: input.name.trim(),
     description: input.description?.trim() || null,
-    id_tipe: input.tipeIds[0] || null,
     unit: input.unit?.trim().toUpperCase() || 'PCS',
     minimum_stok: Math.max(0, Number(input.minimum_stok) || 0),
     lokasi: input.lokasi?.trim() || null,
@@ -439,10 +455,10 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     if (uniqueIds.length === 0) return null;
 
     const { error: upsertErr } = await supabase.from('sparepart_compatibility').upsert(
-      uniqueIds.map((idTipe, idx) => ({
+      // is_primary is left out: there is no primary tipe any more (existing values stay as they are)
+      uniqueIds.map((idTipe) => ({
         sparepart_id: sparepartId,
-        id_tipe: idTipe,
-        is_primary: idx === 0
+        id_tipe: idTipe
       })),
       { onConflict: 'sparepart_id,id_tipe' }
     );

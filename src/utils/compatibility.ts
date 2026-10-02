@@ -27,7 +27,7 @@ interface CompatibilityInput {
 
 /**
  * Resolves which locations, titik and equipment units are compatible with a sparepart,
- * using the primary id_tipe + sparepart_compatibility rows and active penempatan records.
+ * using the sparepart_compatibility rows (the only sparepart ↔ tipe link) and active penempatan records.
  */
 export const getCompatibleEquipment = ({
   part,
@@ -41,10 +41,7 @@ export const getCompatibleEquipment = ({
 }: CompatibilityInput) => {
   const compatTypeIds: string[] = part
     ? Array.from(
-        new Set([
-          part.id_tipe || '',
-          ...sparepartCompatibility.filter((c) => c.sparepart_id === part.id).map((c) => c.id_tipe)
-        ])
+        new Set(sparepartCompatibility.filter((c) => c.sparepart_id === part.id).map((c) => c.id_tipe))
       ).filter(Boolean)
     : [];
 

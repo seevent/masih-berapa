@@ -67,8 +67,8 @@ export const HistoryPage: React.FC = () => {
     const persObj = personelList.find((p) => p.id === m.personel_id);
 
     // Determine Tipe Peralatan
-    const tipeId = unit?.id_tipe || sp?.id_tipe;
-    const tipeObj = tipePeralatan.find((t) => t.id === tipeId);
+    // The unit's own tipe when known, otherwise the compatible tipe of the sparepart
+    const tipeObj = unit ? tipePeralatan.find((t) => t.id === unit.id_tipe) : undefined;
     const tipeName = tipeObj ? tipeObj.nama : sp?.equipment_type_name || '-';
 
     // Determine Lokasi & Titik

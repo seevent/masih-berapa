@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 2953 nodes · 3551 edges · 252 communities (187 shown, 65 thin omitted)
+- 2954 nodes · 3551 edges · 253 communities (188 shown, 65 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 92 edges (avg confidence: 0.72)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `fd67a1fb`
+- Built from commit: `7c1bf07b`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -161,7 +161,7 @@
 - InventoryContext.tsx
 - Bulletproofing Skills Against Rationalization
 - Brand Guidelines Template
-- lg
+- $type
 - Pressure Test 1: Emergency Production Fix
 - stock.ts
 - Pressure Test 2: Sunk Cost + Exhaustion
@@ -172,7 +172,7 @@
 - RED-GREEN-REFACTOR for Skills
 - VERIFY GREEN: Pressure Testing
 - sm
-- 16
+- padding-y
 - codex-tools.md
 - App.tsx
 - schema_relational_supabase.sql
@@ -232,10 +232,10 @@
 - .test_default_content_paths_react
 - .test_default_content_paths_vue
 - 2026-10-02_pakai_wajib_unit.sql
-- 2
+- md
 - plan-document-reviewer-prompt.md
 - jspdf
-- motion
+- none
 - tailwindcss
 - vercel.json
 - Path
@@ -244,23 +244,23 @@
 - Path
 - InventoryProvider
 - Core principles
-- 6
-- $type
+- 12
+- 2
 - muted
 - radius
 - 2026-10-02_aliran_stok.sql
-- padding-y
+- @supabase/supabase-js
 - xl
 - foreground
 - clsx
 - tailwind-merge
-- md
 - primary-foreground
 - 8
 - destructive-foreground
 - primary
-- core-js
+- 6
 - secondary
+- motion
 
 ## God Nodes (most connected - your core abstractions)
 1. `TailwindConfigGenerator` - 57 edges
@@ -289,11 +289,11 @@
 ## Import Cycles
 - None detected.
 
-## Communities (252 total, 65 thin omitted)
+## Communities (253 total, 65 thin omitted)
 
 ### Community 0 - "dependencies"
 Cohesion: 0.11
-Nodes (19): html2canvas-pro, html5-qrcode, lucide-react, dependencies, html2canvas-pro, html5-qrcode, lucide-react, qrcode.react (+11 more)
+Nodes (19): core-js, html2canvas-pro, html5-qrcode, lucide-react, dependencies, core-js, html2canvas-pro, html5-qrcode (+11 more)
 
 ### Community 1 - "sparepartAnalytics.ts"
 Cohesion: 0.12
@@ -776,8 +776,8 @@ Cohesion: 0.42
 Nodes (7): connect(), nextReconnectDelay(), reloadAfterRecovery(), sessionKey(), setStatus(), showTombstone(), websocketUrl()
 
 ### Community 130 - "radius"
-Cohesion: 0.19
-Nodes (14): $type, $value, $type, $value, $type, $value, primitive, radius (+6 more)
+Cohesion: 0.18
+Nodes (15): $type, $value, lg, $type, $value, $type, $value, primitive (+7 more)
 
 ### Community 131 - "sync-brand-to-tokens.cjs"
 Cohesion: 0.33
@@ -851,9 +851,9 @@ Nodes (6): Address "Spirit vs Letter" Arguments, Build Rationalization Table, Bu
 Cohesion: 0.40
 Nodes (4): Brand Guidelines Template, Document Structure, Extractable Fields, Usage
 
-### Community 149 - "lg"
+### Community 149 - "$type"
 Cohesion: 0.60
-Nodes (5): lg, $type, $value, lg, lg
+Nodes (5): $type, $value, border, border, border
 
 ### Community 150 - "Pressure Test 1: Emergency Production Fix"
 Cohesion: 0.40
@@ -895,9 +895,9 @@ Nodes (5): Key Elements of Good Scenarios, Pressure Types, Testing Setup, VERIFY
 Cohesion: 0.60
 Nodes (5): sm, sm, sm, $type, $value
 
-### Community 160 - "16"
+### Community 160 - "padding-y"
 Cohesion: 0.67
-Nodes (3): $type, $value, 16
+Nodes (4): padding-y, padding-y, $type, $value
 
 ### Community 161 - "codex-tools.md"
 Cohesion: 0.50
@@ -955,9 +955,13 @@ Nodes (12): $type, $value, bg, bg, padding, shadow, card, bg (+4 more)
 Cohesion: 0.20
 Nodes (10): fg, font-size, hover-bg, button, $type, $value, $type, $value (+2 more)
 
-### Community 221 - "2"
+### Community 221 - "md"
 Cohesion: 0.67
-Nodes (3): $type, $value, 2
+Nodes (4): $type, $value, md, md
+
+### Community 224 - "none"
+Cohesion: 0.67
+Nodes (4): $type, $value, none, none
 
 ### Community 232 - "InventoryProvider"
 Cohesion: 0.43
@@ -967,13 +971,13 @@ Nodes (6): fetchSparepartMutations(), flowColumns(), InventoryProvider(), fetchA
 Cohesion: 0.50
 Nodes (4): Concise is key, Core principles, Set appropriate degrees of freedom, Test with all models you plan to use
 
-### Community 234 - "6"
+### Community 234 - "12"
 Cohesion: 0.67
-Nodes (3): $type, $value, 6
+Nodes (3): $type, $value, 12
 
-### Community 235 - "$type"
-Cohesion: 0.60
-Nodes (5): $type, $value, border, border, border
+### Community 235 - "2"
+Cohesion: 0.67
+Nodes (3): $type, $value, 2
 
 ### Community 236 - "muted"
 Cohesion: 0.67
@@ -983,10 +987,6 @@ Nodes (3): muted, $type, $value
 Cohesion: 0.60
 Nodes (5): radius, radius, radius, $type, $value
 
-### Community 239 - "padding-y"
-Cohesion: 0.67
-Nodes (4): padding-y, padding-y, $type, $value
-
 ### Community 240 - "xl"
 Cohesion: 0.67
 Nodes (4): xl, xl, $type, $value
@@ -994,10 +994,6 @@ Nodes (4): xl, xl, $type, $value
 ### Community 241 - "foreground"
 Cohesion: 0.67
 Nodes (3): foreground, $type, $value
-
-### Community 244 - "md"
-Cohesion: 0.67
-Nodes (4): $type, $value, md, md
 
 ### Community 246 - "primary-foreground"
 Cohesion: 0.67
@@ -1015,6 +1011,10 @@ Nodes (3): destructive-foreground, $type, $value
 Cohesion: 0.67
 Nodes (3): primary, $type, $value
 
+### Community 250 - "6"
+Cohesion: 0.67
+Nodes (3): $type, $value, 6
+
 ### Community 251 - "secondary"
 Cohesion: 0.67
 Nodes (3): secondary, $type, $value
@@ -1029,7 +1029,7 @@ _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `primitive` connect `radius` to `gray`, `fontSize`, `design-tokens-starter.json`, `spacing`, `duration`?**
   _High betweenness centrality (0.009) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `dependencies` to `motion`, `clsx`, `tailwind-merge`, `core-js`, `package.json`, `useInventory`, `jspdf`?**
+- **Why does `dependencies` connect `dependencies` to `@supabase/supabase-js`, `clsx`, `tailwind-merge`, `motion`, `package.json`, `useInventory`, `jspdf`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Why does `color` connect `gray` to `radius`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._

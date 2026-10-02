@@ -9,7 +9,7 @@ Produksi: **https://masih-berapa.vercel.app** · Repo: `seevent/masih-berapa`
 | Modul | Rute | Fungsi |
 |---|---|---|
 | Dashboard | `/` | total stok dan tren 6 bulan, SKU di bawah minimum, rasio baru vs bekas, level inventaris, top moving (pemakaian), transaksi terbaru |
-| Katalog | `/catalog` | CRUD sparepart (grid/list), SKU otomatis `SP-001`, banyak tipe peralatan kompatibel |
+| Katalog | `/catalog` | CRUD sparepart (grid/list), SKU otomatis `SP-001`, tipe peralatan lewat daftar kompatibel (banyak tipe, tanpa "tipe utama") |
 | Input Transaksi | `/input-sparepart` | catat **Masuk, Pakai, Bekas, Rusak, Serah Terima**; pilih lokasi/unit (**Pakai wajib unit**); petugas = personel yang sedang berdinas |
 | History & Audit | `/history` | riwayat dengan aliran stok, edit, hapus, ekspor Excel |
 | Scanner QR | `/scanner` | pindai QR dengan kamera atau ketik SKU/URL, lalu catat transaksi |

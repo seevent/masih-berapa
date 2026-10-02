@@ -49,7 +49,7 @@ Isi dokumen ini diambil dari **database live** (project "SSES T2 Project", regio
 erDiagram
     jenis_peralatan ||--o{ tipe_peralatan : "id_jenis (CASCADE)"
     tipe_peralatan ||--o{ unit_peralatan : "id_tipe"
-    tipe_peralatan ||--o{ spareparts : "id_tipe = tipe utama (SET NULL)"
+    tipe_peralatan ||--o{ spareparts : "id_tipe (TIDAK DIPAKAI lagi, SET NULL)"
     spareparts ||--o{ sparepart_compatibility : "sparepart_id (CASCADE)"
     tipe_peralatan ||--o{ sparepart_compatibility : "id_tipe (CASCADE)"
     lokasi ||--o{ titik_lokasi : "id_lokasi (CASCADE)"
@@ -64,7 +64,7 @@ erDiagram
     personel ||--o{ stock_mutations : "personel_id (SET NULL)"
 ```
 
-Catatan: `sparepart_compatibility` adalah tabel penghubung banyak-ke-banyak antara sparepart dan tipe peralatan. Kolom `spareparts.id_tipe` adalah tipe **utama** (yang dipilih pertama di form katalog); semua tipe yang cocok, termasuk yang utama, ada di `sparepart_compatibility`.
+Catatan: `sparepart_compatibility` adalah tabel penghubung banyak-ke-banyak antara sparepart dan tipe peralatan. Kolom `spareparts.id_tipe` (dulu "tipe utama") **tidak dipakai lagi sejak 2 Okt 2026**: aplikasi tidak membaca maupun menulisnya, dan satu-satunya hubungan sparepart ↔ tipe adalah `sparepart_compatibility`. Kolom tetap ada (penghapusan butuh migrasi terpisah setelah dipastikan aplikasi lain tidak membacanya). Sparepart lama yang hanya punya `id_tipe` perlu dipindahkan dulu: [`migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql`](migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql).
 
 ## 3. Model stok (paling penting)
 
@@ -217,7 +217,7 @@ Master sparepart. **Tidak ada kolom stok.**
 | `sku` | varchar(100) | tidak | | UNIQUE; aplikasi membuat urutan `SP-001`, `SP-002`, … |
 | `name` | varchar(255) | tidak | | |
 | `description` | text | ya | | |
-| `id_tipe` | uuid | ya | | FK → `tipe_peralatan` (SET NULL); tipe utama |
+| `id_tipe` | uuid | ya | | FK → `tipe_peralatan` (SET NULL); **tidak dipakai lagi** (dulu tipe utama), lihat 2 |
 | `unit` | varchar(50) | ya | `'PCS'` | satuan |
 | `minimum_stok` | integer | tidak | `1` | CHECK ≥ 0; batas stok baru minimum |
 | `lokasi` | varchar | ya | | nama gudang (teks bebas) |
@@ -253,7 +253,7 @@ Log semua pergerakan stok. **Sumber kebenaran stok.**
 | `id` | uuid | tidak | `gen_random_uuid()` | PK |
 | `sparepart_id` | uuid | tidak | | FK → `spareparts` (CASCADE) |
 | `id_tipe` | uuid | tidak | | FK → `tipe_peralatan` (CASCADE) |
-| `is_primary` | boolean | ya | `true` | aplikasi mengisi `true` hanya untuk tipe pertama |
+| `is_primary` | boolean | ya | `true` | **tidak bermakna lagi** (tidak ada tipe utama); aplikasi tidak menulisnya, sehingga baris baru memakai default `true` |
 | `created_at` | timestamptz | ya | `now()` | |
 
 UNIQUE (`sparepart_id`, `id_tipe`). Aplikasi menyamakan isi tabel ini dengan pilihan di form katalog (hapus yang tidak dipilih, upsert yang dipilih).
@@ -311,7 +311,7 @@ Tabel `supabase_migrations.schema_migrations` mencatat:
 
 Perubahan skema sebelum 23 Juli 2026 dibuat lewat dashboard dan tidak tercatat di tabel ini. Salinan kedua migrasi Oktober ada di [`docs/migrations/`](migrations/) beserta perintah rollback.
 
-**Belum diterapkan:** [`2026-10-02_pakai_wajib_unit.sql`](migrations/2026-10-02_pakai_wajib_unit.sql) (trigger `Pakai` wajib unit), menunggu persetujuan pemilik. Kode aplikasi tidak bergantung padanya.
+**Belum diterapkan:** [`2026-10-02_kompatibilitas_dari_tipe_utama.sql`](migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql) (data: pindahkan `id_tipe` ke `sparepart_compatibility`; **harus diterapkan sebelum kode "tanpa tipe utama" dideploy**) dan [`2026-10-02_pakai_wajib_unit.sql`](migrations/2026-10-02_pakai_wajib_unit.sql) (trigger `Pakai` wajib unit), menunggu persetujuan pemilik. Kode aplikasi tidak bergantung padanya.
 
 ## 8. Prosedur mengubah database
 
@@ -363,4 +363,5 @@ Sparepart sudah terdaftar tetapi belum ada satu pun transaksi stok, jadi semua s
 | `docs/migrations/2026-10-02_aliran_stok.sql` | Sudah diterapkan. |
 | `docs/migrations/2026-10-02_current_stock_security_invoker.sql` | Sudah diterapkan. |
 | `docs/migrations/2026-10-02_pakai_wajib_unit.sql` | **Belum diterapkan**; sudah diuji dalam transaksi yang dibatalkan. |
+| `docs/migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql` | **Belum diterapkan**; diuji dalam transaksi yang dibatalkan (juga sebagai `anon`). |
 | `docs/schema_relational_supabase_v2.sql` | **Usang. Jangan dijalankan.** Skrip migrasi lama TEXT→UUID; database sudah memakai UUID. |

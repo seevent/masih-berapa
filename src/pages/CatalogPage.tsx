@@ -73,8 +73,7 @@ export const CatalogPage: React.FC = () => {
     setEditingId(null);
     setFormData({
       ...emptyForm(),
-      sku: generateNextSku(),
-      id_jenis: jenisPeralatan[0]?.id || ''
+      sku: generateNextSku()
     });
     setSelectedTipeIds([]);
     setIsModalOpen(true);
@@ -85,13 +84,13 @@ export const CatalogPage: React.FC = () => {
     const compatTipeIds = sparepartCompatibility
       .filter((c) => c.sparepart_id === sp.id)
       .map((c) => c.id_tipe);
-    const initialTipeIds = Array.from(new Set([sp.id_tipe || '', ...compatTipeIds])).filter(Boolean);
+    const initialTipeIds = Array.from(new Set(compatTipeIds)).filter(Boolean);
 
     setFormData({
       sku: sp.sku || '',
       name: sp.name || '',
       description: sp.description || '',
-      id_jenis: sp.id_jenis || '',
+      id_jenis: '',
       unit: sp.unit || 'PCS',
       stok_aktual: sp.stok_aktual || 0,
       stok_bekas: sp.stok_bekas || 0,
@@ -161,8 +160,8 @@ export const CatalogPage: React.FC = () => {
       sp.sku.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (sp.description || '').toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesJenis = !selectedJenis || sp.id_jenis === selectedJenis;
-    const matchesTipe = !selectedTipe || sp.id_tipe === selectedTipe;
+    const matchesJenis = !selectedJenis || sp.jenis_ids.includes(selectedJenis);
+    const matchesTipe = !selectedTipe || sp.tipe_ids.includes(selectedTipe);
 
     return matchesSearch && matchesJenis && matchesTipe;
   });
@@ -281,11 +280,8 @@ export const CatalogPage: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredSpareparts.map((sp) => {
             const isCritical = isLowStock(sp.stok_aktual, sp.minimum_stok);
-            const tpObj = tipePeralatan.find((t) => t.id === sp.id_tipe);
-            const jpObj = jenisPeralatan.find((j) => j.id === sp.id_jenis);
-            const compatRecords = sparepartCompatibility.filter((c) => c.sparepart_id === sp.id);
-            const compatTypeNames = compatRecords
-              .map((c) => tipePeralatan.find((t) => t.id === c.id_tipe)?.nama)
+            const compatTypeNames = sp.tipe_ids
+              .map((id) => tipePeralatan.find((t) => t.id === id)?.nama)
               .filter(Boolean);
 
             return (
@@ -311,19 +307,17 @@ export const CatalogPage: React.FC = () => {
                       <Layers className="w-3.5 h-3.5 text-slate-500 mt-0.5 shrink-0" />
                       <span className="text-slate-400 shrink-0">Jenis:</span>
                       <span className="font-medium text-cyan-300 line-clamp-1">
-                        {jpObj?.nama || 'Umum'}
+                        {sp.jenis_name}
                       </span>
                     </div>
 
-                    <div className="flex items-start gap-2">
-                      <Cpu className="w-3.5 h-3.5 text-slate-500 mt-0.5 shrink-0" />
-                      <span className="text-slate-400 shrink-0">Tipe:</span>
-                      <span className="font-medium text-white line-clamp-1">
-                        {tpObj?.nama || sp.equipment_type_name || 'Semua Tipe'}
-                      </span>
-                    </div>
-
-                    {compatTypeNames.length > 0 && (
+                    {compatTypeNames.length === 0 ? (
+                      <div className="flex items-start gap-2">
+                        <Cpu className="w-3.5 h-3.5 text-slate-500 mt-0.5 shrink-0" />
+                        <span className="text-slate-400 shrink-0">Kompatibel:</span>
+                        <span className="font-medium text-slate-500">Belum diisi</span>
+                      </div>
+                    ) : (
                       <div className="flex flex-wrap gap-1 pt-1">
                         <span className="text-[10px] text-cyan-400 font-semibold w-full">Kompatibel Dengan:</span>
                         {compatTypeNames.map((name, idx) => (
@@ -443,8 +437,6 @@ export const CatalogPage: React.FC = () => {
                 ) : (
                   filteredSpareparts.map((sp) => {
                     const isCritical = isLowStock(sp.stok_aktual, sp.minimum_stok);
-                    const tpObj = tipePeralatan.find((t) => t.id === sp.id_tipe);
-                    const jpObj = jenisPeralatan.find((j) => j.id === sp.id_jenis);
 
                     return (
                       <tr key={sp.id} className="hover:bg-slate-800/40 transition-colors">
@@ -458,8 +450,8 @@ export const CatalogPage: React.FC = () => {
                           <div className="text-slate-400 text-xs truncate max-w-xs">{sp.description || '-'}</div>
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap">
-                          <div className="text-cyan-300 font-semibold">{jpObj?.nama || 'Umum'}</div>
-                          <div className="text-slate-300 text-xs">{tpObj?.nama || sp.equipment_type_name || '-'}</div>
+                          <div className="text-cyan-300 font-semibold">{sp.jenis_name}</div>
+                          <div className="text-slate-300 text-xs max-w-xs whitespace-normal">{sp.equipment_type_name}</div>
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap">
                           <div className="text-slate-200 font-medium">{sp.lokasi || '-'}</div>
@@ -536,21 +528,13 @@ export const CatalogPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Jenis Peralatan *</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Persempit Daftar Tipe (opsional)</label>
                   <select
-                    required
                     value={formData.id_jenis}
-                    onChange={(e) => {
-                      const newJenisId = e.target.value;
-                      setFormData({ ...formData, id_jenis: newJenisId });
-                      // Keep only the selected tipes that belong to the new jenis
-                      setSelectedTipeIds((prev) =>
-                        prev.filter((id) => tipePeralatan.some((t) => t.id === id && t.id_jenis === newJenisId))
-                      );
-                    }}
+                    onChange={(e) => setFormData({ ...formData, id_jenis: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs font-semibold"
                   >
-                    <option value="">-- Pilih Jenis Peralatan --</option>
+                    <option value="">Semua Jenis Peralatan</option>
                     {jenisPeralatan.map((jp) => (
                       <option key={jp.id} value={jp.id}>
                         {jp.nama}
@@ -563,11 +547,20 @@ export const CatalogPage: React.FC = () => {
               {/* Checklist Tipe Peralatan */}
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1">
-                  Tipe Peralatan Kompatibel (bisa lebih dari satu, pilihan pertama = tipe utama)
+                  Tipe Peralatan Kompatibel (bisa lebih dari satu; {selectedTipeIds.length} dipilih)
                 </label>
-                <div className="bg-slate-950 border border-slate-700 rounded-xl p-3 max-h-36 overflow-y-auto space-y-2">
+                {selectedTipeIds.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {selectedTipeIds.map((id) => (
+                      <span key={id} className="text-[10px] bg-cyan-500/15 text-cyan-300 px-2 py-0.5 rounded border border-cyan-500/30">
+                        {tipePeralatan.find((t) => t.id === id)?.nama || id}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <div className="bg-slate-950 border border-slate-700 rounded-xl p-3 max-h-48 overflow-y-auto space-y-2">
                   {modalAvailableTipes.length === 0 ? (
-                    <span className="text-xs text-slate-500 italic">Pilih Jenis Peralatan terlebih dahulu</span>
+                    <span className="text-xs text-slate-500 italic">Tidak ada tipe peralatan untuk jenis ini</span>
                   ) : (
                     modalAvailableTipes.map((tp) => {
                       const isChecked = selectedTipeIds.includes(tp.id);
@@ -585,9 +578,6 @@ export const CatalogPage: React.FC = () => {
                             {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
                           </div>
                           <span>{tp.nama} {tp.varian ? `(${tp.varian})` : ''}</span>
-                          {selectedTipeIds[0] === tp.id && (
-                            <span className="ml-auto text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-cyan-500 text-slate-950">Utama</span>
-                          )}
                         </label>
                       );
                     })
