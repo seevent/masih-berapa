@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
 import { Sparepart } from '../types';
-import { isLowStock } from '../utils/stock';
+import { isLowStock, usableStock } from '../utils/stock';
 import { MtbfBadge } from '../components/predictive/MtbfBadge';
 
 export const CatalogPage: React.FC = () => {
@@ -276,7 +276,7 @@ export const CatalogPage: React.FC = () => {
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredSpareparts.map((sp) => {
-            const isCritical = isLowStock(sp.stok_aktual, sp.minimum_stok);
+            const isCritical = isLowStock(usableStock(sp), sp.minimum_stok);
             const compatTypeNames = sp.tipe_ids
               .map((id) => tipePeralatan.find((t) => t.id === id)?.nama)
               .filter(Boolean);
@@ -430,7 +430,7 @@ export const CatalogPage: React.FC = () => {
                   </tr>
                 ) : (
                   filteredSpareparts.map((sp) => {
-                    const isCritical = isLowStock(sp.stok_aktual, sp.minimum_stok);
+                    const isCritical = isLowStock(usableStock(sp), sp.minimum_stok);
 
                     return (
                       <tr key={sp.id} className="hover:bg-slate-800/40 transition-colors">

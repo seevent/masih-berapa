@@ -22,7 +22,8 @@ export const PredictiveNeedsPage: React.FC = () => {
       SKU: n.sparepart.sku,
       'Nama Sparepart': n.sparepart.name,
       Peralatan: n.sparepart.equipment_type_name,
-      'Stok Baru (Unit)': n.stok_baru,
+      'Stok Baru (Unit)': n.sparepart.stok_aktual,
+      'Stok Tersedia Baru + Bekas (Unit)': n.stok_tersedia,
       'Stok Bekas (Unit)': n.sparepart.stok_bekas,
       'Total Pakai dalam Jendela (Unit)': n.demand.usage_qty,
       'Jendela Pengamatan (Hari)': Math.round(n.demand.window_days),
@@ -45,7 +46,7 @@ export const PredictiveNeedsPage: React.FC = () => {
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-white">Perencanaan Kebutuhan (Demand Forecast)</h1>
           <p className="text-sm text-slate-400 mt-1">
-            Estimasi kebutuhan sparepart setahun dari pemakaian riil (transaksi Pakai) dan stok baru di gudang.
+            Estimasi kebutuhan sparepart setahun dari pemakaian riil (transaksi Pakai) dan stok tersedia (baru + bekas) di gudang.
           </p>
         </div>
 
@@ -100,7 +101,7 @@ export const PredictiveNeedsPage: React.FC = () => {
         <div>
           <span className="font-bold">Formula Perhitungan Otomatis:</span> Kebutuhan Tahunan = kebutuhan per hari × 365 (dibulatkan ke atas),
           {' '}dengan kebutuhan per hari = total Pakai dalam jendela pengamatan ÷ panjang jendela (hari sejak transaksi pertama, 30–365 hari).
-          {' '}Rekomendasi Order = Kebutuhan Tahunan − Stok Baru (Pakai hanya mengambil stok baru).
+          {' '}Rekomendasi Order = Kebutuhan Tahunan − Stok Tersedia (baru + bekas, karena Pakai bisa mengambil keduanya).
           {' '}Sparepart tanpa transaksi Pakai berstatus &quot;belum cukup data&quot;.
         </div>
       </div>
@@ -113,14 +114,14 @@ export const PredictiveNeedsPage: React.FC = () => {
               <tr>
                 <th className="py-3.5 px-4 whitespace-nowrap">SKU & Sparepart</th>
                 <th className="py-3.5 px-4 whitespace-nowrap">Peralatan</th>
-                <th className="py-3.5 px-4 text-center whitespace-nowrap">Stok Baru</th>
+                <th className="py-3.5 px-4 text-center whitespace-nowrap">Stok Tersedia</th>
                 <th className="py-3.5 px-4 text-center whitespace-nowrap">Kebutuhan Tahunan</th>
                 <th className="py-3.5 px-4 text-center whitespace-nowrap">Rekomendasi Order</th>
                 <th className="py-3.5 px-4 text-center whitespace-nowrap">Status Defisit</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-xs">
-              {needs.map(({ sparepart: sp, stok_baru, demand, annual_forecast_qty, order_needed_qty }) => (
+              {needs.map(({ sparepart: sp, stok_tersedia, demand, annual_forecast_qty, order_needed_qty }) => (
                 <tr key={sp.id} className="hover:bg-slate-800/40 transition-colors">
                   <td className="py-3.5 px-4">
                     <div className="font-mono text-cyan-400 font-bold">{sp.sku}</div>
@@ -130,8 +131,8 @@ export const PredictiveNeedsPage: React.FC = () => {
                     {sp.equipment_type_name}
                   </td>
                   <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                    <span className="font-bold text-white">{stok_baru} {sp.unit}</span>
-                    <div className="text-[10px] text-slate-400">(bekas {sp.stok_bekas}, tidak dihitung)</div>
+                    <span className="font-bold text-white">{stok_tersedia} {sp.unit}</span>
+                    <div className="text-[10px] text-slate-400">(baru {sp.stok_aktual} + bekas {sp.stok_bekas})</div>
                   </td>
                   <td className="py-3.5 px-4 text-center font-semibold text-slate-300 whitespace-nowrap">
                     {annual_forecast_qty === null ? (

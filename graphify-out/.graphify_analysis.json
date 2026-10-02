@@ -1,12 +1,12 @@
 {
   "communities": {
     "0": [
-      "clsx",
+      "core_js",
       "html2canvas_pro",
       "html5_qrcode",
       "lucide_react",
       "package_dependencies",
-      "package_dependencies_clsx",
+      "package_dependencies_core_js",
       "package_dependencies_html2canvas_pro",
       "package_dependencies_html5_qrcode",
       "package_dependencies_lucide_react",
@@ -35,6 +35,7 @@
       "src_components_dashboard_sparepartmetricscards_sparepartmetricscards",
       "src_components_dashboard_sparepartmetricscards_sparepartmetricscardsprops",
       "src_lib_sparepartanalytics",
+      "src_lib_sparepartanalytics_abcitemphysical",
       "src_lib_sparepartanalytics_abcphysicalbreakdown",
       "src_lib_sparepartanalytics_calculateabcanalysisphysical",
       "src_lib_sparepartanalytics_calculatecategoryphysicalbreakdown",
@@ -508,7 +509,6 @@
       "c_users_yuli_syarif_antigravity_sparepart_agents_workflows_implement_workflow_implement"
     ],
     "22": [
-      "src_lib_sparepartanalytics_abcitemphysical",
       "src_types_index_sparepart",
       "src_types_index_unitstatus",
       "src_utils_reliability",
@@ -1614,6 +1614,9 @@
       "src_components_predictive_mtbfbadge_confidence_label",
       "src_components_predictive_mtbfbadge_mtbfbadge",
       "src_components_predictive_mtbfbadge_mtbfbadgeprops",
+      "src_lib_sparepartanalytics_getreorderprioritylistphysical",
+      "src_pages_catalogpage",
+      "src_pages_catalogpage_catalogpage",
       "src_pages_predictivealertspage",
       "src_pages_predictivealertspage_formatdate",
       "src_pages_predictivealertspage_formatnumber",
@@ -1621,7 +1624,9 @@
       "src_pages_predictivealertspage_predictivealertspage",
       "src_pages_predictivealertspage_status_style",
       "src_utils_reliability_mtbfconfidence",
-      "src_utils_reliability_mtbfestimate"
+      "src_utils_reliability_mtbfestimate",
+      "src_utils_stock_islowstock",
+      "src_utils_stock_usablestock"
     ],
     "63": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_brand_references_consistency_checklist_audit_frequency",
@@ -2225,36 +2230,61 @@
       "docs_tickets_masih_berapa_tickets_ticket_9_thermal_label_generator_pdf_print_print"
     ],
     "97": [
-      "src_components_mutation_equipmentunitselect",
       "src_components_mutation_equipmentunitselect_equipmentunitselect",
-      "src_components_mutation_petugasselect",
-      "src_components_mutation_petugasselect_petugasoption",
-      "src_components_mutation_petugasselect_petugasselect",
-      "src_components_mutation_petugasselect_petugasselectprops",
       "src_components_mutation_stockflowfields",
       "src_components_mutation_stockflowfields_initialstockflowform",
       "src_components_mutation_stockflowfields_isstockflowformcomplete",
+      "src_components_mutation_stockflowfields_kondisi_label",
+      "src_components_mutation_stockflowfields_kondisiissource",
+      "src_components_mutation_stockflowfields_kondisipicker",
+      "src_components_mutation_stockflowfields_kondisipickerprops",
       "src_components_mutation_stockflowfields_optionclass",
       "src_components_mutation_stockflowfields_stockflowfields",
+      "src_components_mutation_stockflowfields_stockflowfieldsprops",
       "src_components_mutation_stockflowfields_stockflowformstate",
       "src_components_mutation_stockflowfields_stockof",
+      "src_components_mutation_transactionform",
+      "src_components_mutation_transactionform_linestate",
+      "src_components_mutation_transactionform_newline",
+      "src_components_mutation_transactionform_sumber_options",
+      "src_components_mutation_transactionform_transactionform",
+      "src_components_mutation_transactionform_transactionformprops",
+      "src_components_mutation_transactionform_type_info",
+      "src_context_inventorycontext_validatestock",
+      "src_pages_dashboardpage",
+      "src_pages_dashboardpage_dashboardpage",
       "src_pages_historypage",
+      "src_pages_historypage_edit_type_label",
       "src_pages_historypage_historypage",
       "src_pages_mutationpage",
       "src_pages_mutationpage_mutationpage",
-      "src_pages_scannerpage",
-      "src_pages_scannerpage_extractskufrominput",
-      "src_pages_scannerpage_scannerpage",
+      "src_types_index_mutationtype",
       "src_utils_compatibility_getcompatibleequipment",
       "src_utils_compatibility_requiresequipmentunit",
       "src_utils_compatibility_usesequipmentunit",
-      "src_utils_shiftutils_cleanmanualpetugas",
-      "src_utils_shiftutils_extractmanualpetugas",
-      "src_utils_shiftutils_withmanualpetugas",
+      "src_utils_shiftutils_stripmanualpetugas",
+      "src_utils_stock",
+      "src_utils_stock_active_mutation_types",
+      "src_utils_stock_buckets",
+      "src_utils_stock_computestockbysparepart",
+      "src_utils_stock_describeflow",
+      "src_utils_stock_findnegativestock",
+      "src_utils_stock_flowinput",
       "src_utils_stock_flowoptions",
+      "src_utils_stock_flowtooptions",
+      "src_utils_stock_geteffectiveflow",
+      "src_utils_stock_getmutationdelta",
+      "src_utils_stock_getusablestockdelta",
+      "src_utils_stock_isbucket",
+      "src_utils_stock_isincompleteserahterima",
+      "src_utils_stock_kondisioptions",
       "src_utils_stock_resolvestockflow",
+      "src_utils_stock_serahterimaarah",
       "src_utils_stock_stock_bucket_label",
-      "src_utils_stock_stockbucket"
+      "src_utils_stock_stockbucket",
+      "src_utils_stock_stockdelta",
+      "src_utils_stock_test",
+      "src_utils_stock_test_opts"
     ],
     "98": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_brand_references_update_color_presets",
@@ -2812,13 +2842,15 @@
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_skill_skill_discovery_optimization_sdo"
     ],
     "146": [
+      "src_components_mutation_equipmentunitselect",
       "src_components_mutation_equipmentunitselect_equipmentunitselectprops",
-      "src_components_mutation_stockflowfields_stockflowfieldsprops",
       "src_context_inventorycontext",
       "src_context_inventorycontext_inventorycontext",
       "src_context_inventorycontext_inventorycontexttype",
+      "src_context_inventorycontext_mutationlineinput",
       "src_context_inventorycontext_mutationupdateinput",
       "src_context_inventorycontext_newsparepartinput",
+      "src_context_inventorycontext_newtransactioninput",
       "src_context_inventorycontext_sparepartforminput",
       "src_context_inventorycontext_stockrow",
       "src_types_index",
@@ -2826,9 +2858,7 @@
       "src_types_index_jenisperalatan",
       "src_types_index_lokasi",
       "src_types_index_masterconfig",
-      "src_types_index_mutationtype",
       "src_types_index_penempatanperalatan",
-      "src_types_index_personel",
       "src_types_index_purchaserequisition",
       "src_types_index_sparepartcompatibility",
       "src_types_index_stockbucketvalue",
@@ -2840,8 +2870,14 @@
       "src_types_index_unitperalatan",
       "src_utils_compatibility",
       "src_utils_compatibility_compatibilityinput",
+      "src_utils_compatibility_test",
+      "src_utils_compatibility_test_compat",
+      "src_utils_compatibility_test_compatrows",
+      "src_utils_compatibility_test_part",
+      "src_utils_compatibility_test_penempatan",
+      "src_utils_compatibility_test_run",
+      "src_utils_compatibility_test_units",
       "src_utils_reliability_predictivereport",
-      "src_utils_stock_flowinput",
       "src_utils_stock_stockflow"
     ],
     "147": [
@@ -2874,27 +2910,10 @@
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_systematic_debugging_test_pressure_1_your_options"
     ],
     "151": [
-      "src_context_inventorycontext_validatestock",
-      "src_lib_sparepartanalytics_getreorderprioritylistphysical",
-      "src_pages_catalogpage",
-      "src_pages_catalogpage_catalogpage",
-      "src_pages_dashboardpage",
-      "src_pages_dashboardpage_dashboardpage",
-      "src_utils_shiftutils_stripmanualpetugas",
-      "src_utils_stock",
-      "src_utils_stock_buckets",
-      "src_utils_stock_computestockbysparepart",
-      "src_utils_stock_describeflow",
-      "src_utils_stock_findnegativestock",
-      "src_utils_stock_flowtooptions",
-      "src_utils_stock_geteffectiveflow",
-      "src_utils_stock_getmutationdelta",
-      "src_utils_stock_getusablestockdelta",
-      "src_utils_stock_isbucket",
-      "src_utils_stock_isincompleteserahterima",
-      "src_utils_stock_islowstock",
-      "src_utils_stock_serahterimaarah",
-      "src_utils_stock_stockdelta"
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_md_type",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_md_value",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_md",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_shadow_md"
     ],
     "152": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_systematic_debugging_test_pressure_2_choose_a_b_or_c",
@@ -2985,7 +3004,13 @@
       "src_context_notificationcontext_notificationprovider",
       "src_context_notificationcontext_toastmessage",
       "src_context_notificationcontext_toasttype",
-      "src_main"
+      "src_context_notificationcontext_usenotification",
+      "src_main",
+      "src_pages_printlabelpage",
+      "src_pages_printlabelpage_label_presets",
+      "src_pages_printlabelpage_labelpreset",
+      "src_pages_printlabelpage_printlabelpage",
+      "src_pages_printlabelpage_public_app_url"
     ],
     "163": [
       "docs_schema_relational_supabase",
@@ -3294,14 +3319,14 @@
       "docs_migrations_2026_10_02_pakai_wajib_unit_stock_mutations_pakai_wajib_unit"
     ],
     "221": [
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_default_type",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_default_value",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_full_type",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_full_value",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_md_type",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_md_value",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_primitive_radius",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_default",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_full",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_md",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_shadow_md"
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_shadow_default"
     ],
     "222": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_plans_plan_document_reviewer_prompt_md",
@@ -3322,26 +3347,31 @@
       "src_components_layout_sidebar_sidebar",
       "src_components_layout_sidebar_sidebarprops",
       "src_context_inventorycontext_useinventory",
-      "src_context_notificationcontext_usenotification",
       "src_pages_predictiveneedspage",
       "src_pages_predictiveneedspage_predictiveneedspage",
-      "src_pages_printlabelpage",
-      "src_pages_printlabelpage_label_presets",
-      "src_pages_printlabelpage_labelpreset",
-      "src_pages_printlabelpage_printlabelpage",
-      "src_pages_printlabelpage_public_app_url",
       "src_pages_reportspage",
       "src_pages_reportspage_category_style",
       "src_pages_reportspage_formatpermonth",
       "src_pages_reportspage_reportspage",
+      "src_pages_scannerpage",
+      "src_pages_scannerpage_extractskufrominput",
+      "src_pages_scannerpage_scannerpage",
+      "src_utils_compatibility_test_unit",
       "src_utils_reliability_movementclass",
       "xlsx"
     ],
     "225": [
+      "src_components_mutation_petugasselect",
+      "src_components_mutation_petugasselect_petugasoption",
+      "src_components_mutation_petugasselect_petugasselect",
+      "src_components_mutation_petugasselect_petugasselectprops",
+      "src_types_index_personel",
       "src_utils_shiftutils",
       "src_utils_shiftutils_absent_statuses",
       "src_utils_shiftutils_activedutypersonelresult",
+      "src_utils_shiftutils_cleanmanualpetugas",
       "src_utils_shiftutils_comparedutypersonel",
+      "src_utils_shiftutils_extractmanualpetugas",
       "src_utils_shiftutils_formatdatetoyyyymmdd",
       "src_utils_shiftutils_getactivedutypersonel",
       "src_utils_shiftutils_getcurrentshiftinfo",
@@ -3352,7 +3382,8 @@
       "src_utils_shiftutils_test_people",
       "src_utils_shiftutils_test_person",
       "src_utils_shiftutils_test_units",
-      "src_utils_shiftutils_unitrank"
+      "src_utils_shiftutils_unitrank",
+      "src_utils_shiftutils_withmanualpetugas"
     ],
     "226": [
       "src_components_layout_floatingdock",
@@ -3375,6 +3406,7 @@
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_ui_styling_scripts_tailwind_config_gen_py_path"
     ],
     "232": [
+      "src_context_inventorycontext_fetchmutationsof",
       "src_context_inventorycontext_fetchsparepartmutations",
       "src_context_inventorycontext_flowcolumns",
       "src_context_inventorycontext_inventoryprovider",
@@ -3384,20 +3416,20 @@
       "src_lib_supabase_getsupabaseclient"
     ],
     "233": [
+      "docs_migrations_2026_10_02_transaksi_tiga_tipe",
+      "docs_migrations_2026_10_02_transaksi_tiga_tipe_public_stock_mutations"
+    ],
+    "234": [
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_fontsize_xl",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_xl",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_xl_type",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_xl_value"
+    ],
+    "235": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_concise_is_key",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_core_principles",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_set_appropriate_degrees_of_freedom",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_test_with_all_models_you_plan_to_use"
-    ],
-    "234": [
-      "core_js",
-      "package_dependencies_core_js"
-    ],
-    "235": [
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_default_type",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_default_value",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_default",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_shadow_default"
     ],
     "236": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_none_type",
@@ -3422,15 +3454,17 @@
       "supabase_supabase_js"
     ],
     "240": [
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_fontsize_xl",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_xl",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_xl_type",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_xl_value"
+      "clsx",
+      "package_dependencies_clsx"
     ],
     "241": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_color_foreground",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_foreground_type",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_foreground_value"
+    ],
+    "242": [
+      "package_devdependencies_tailwindcss",
+      "tailwindcss"
     ],
     "243": [
       "package_dependencies_tailwind_merge",
@@ -3470,15 +3504,11 @@
     "253": [
       "motion",
       "package_dependencies_motion"
-    ],
-    "255": [
-      "package_devdependencies_tailwindcss",
-      "tailwindcss"
     ]
   },
   "cohesion": {
     "0": 0.10526315789473684,
-    "1": 0.1341991341991342,
+    "1": 0.12648221343873517,
     "2": 0.08695652173913043,
     "3": 0.05370101596516691,
     "4": 0.09523809523809523,
@@ -3499,7 +3529,7 @@
     "19": 1.0,
     "20": 1.0,
     "21": 1.0,
-    "22": 0.12473118279569892,
+    "22": 0.1310344827586207,
     "23": 1.0,
     "24": 1.0,
     "25": 0.05555555555555555,
@@ -3539,7 +3569,7 @@
     "59": 0.10526315789473684,
     "60": 0.15204678362573099,
     "61": 0.14035087719298245,
-    "62": 0.21794871794871795,
+    "62": 0.16993464052287582,
     "63": 0.1111111111111111,
     "64": 0.1111111111111111,
     "65": 0.16993464052287582,
@@ -3574,7 +3604,7 @@
     "94": 0.21978021978021978,
     "95": 0.25274725274725274,
     "96": 0.14285714285714285,
-    "97": 0.18850574712643678,
+    "97": 0.0962962962962963,
     "98": 0.15384615384615385,
     "99": 0.15384615384615385,
     "100": 0.15384615384615385,
@@ -3623,12 +3653,12 @@
     "143": 0.3333333333333333,
     "144": 0.3333333333333333,
     "145": 0.3333333333333333,
-    "146": 0.16774193548387098,
+    "146": 0.12612612612612611,
     "147": 0.3333333333333333,
     "148": 0.4,
     "149": 0.6,
     "150": 0.4,
-    "151": 0.19523809523809524,
+    "151": 0.6666666666666666,
     "152": 0.4,
     "153": 0.4,
     "154": 0.4,
@@ -3639,7 +3669,7 @@
     "159": 0.4666666666666667,
     "160": 0.6666666666666666,
     "161": 0.5,
-    "162": 0.11052631578947368,
+    "162": 0.09230769230769231,
     "163": 0.2967032967032967,
     "164": 0.5,
     "165": 0.5,
@@ -3701,24 +3731,25 @@
     "221": 0.2857142857142857,
     "222": 1.0,
     "223": 1.0,
-    "224": 0.12318840579710146,
-    "225": 0.2,
+    "224": 0.1341991341991342,
+    "225": 0.1383399209486166,
     "226": 1.0,
     "227": 1.0,
     "228": 1.0,
     "229": 1.0,
     "230": 1.0,
     "231": 1.0,
-    "232": 0.42857142857142855,
-    "233": 0.5,
-    "234": 1.0,
-    "235": 0.6666666666666666,
+    "232": 0.39285714285714285,
+    "233": 1.0,
+    "234": 0.6666666666666666,
+    "235": 0.5,
     "236": 0.6666666666666666,
     "237": 0.6,
     "238": 1.0,
     "239": 1.0,
-    "240": 0.6666666666666666,
+    "240": 1.0,
     "241": 0.6666666666666666,
+    "242": 1.0,
     "243": 1.0,
     "244": 1.0,
     "245": 1.0,
@@ -3727,8 +3758,7 @@
     "250": 0.6666666666666666,
     "251": 0.6666666666666666,
     "252": 0.6666666666666666,
-    "253": 1.0,
-    "255": 1.0
+    "253": 1.0
   },
   "gods": [
     {
@@ -3762,9 +3792,9 @@
       "degree": 23
     },
     {
-      "id": "src_context_inventorycontext_inventorycontexttype",
-      "label": "InventoryContextType",
-      "degree": 18
+      "id": "src_types_index_sparepart",
+      "label": "Sparepart",
+      "degree": 19
     },
     {
       "id": "tsconfig_compileroptions",
@@ -3777,8 +3807,8 @@
       "degree": 17
     },
     {
-      "id": "src_types_index_sparepart",
-      "label": "Sparepart",
+      "id": "src_types_index_mutationtype",
+      "label": "MutationType",
       "degree": 16
     }
   ],
@@ -3847,7 +3877,7 @@
     },
     {
       "type": "bridge_node",
-      "question": "Why does `dependencies` connect `dependencies` to `useInventory`, `core-js`, `@supabase/supabase-js`, `tailwind-merge`, `package.json`, `motion`, `jspdf`?",
+      "question": "Why does `dependencies` connect `dependencies` to `useInventory`, `@supabase/supabase-js`, `clsx`, `tailwind-merge`, `package.json`, `motion`, `jspdf`?",
       "why": "High betweenness centrality (0.004) - this node is a cross-community bridge."
     },
     {
@@ -3868,7 +3898,7 @@
     {
       "type": "isolated_nodes",
       "question": "What connects `crypto`, `http`, `fs` to the rest of the system?",
-      "why": "1538 weakly-connected nodes found - possible documentation gaps or missing edges."
+      "why": "1546 weakly-connected nodes found - possible documentation gaps or missing edges."
     },
     {
       "type": "low_cohesion",

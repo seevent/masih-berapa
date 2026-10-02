@@ -204,11 +204,20 @@ describe('Laporan gabungan', () => {
     expect(report.urgentCount).toBe(0);
   });
 
-  it('kebutuhan tahunan = ceil(r × 365), dikurangi stok baru', () => {
+  it('kebutuhan tahunan = ceil(r × 365), dikurangi stok tersedia (baru + bekas)', () => {
     const muts = [0, 30, 60, 90, 120, 150].map((d) => pakai('sp1', 'A', d));
-    const report = buildPredictiveReport([part({ stok_aktual: 3, stok_bekas: 10 })], muts, activeUnits, DAY0 + 180 * DAY_MS);
+    const report = buildPredictiveReport([part({ stok_aktual: 3, stok_bekas: 4 })], muts, activeUnits, DAY0 + 180 * DAY_MS);
     expect(report.annualNeeds[0].annual_forecast_qty).toBe(13); // 6/180 × 365 = 12,17
-    expect(report.annualNeeds[0].order_needed_qty).toBe(10);
+    expect(report.annualNeeds[0].stok_tersedia).toBe(7);
+    expect(report.annualNeeds[0].order_needed_qty).toBe(6);
+  });
+
+  it('kecukupan stok menghitung stok bekas karena Pakai bisa mengambil bekas', () => {
+    const muts = [0, 30, 60, 90, 120, 150].map((d) => pakai('sp1', 'A', d));
+    // titik pesan SLA 3: baru 1 + bekas 2 = 3 tersedia → cukup
+    const report = buildPredictiveReport([part({ stok_aktual: 1, stok_bekas: 2 })], muts, activeUnits, DAY0 + 180 * DAY_MS);
+    expect(report.stockCoverage[0].stok_tersedia).toBe(3);
+    expect(report.stockCoverage[0].needs_order).toBe(false);
   });
 
   it('kebutuhan tahunan tidak terdorong naik oleh galat pembulatan desimal', () => {

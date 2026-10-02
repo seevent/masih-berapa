@@ -99,7 +99,7 @@ titik_pesan     = max(titik_pesan_SLA, minimum_stok + 1)    [Usulan: minimum_sto
 PESAN bila stok_baru < titik_pesan;  jumlah usulan = titik_pesan − stok_baru
 ```
 
-- Yang dihitung **stok baru** saja, karena `Pakai` hanya mengambil dari stok baru.
+- ~~Yang dihitung stok baru saja~~ **Sejak 2 Okt 2026 yang dihitung stok tersedia = baru + bekas**, karena `Pakai` bisa mengambil keduanya (`stok_baru` di rumus di atas dibaca "stok tersedia").
 - **Penjelasan implementasi:** batas bawahnya `minimum_stok + 1` (bukan `minimum_stok`) agar PESAN selalu muncul bila stok rendah menurut definisi aplikasi (`isLowStock`: stok baru **≤** minimum). Tanpa "+1", stok yang tepat sama dengan minimum dianggap rendah di Dashboard tetapi tidak dipesan di sini.
 - Tanpa transaksi `Pakai` sama sekali, titik pesan SLA kosong dan stok minimum = 0 (PESAN hanya bila stok baru habis), dengan keterangan "belum cukup data".
 - **Perubahan 2 Okt 2026:** `minimum_stok` tidak lagi diisi manual. Nilainya `titik_pesan_SLA − 1` (`autoMinimumStock`), sehingga `titik_pesan = max(titik_pesan_SLA, minimum + 1)` sama dengan titik pesan SLA.
@@ -124,7 +124,7 @@ Memakai `r` dan jendela yang sama dengan 4.3/4.4, supaya laporan rotasi, kebutuh
 | Slow | tanpa `Pakai`, riwayat sparepart ≥ 30 hari |
 | Belum cukup data | tanpa `Pakai`, riwayat < 30 hari |
 
-Hanya `Pakai` yang dihitung; Masuk, Bekas, Rusak, dan Serah Terima (termasuk stok awal saat mendaftar) bukan perputaran.
+Hanya `Pakai` (dari baru maupun bekas) yang dihitung; Masuk, Serah Terima, tipe lama Bekas/Rusak, dan stok awal saat mendaftar bukan perputaran.
 
 ## 5. Perubahan aplikasi
 
@@ -183,5 +183,5 @@ Semua usulan U1–U8 **disetujui pemilik** pada 2 Oktober 2026. Untuk U8, bentuk
 - Model Weibull (pola "makin tua makin rawan"): setelah ada sparepart dengan ≥ 10 penggantian.
 - Lead time per sparepart: setelah datanya tersedia (akan menggantikan H = 30).
 - Riwayat sebelum aplikasi dipakai: tidak diketahui; umur posisi dimulai dari pemasangan pertama yang tercatat.
-- `Pakai` dari stok bekas (rotable dipasang ulang): model aliran stok saat ini belum mendukungnya.
+- ~~`Pakai` dari stok bekas~~: **sudah didukung sejak 2 Okt 2026** (Pakai memilih baru/bekas). `Pakai` dari bekas dihitung sebagai pemasangan/penggantian dan sebagai pemakaian; kecukupan stok dan kebutuhan memakai stok tersedia = baru + bekas.
 - Jumlah komponen sejenis per unit: diambil dari qty pemasangan pertama, bukan dari data master.

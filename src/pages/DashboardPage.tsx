@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, AreaChart, Area } from 'recharts';
 import { stripManualPetugas } from '../utils/shiftUtils';
-import { getEffectiveFlow, getUsableStockDelta, isIncompleteSerahTerima, isLowStock } from '../utils/stock';
+import { getEffectiveFlow, getUsableStockDelta, isIncompleteSerahTerima, isLowStock, usableStock } from '../utils/stock';
 
 export const DashboardPage: React.FC = () => {
   const { spareparts, mutations, personelList, predictive } = useInventory();
@@ -81,7 +81,7 @@ export const DashboardPage: React.FC = () => {
 
   // 2. Low Stock & Critical Alerts calculation (Live Supabase DB)
   const criticalSpareparts = useMemo(
-    () => spareparts.filter((p) => isLowStock(p.stok_aktual, p.minimum_stok)),
+    () => spareparts.filter((p) => isLowStock(usableStock(p), p.minimum_stok)),
     [spareparts]
   );
 
@@ -97,7 +97,7 @@ export const DashboardPage: React.FC = () => {
       const total = (p.stok_aktual || 0) + (p.stok_bekas || 0);
       if (total === 0) {
         outOfStock++;
-      } else if (isLowStock(p.stok_aktual, p.minimum_stok)) {
+      } else if (isLowStock(usableStock(p), p.minimum_stok)) {
         critical++;
       } else {
         healthy++;
@@ -131,7 +131,7 @@ export const DashboardPage: React.FC = () => {
             location: p.lokasi || '-',
             rack: p.rack || '-',
             stockRatio,
-            color: isLowStock(p.stok_aktual, minStock) ? 'bg-amber-400' : 'bg-emerald-500'
+            color: isLowStock(usableStock(p), minStock) ? 'bg-amber-400' : 'bg-emerald-500'
           };
         })
         .filter((item) => item.quant > 0)
@@ -159,10 +159,11 @@ export const DashboardPage: React.FC = () => {
       let qtySign = `+${m.qty}`;
 
       if (m.mutation_type === 'Pakai') {
-        typeLabel = 'Issued / Dipakai';
+        const asal = getEffectiveFlow(m).asal;
+        typeLabel = asal === 'bekas' ? 'Dipakai (dari Bekas)' : 'Issued / Dipakai';
         iconType = 'issued';
         statusColor = 'bg-cyan-400';
-        qtySign = `-${m.qty}`;
+        qtySign = asal === 'bekas' ? `-${m.qty} Bekas` : `-${m.qty}`;
       } else if (m.mutation_type === 'Bekas') {
         typeLabel = 'Rotable Returned';
         iconType = 'returned';
@@ -175,10 +176,11 @@ export const DashboardPage: React.FC = () => {
         statusColor = 'bg-rose-500';
         qtySign = `-${m.qty} ${asal}`;
       } else if (m.mutation_type === 'Masuk') {
-        typeLabel = 'Part Received';
-        iconType = 'received';
-        statusColor = 'bg-emerald-400';
-        qtySign = `+${m.qty}`;
+        const tujuan = getEffectiveFlow(m).tujuan;
+        typeLabel = tujuan === 'baru' ? 'Part Received' : `Masuk ${tujuan === 'bekas' ? 'Bekas' : 'Rusak'}`;
+        iconType = tujuan === 'rusak' ? 'scrapped' : tujuan === 'bekas' ? 'returned' : 'received';
+        statusColor = tujuan === 'rusak' ? 'bg-rose-500' : tujuan === 'bekas' ? 'bg-amber-400' : 'bg-emerald-400';
+        qtySign = tujuan === 'baru' ? `+${m.qty}` : `+${m.qty} ${tujuan === 'bekas' ? 'Bekas' : 'Rusak'}`;
       } else {
         const flow = getEffectiveFlow(m);
         iconType = 'handover';

@@ -25,8 +25,8 @@
     "semantic_hash": ""
   },
   "src/context/InventoryContext.tsx": {
-    "mtime": 1790961556.5163548,
-    "ast_hash": "a53cb3e3fa53335c88b51218bf2fac21",
+    "mtime": 1790965955.8675323,
+    "ast_hash": "dc1e70cbd8e03d13681ca2a05423fd78",
     "semantic_hash": ""
   },
   "src/context/NotificationContext.tsx": {
@@ -45,33 +45,33 @@
     "semantic_hash": ""
   },
   "src/pages/CatalogPage.tsx": {
-    "mtime": 1790960999.9113007,
-    "ast_hash": "a43e8d37933aeb0b4a1f3290e065330b",
+    "mtime": 1790965897.0817277,
+    "ast_hash": "90254d5aa56ab1534d9de5d2ddbb221e",
     "semantic_hash": ""
   },
   "src/pages/DashboardPage.tsx": {
-    "mtime": 1790961561.5098922,
-    "ast_hash": "68c3bee626dd318afb2044cced693760",
+    "mtime": 1790965955.8681757,
+    "ast_hash": "1bd03560c1a73c6cc7afcffd8921822f",
     "semantic_hash": ""
   },
   "src/pages/HistoryPage.tsx": {
-    "mtime": 1790961576.323388,
-    "ast_hash": "187d1df5cfa72f8214740b6f16dc23f1",
+    "mtime": 1790965955.8687003,
+    "ast_hash": "7aa6f60a13b39d98e87dd9ef5eb43548",
     "semantic_hash": ""
   },
   "src/pages/MutationPage.tsx": {
-    "mtime": 1790961556.5154457,
-    "ast_hash": "e0cd956d945a53351469560c1b414d0c",
+    "mtime": 1790965817.0003626,
+    "ast_hash": "c26cfae7f9e2f8537389e97cc9ca27b5",
     "semantic_hash": ""
   },
   "src/pages/PredictiveAlertsPage.tsx": {
-    "mtime": 1790960217.3929207,
-    "ast_hash": "b3cd380761e46dd27b9bda11487fb8bc",
+    "mtime": 1790965905.3071554,
+    "ast_hash": "b5435a30b6cafcbb01fb367927450fe8",
     "semantic_hash": ""
   },
   "src/pages/PredictiveNeedsPage.tsx": {
-    "mtime": 1790954506.7447314,
-    "ast_hash": "34b3fcef77688ad8262aab984c37e050",
+    "mtime": 1790965913.9512494,
+    "ast_hash": "f812d8bf1587ceaf19ea4fe95a7f1716",
     "semantic_hash": ""
   },
   "src/pages/PrintLabelPage.tsx": {
@@ -85,8 +85,8 @@
     "semantic_hash": ""
   },
   "src/pages/ScannerPage.tsx": {
-    "mtime": 1790961556.515853,
-    "ast_hash": "f293095367679d1e30b5c55a84ed1d82",
+    "mtime": 1790965835.6276453,
+    "ast_hash": "9c495dfc1e9a03a02ab4fe2eb609a5fc",
     "semantic_hash": ""
   },
   "src/types/index.ts": {
@@ -175,8 +175,8 @@
     "semantic_hash": ""
   },
   "src/lib/sparepartAnalytics.ts": {
-    "mtime": 1790954700.0412688,
-    "ast_hash": "1d0dafa63f86f4552d540db0b2038c9f",
+    "mtime": 1790965897.0821345,
+    "ast_hash": "7e92e4c2c27af92d14a73f522df7c251",
     "semantic_hash": ""
   },
   ".agents/workflows/handoff.md": {
@@ -215,8 +215,8 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1790960296.0986116,
-    "ast_hash": "14e3f05b8da74f0bc5f774ba89e2e786",
+    "mtime": 1790966131.000376,
+    "ast_hash": "8be00c98aaffe9173d22fb3cec3ca2b9",
     "semantic_hash": ""
   },
   "docs/specs/schema_alignment_spec.md": {
@@ -925,18 +925,18 @@
     "semantic_hash": ""
   },
   "src/components/mutation/StockFlowFields.tsx": {
-    "mtime": 1790930771.3654518,
-    "ast_hash": "4d0dcf37297393f7fe96701cb1e69dca",
+    "mtime": 1790965712.306323,
+    "ast_hash": "79ed6370c31bd20ea71cec2b266631a6",
     "semantic_hash": ""
   },
   "src/utils/compatibility.ts": {
-    "mtime": 1790954700.0388103,
-    "ast_hash": "73b2f141b172d37928023982710329e9",
+    "mtime": 1790965683.4601882,
+    "ast_hash": "e455aeb650f897c91b20369f8a3f1339",
     "semantic_hash": ""
   },
   "src/utils/stock.ts": {
-    "mtime": 1790930771.373452,
-    "ast_hash": "36ec8257331952a1fdc68d32501e022a",
+    "mtime": 1790965897.0793116,
+    "ast_hash": "fdca0ed4d488e5f449519b0bdc53745e",
     "semantic_hash": ""
   },
   "src/vite-env.d.ts": {
@@ -950,23 +950,23 @@
     "semantic_hash": ""
   },
   "AGENTS.md": {
-    "mtime": 1790960296.0990987,
-    "ast_hash": "d00ef01f50c7667019bd9663027f454d",
+    "mtime": 1790966192.132449,
+    "ast_hash": "6d7f4197cc3ee1a1159cdbd44d7d00c4",
     "semantic_hash": ""
   },
   "docs/ARCHITECTURE.md": {
-    "mtime": 1790961667.101055,
-    "ast_hash": "0b46a000cdcfa79f0799cbab98224c13",
+    "mtime": 1790966192.1310053,
+    "ast_hash": "b23d2f78573c3c8cae93cfc75e9461c0",
     "semantic_hash": ""
   },
   "docs/DATABASE.md": {
-    "mtime": 1790961667.1015594,
-    "ast_hash": "589b81a2be27e9184ad712ae002dcd70",
+    "mtime": 1790966192.1320124,
+    "ast_hash": "9c4cdb7a32ebf32db095c39f119bb3db",
     "semantic_hash": ""
   },
   "docs/PRD.md": {
-    "mtime": 1790961667.1004,
-    "ast_hash": "08d98758d8438f4eb97dd38ad5d459d1",
+    "mtime": 1790966159.3825915,
+    "ast_hash": "43bcf858eff80c819910d25b50613f19",
     "semantic_hash": ""
   },
   "docs/migrations/2026-10-02_pakai_wajib_unit.sql": {
@@ -985,18 +985,18 @@
     "semantic_hash": ""
   },
   "src/utils/reliability.test.ts": {
-    "mtime": 1790960217.3917265,
-    "ast_hash": "a409cd4aa929e1bc38cbd8c615337c7d",
+    "mtime": 1790965913.9635828,
+    "ast_hash": "4b73696f1bd317491534e533be560b7f",
     "semantic_hash": ""
   },
   "src/utils/reliability.ts": {
-    "mtime": 1790960217.3913136,
-    "ast_hash": "1039d5adccab989eeba578bbf3693544",
+    "mtime": 1790965897.0799627,
+    "ast_hash": "531b66b0e49a5930ae6b79e1ad40ea2b",
     "semantic_hash": ""
   },
   "docs/specs/predictive-maintenance.md": {
-    "mtime": 1790960296.100756,
-    "ast_hash": "4aa4b3ca2a831803fc655ebaa773e4ae",
+    "mtime": 1790966192.1327972,
+    "ast_hash": "f09f78798065cf9438c163304a88d88f",
     "semantic_hash": ""
   },
   "docs/migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql": {
@@ -1012,6 +1012,26 @@
   "src/components/mutation/PetugasSelect.tsx": {
     "mtime": 1790961546.8767898,
     "ast_hash": "59f2848173f0efc0cb740ead004bc29c",
+    "semantic_hash": ""
+  },
+  "docs/migrations/2026-10-02_transaksi_tiga_tipe.sql": {
+    "mtime": 1790964703.0062172,
+    "ast_hash": "595ab5934f46664839e10a9b5dc75e95",
+    "semantic_hash": ""
+  },
+  "src/components/mutation/TransactionForm.tsx": {
+    "mtime": 1790965816.995069,
+    "ast_hash": "8173c7666440364a457bf33a1dd9afd6",
+    "semantic_hash": ""
+  },
+  "src/utils/compatibility.test.ts": {
+    "mtime": 1790965934.9230807,
+    "ast_hash": "decfd4ad8512d39808689dbe04cf4975",
+    "semantic_hash": ""
+  },
+  "src/utils/stock.test.ts": {
+    "mtime": 1790964677.787058,
+    "ast_hash": "9d97665f2f8b96cbd2e3df3268a01b71",
     "semantic_hash": ""
   }
 }

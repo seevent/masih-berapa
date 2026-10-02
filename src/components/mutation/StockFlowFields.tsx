@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowDownToLine, ArrowUpFromLine } from 'lucide-react';
 import { MutationType, Sparepart } from '../../types';
-import { FlowOptions, StockBucket, STOCK_BUCKET_LABEL } from '../../utils/stock';
+import { FlowOptions, StockBucket, STOCK_BUCKET_LABEL, kondisiOptions } from '../../utils/stock';
 
 export interface StockFlowFormState extends FlowOptions {
   /** Serah Terima: the other party (receiver when handing over, giver when receiving) */
@@ -29,7 +29,7 @@ interface StockFlowFieldsProps {
   part?: Sparepart | null;
 }
 
-const stockOf = (part: Sparepart | null | undefined, bucket: StockBucket): number | null => {
+export const stockOf = (part: Sparepart | null | undefined, bucket: StockBucket): number | null => {
   if (!part) return null;
   if (bucket === 'baru') return part.stok_aktual;
   if (bucket === 'bekas') return part.stok_bekas;
@@ -43,7 +43,44 @@ const optionClass = (selected: boolean) =>
       : 'border-slate-700 bg-slate-900 text-slate-400 hover:text-white'
   }`;
 
-/** Extra inputs for 'Rusak' (which stock it comes from) and 'Serah Terima' (direction, condition, party). */
+const KONDISI_LABEL: Record<StockBucket, string> = { baru: 'Baru', bekas: 'Bekas', rusak: 'Rusak' };
+
+/** True when the chosen condition is the stock that decreases (so its availability matters). */
+export const kondisiIsSource = (type: MutationType, arah: FlowOptions['arah']) =>
+  type === 'Pakai' || (type === 'Serah Terima' && arah === 'serah');
+
+interface KondisiPickerProps {
+  mutationType: MutationType;
+  value: StockBucket;
+  onChange: (kondisi: StockBucket) => void;
+  arah: FlowOptions['arah'];
+  part?: Sparepart | null;
+  compact?: boolean;
+}
+
+/** Condition of one line: Masuk/Serah Terima baru·bekas·rusak, Pakai baru·bekas (stock it is taken from). */
+export const KondisiPicker: React.FC<KondisiPickerProps> = ({ mutationType, value, onChange, arah, part, compact }) => {
+  const showStock = kondisiIsSource(mutationType, arah);
+  return (
+    <div className="flex gap-1.5">
+      {kondisiOptions(mutationType).map((b) => (
+        <button
+          key={b}
+          type="button"
+          onClick={() => onChange(b)}
+          className={`${optionClass(value === b)} ${compact ? 'px-2 py-1.5 text-center' : ''}`}
+        >
+          {KONDISI_LABEL[b]}
+          {part && showStock && (
+            <span className="block text-[10px] font-normal opacity-80">Ada: {stockOf(part, b)}</span>
+          )}
+        </button>
+      ))}
+    </div>
+  );
+};
+
+/** Extra inputs for legacy 'Rusak' (which stock it comes from) and 'Serah Terima' (direction and other party). */
 export const StockFlowFields: React.FC<StockFlowFieldsProps> = ({ mutationType, value, onChange, part }) => {
   const set = (patch: Partial<StockFlowFormState>) => onChange({ ...value, ...patch });
 
@@ -85,20 +122,6 @@ export const StockFlowFields: React.FC<StockFlowFieldsProps> = ({ mutationType, 
               Terima
               <span className="block text-[10px] font-normal opacity-80">Masuk ke gudang</span>
             </button>
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <label className="block text-xs font-extrabold text-slate-200 uppercase tracking-wider">Kondisi Barang</label>
-          <div className="flex gap-2">
-            {(['baru', 'bekas', 'rusak'] as const).map((b) => (
-              <button key={b} type="button" onClick={() => set({ kondisi: b })} className={optionClass(value.kondisi === b)}>
-                {b.charAt(0).toUpperCase() + b.slice(1)}
-                {part && isSerah && (
-                  <span className="block text-[10px] font-normal opacity-80">Tersedia: {stockOf(part, b)}</span>
-                )}
-              </button>
-            ))}
           </div>
         </div>
 

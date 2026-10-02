@@ -1,5 +1,5 @@
 import { Sparepart, StockMutation, SupplierType } from '../types';
-import { isLowStock } from '../utils/stock';
+import { isLowStock, usableStock } from '../utils/stock';
 
 export interface ABCItemPhysical {
   sparepart: Sparepart;
@@ -283,7 +283,7 @@ export const getReorderPriorityListPhysical = (
   return spareparts
     .map((p) => {
       const safetyStok = Math.ceil(p.minimum_stok * 1.5);
-      const isCritical = isLowStock(p.stok_aktual, p.minimum_stok);
+      const isCritical = isLowStock(usableStock(p), p.minimum_stok);
       const isWarning = !isCritical && p.stok_aktual <= safetyStok;
 
       const suggestedQty = Math.max(p.minimum_stok * 2 - p.stok_aktual, 0);

@@ -86,10 +86,10 @@ Kolom `stok_asal` (kantong yang berkurang) dan `stok_tujuan` (kantong yang berta
 
 | `mutation_type` | `stok_asal` | `stok_tujuan` | Keterangan |
 |---|---|---|---|
-| `Masuk` | NULL | `baru` | penerimaan barang baru; kolom `sumber` diisi |
-| `Pakai` | `baru` | NULL | dipasang ke peralatan; aplikasi **mewajibkan `unit_id`** (dasar MTBF per unit) |
-| `Bekas` | NULL | `bekas` | barang copotan layak pakai dikembalikan ke gudang |
-| `Rusak` | `baru` atau `bekas` | `rusak` | barang tidak layak pakai; boleh langsung dari baru |
+| `Masuk` | NULL | `baru`, `bekas`, atau `rusak` | barang masuk gudang; `sumber` hanya untuk baru; `unit_id` opsional = unit asal copotan (bekas/rusak) |
+| `Pakai` | `baru` atau `bekas` | NULL | dipasang ke peralatan; **`unit_id` wajib** (aplikasi + trigger; dasar MTBF per unit) |
+| `Bekas` *(tipe lama)* | NULL | `bekas` | tidak lagi ditulis aplikasi ini (sejak 2 Okt 2026); diganti `Masuk` bekas |
+| `Rusak` *(tipe lama)* | `baru` atau `bekas` | `rusak` | tidak lagi ditulis aplikasi ini; diganti `Masuk` rusak / `Serah Terima` |
 | `Serah Terima` (terima) | NULL | `baru`, `bekas`, atau `rusak` | menerima barang dari pihak lain |
 | `Serah Terima` (serahkan) | `baru`, `bekas`, atau `rusak` | NULL | menyerahkan barang ke pihak lain |
 
@@ -97,7 +97,9 @@ Untuk `Serah Terima`, kolom `penerima` dan `unit_penerima` berisi **pihak lain**
 
 **Baris tanpa `stok_asal`/`stok_tujuan`** (baris lama atau ditulis aplikasi lain) memakai default tipenya: `Masuk`→baru, `Pakai`←baru, `Bekas`→bekas, `Rusak` dari bekas ke rusak. `Serah Terima` tanpa arah **tidak mengubah stok** (aplikasi menandainya kuning di History).
 
-Constraint `stock_mutations_aliran_stok_check` menolak kombinasi yang tidak masuk akal (contoh: `Masuk` dengan `stok_asal`, `Pakai` ke `rusak`, `Serah Terima` dua arah sekaligus).
+Constraint `stock_mutations_aliran_stok_check` menolak kombinasi yang tidak masuk akal (contoh: `Masuk` dengan `stok_asal`, `Pakai` dari `rusak` atau ke kantong mana pun, `Serah Terima` dua arah sekaligus). **Perluasan untuk Masuk bekas/rusak dan Pakai dari bekas ada di migrasi [`2026-10-02_transaksi_tiga_tipe.sql`](migrations/2026-10-02_transaksi_tiga_tipe.sql), belum diterapkan** (constraint lama hanya mengizinkan Masuk → baru dan Pakai ← baru). View `current_stock` tidak perlu diubah karena sudah membaca kolom asal/tujuan.
+
+Satu transaksi di aplikasi (nota) bisa berisi banyak baris; semuanya dikirim dalam satu `INSERT` (satu statement), jadi bila satu baris melanggar constraint, seluruh nota batal.
 
 ### 3.3 Dua implementasi yang harus selalu sama
 
@@ -312,6 +314,8 @@ Tabel `supabase_migrations.schema_migrations` mencatat:
 
 Perubahan skema sebelum 23 Juli 2026 dibuat lewat dashboard dan tidak tercatat di tabel ini. Salinan kedua migrasi Oktober ada di [`docs/migrations/`](migrations/) beserta perintah rollback.
 
+**Belum diterapkan:** [`2026-10-02_transaksi_tiga_tipe.sql`](migrations/2026-10-02_transaksi_tiga_tipe.sql) (constraint aliran stok untuk Masuk bekas/rusak dan Pakai dari bekas; **harus diterapkan sebelum kode tiga tipe transaksi dideploy**).
+
 **Tidak perlu diterapkan:** [`2026-10-02_kompatibilitas_dari_tipe_utama.sql`](migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql) (data: pindahkan `id_tipe` ke `sparepart_compatibility`) sudah no-op karena keempat sparepart sudah punya baris kompatibel yang memuat tipe utamanya.
 
 ## 8. Prosedur mengubah database
@@ -364,5 +368,6 @@ Sparepart sudah terdaftar tetapi belum ada satu pun transaksi stok, jadi semua s
 | `docs/migrations/2026-10-02_aliran_stok.sql` | Sudah diterapkan. |
 | `docs/migrations/2026-10-02_current_stock_security_invoker.sql` | Sudah diterapkan. |
 | `docs/migrations/2026-10-02_pakai_wajib_unit.sql` | Sudah diterapkan (2 Okt 2026). |
+| `docs/migrations/2026-10-02_transaksi_tiga_tipe.sql` | **Belum diterapkan**; diuji dalam transaksi yang dibatalkan (juga sebagai `anon`). |
 | `docs/migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql` | Tidak perlu diterapkan (no-op, data sudah lengkap); disimpan sebagai catatan. |
 | `docs/schema_relational_supabase_v2.sql` | **Usang. Jangan dijalankan.** Skrip migrasi lama TEXT→UUID; database sudah memakai UUID. |

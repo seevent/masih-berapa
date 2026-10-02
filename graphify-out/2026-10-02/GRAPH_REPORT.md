@@ -4,12 +4,12 @@
 - cluster-only mode — file stats not available
 
 ## Summary
-- 2971 nodes · 3610 edges · 252 communities (187 shown, 65 thin omitted)
-- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 92 edges (avg confidence: 0.72)
+- 3001 nodes · 3662 edges · 252 communities (186 shown, 66 thin omitted)
+- Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 93 edges (avg confidence: 0.73)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ced56506`
+- Built from commit: `50af8a85`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -109,7 +109,7 @@
 - extract-colors.cjs
 - validate-asset.cjs
 - Task Dependency Hierarchy
-- HistoryPage.tsx
+- TransactionForm.tsx
 - update.md
 - Logo Design Reference
 - Writing Plans
@@ -163,7 +163,7 @@
 - Brand Guidelines Template
 - $type
 - Pressure Test 1: Emergency Production Fix
-- stock.ts
+- md
 - Pressure Test 2: Sunk Cost + Exhaustion
 - Pressure Test 3: Authority + Social Pressure
 - [Analysis Title]
@@ -243,15 +243,16 @@
 - Path
 - Path
 - InventoryProvider
+- 2026-10-02_transaksi_tiga_tipe.sql
+- xl
 - Core principles
-- core-js
-- default
 - none
 - radius
 - 2026-10-02_aliran_stok.sql
 - @supabase/supabase-js
-- xl
+- clsx
 - foreground
+- tailwindcss
 - tailwind-merge
 - destructive-foreground
 - primary
@@ -259,7 +260,6 @@
 - secondary
 - primary-foreground
 - motion
-- tailwindcss
 
 ## God Nodes (most connected - your core abstractions)
 1. `TailwindConfigGenerator` - 57 edges
@@ -268,10 +268,10 @@
 4. `TestShadcnInstaller` - 26 edges
 5. `useInventory()` - 23 edges
 6. `Writing Skills` - 23 edges
-7. `InventoryContextType` - 18 edges
+7. `Sparepart` - 19 edges
 8. `compilerOptions` - 17 edges
 9. `UI Styling Skill` - 17 edges
-10. `Sparepart` - 16 edges
+10. `MutationType` - 16 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `PrintLabelPage()` --references--> `jspdf`  [EXTRACTED]
@@ -288,15 +288,15 @@
 ## Import Cycles
 - None detected.
 
-## Communities (252 total, 65 thin omitted)
+## Communities (252 total, 66 thin omitted)
 
 ### Community 0 - "dependencies"
 Cohesion: 0.11
-Nodes (19): clsx, html2canvas-pro, html5-qrcode, lucide-react, dependencies, clsx, html2canvas-pro, html5-qrcode (+11 more)
+Nodes (19): core-js, html2canvas-pro, html5-qrcode, lucide-react, dependencies, core-js, html2canvas-pro, html5-qrcode (+11 more)
 
 ### Community 1 - "sparepartAnalytics.ts"
 Cohesion: 0.13
-Nodes (9): ABCAnalysisChartProps, PhysicalMovementChartProps, ReorderPriorityTableProps, SparepartMetricsCardsProps, ABCPhysicalBreakdown, CategoryPhysicalBreakdown, MonthlyPhysicalTrend, ReorderPriorityItemPhysical (+1 more)
+Nodes (10): ABCAnalysisChartProps, PhysicalMovementChartProps, ReorderPriorityTableProps, SparepartMetricsCardsProps, ABCItemPhysical, ABCPhysicalBreakdown, CategoryPhysicalBreakdown, MonthlyPhysicalTrend (+2 more)
 
 ### Community 2 - "compilerOptions"
 Cohesion: 0.09
@@ -351,8 +351,8 @@ Cohesion: 0.05
 Nodes (37): 1. Color Palette, 2. Typography, 3. Logo Usage, 4. Voice & Tone, 5. Imagery Guidelines, 6. Design Components, Accessibility, AI Image Generation (+29 more)
 
 ### Community 22 - "reliability.ts"
-Cohesion: 0.12
-Nodes (28): ABCItemPhysical, Sparepart, UnitStatus, AnnualNeed, autoMinimumStock(), buildPositions(), buildPredictiveReport(), ceilQty() (+20 more)
+Cohesion: 0.13
+Nodes (27): Sparepart, UnitStatus, AnnualNeed, autoMinimumStock(), buildPositions(), buildPredictiveReport(), ceilQty(), classifyMovement() (+19 more)
 
 ### Community 25 - "Design"
 Cohesion: 0.06
@@ -503,8 +503,8 @@ Cohesion: 0.14
 Nodes (11): DesignSystemGenerator, Find matching reasoning rule for a category., Apply reasoning rules to search results., Select best matching result based on priority keywords., Extract results list from search result dict., Generate complete design system recommendation.          variance/motion/density, Bucket a 1-10 dial value into its tier config. Returns None if value is None., Generates design system recommendations from aggregated searches. (+3 more)
 
 ### Community 62 - "PredictiveAlertsPage.tsx"
-Cohesion: 0.22
-Nodes (11): CONFIDENCE_CLASS, CONFIDENCE_LABEL, MtbfBadge(), MtbfBadgeProps, formatDate(), formatNumber(), pct(), PredictiveAlertsPage() (+3 more)
+Cohesion: 0.17
+Nodes (15): CONFIDENCE_CLASS, CONFIDENCE_LABEL, MtbfBadge(), MtbfBadgeProps, getReorderPriorityListPhysical(), CatalogPage(), formatDate(), formatNumber() (+7 more)
 
 ### Community 63 - "Brand Consistency Checklist"
 Cohesion: 0.11
@@ -642,9 +642,9 @@ Nodes (13): checkManifest(), formatBytes(), formatOutput(), fs, main(), parseFil
 Cohesion: 0.14
 Nodes (14): Development Tickets: SSES T2 Sparepart Management - "Masih Berapa", Task Dependency Hierarchy, [TICKET-10]: Predictive Alerts (MTBF) & Demand Planning (`/alerts`, `/needs`), [TICKET-11]: Inventory Analytics & Cost Valuation (`/reports`), [TICKET-12]: System Settings, Supabase Config & Database Seed (`/settings`), [TICKET-1]: Project Scaffold & Tech Stack Setup, [TICKET-2]: Data Types & Supabase Database Layer, [TICKET-3]: App Layout, Sidebar & Toast Notification Context (+6 more)
 
-### Community 97 - "HistoryPage.tsx"
-Cohesion: 0.19
-Nodes (24): EquipmentUnitSelect(), PetugasOption, PetugasSelect(), PetugasSelectProps, initialStockFlowForm, isStockFlowFormComplete(), optionClass(), StockFlowFields() (+16 more)
+### Community 97 - "TransactionForm.tsx"
+Cohesion: 0.10
+Nodes (46): EquipmentUnitSelect(), initialStockFlowForm, isStockFlowFormComplete(), KONDISI_LABEL, kondisiIsSource(), KondisiPicker(), KondisiPickerProps, optionClass() (+38 more)
 
 ### Community 98 - "update.md"
 Cohesion: 0.15
@@ -839,8 +839,8 @@ Cohesion: 0.33
 Nodes (6): 1. Rich Description Field, 2. Keyword Coverage, 3. Descriptive Naming, 4. Token Efficiency (Critical), 5. Cross-Referencing Other Skills, Skill Discovery Optimization (SDO)
 
 ### Community 146 - "InventoryContext.tsx"
-Cohesion: 0.17
-Nodes (28): EquipmentUnitSelectProps, StockFlowFieldsProps, InventoryContext, InventoryContextType, MutationUpdateInput, NewSparepartInput, SparepartFormInput, StockRow (+20 more)
+Cohesion: 0.13
+Nodes (30): EquipmentUnitSelectProps, InventoryContext, InventoryContextType, MutationLineInput, MutationUpdateInput, NewSparepartInput, NewTransactionInput, SparepartFormInput (+22 more)
 
 ### Community 147 - "Bulletproofing Skills Against Rationalization"
 Cohesion: 0.33
@@ -858,9 +858,9 @@ Nodes (5): $type, $value, border, border, border
 Cohesion: 0.40
 Nodes (4): Choose A, B, or C, Pressure Test 1: Emergency Production Fix, Scenario, Your Options
 
-### Community 151 - "stock.ts"
-Cohesion: 0.20
-Nodes (18): validateStock(), getReorderPriorityListPhysical(), CatalogPage(), DashboardPage(), stripManualPetugas(), BUCKETS, computeStockBySparepart(), describeFlow() (+10 more)
+### Community 151 - "md"
+Cohesion: 0.67
+Nodes (4): $type, $value, md, md
 
 ### Community 152 - "Pressure Test 2: Sunk Cost + Exhaustion"
 Cohesion: 0.40
@@ -903,8 +903,8 @@ Cohesion: 0.50
 Nodes (3): Codex App Finishing, Environment Detection, Subagent dispatch requires multi-agent support
 
 ### Community 162 - "App.tsx"
-Cohesion: 0.11
-Nodes (16): App(), CatalogPage, DashboardPage, HistoryPage, MutationPage, page(), PredictiveAlertsPage, PredictiveNeedsPage (+8 more)
+Cohesion: 0.09
+Nodes (21): App(), CatalogPage, DashboardPage, HistoryPage, MutationPage, page(), PredictiveAlertsPage, PredictiveNeedsPage (+13 more)
 
 ### Community 163 - "schema_relational_supabase.sql"
 Cohesion: 0.30
@@ -956,27 +956,27 @@ Nodes (10): fg, font-size, hover-bg, button, $type, $value, $type, $value (+2 mo
 
 ### Community 221 - "radius"
 Cohesion: 0.29
-Nodes (8): $type, $value, $type, $value, radius, full, md, md
+Nodes (8): $type, $value, $type, $value, radius, default, full, default
 
 ### Community 224 - "useInventory"
-Cohesion: 0.12
-Nodes (18): xlsx, AppLayout(), HeaderStats(), HeaderStatsProps, Sidebar(), SidebarProps, useInventory(), useNotification() (+10 more)
+Cohesion: 0.13
+Nodes (16): xlsx, AppLayout(), HeaderStats(), HeaderStatsProps, Sidebar(), SidebarProps, useInventory(), PredictiveNeedsPage() (+8 more)
 
 ### Community 225 - "shiftUtils.ts"
-Cohesion: 0.20
-Nodes (11): ABSENT_STATUSES, ActiveDutyPersonelResult, compareDutyPersonel(), formatDateToYYYYMMDD(), getActiveDutyPersonel(), getCurrentShiftInfo(), ShiftInfo, NOW (+3 more)
+Cohesion: 0.14
+Nodes (18): PetugasOption, PetugasSelect(), PetugasSelectProps, Personel, ABSENT_STATUSES, ActiveDutyPersonelResult, cleanManualPetugas(), compareDutyPersonel() (+10 more)
 
 ### Community 232 - "InventoryProvider"
-Cohesion: 0.43
-Nodes (6): fetchSparepartMutations(), flowColumns(), InventoryProvider(), fetchAllRows(), getStoredSupabaseConfig(), getSupabaseClient()
+Cohesion: 0.39
+Nodes (7): fetchMutationsOf(), fetchSparepartMutations(), flowColumns(), InventoryProvider(), fetchAllRows(), getStoredSupabaseConfig(), getSupabaseClient()
 
-### Community 233 - "Core principles"
+### Community 234 - "xl"
+Cohesion: 0.67
+Nodes (4): xl, xl, $type, $value
+
+### Community 235 - "Core principles"
 Cohesion: 0.50
 Nodes (4): Concise is key, Core principles, Set appropriate degrees of freedom, Test with all models you plan to use
-
-### Community 235 - "default"
-Cohesion: 0.67
-Nodes (4): $type, $value, default, default
 
 ### Community 236 - "none"
 Cohesion: 0.67
@@ -985,10 +985,6 @@ Nodes (4): $type, $value, none, none
 ### Community 237 - "radius"
 Cohesion: 0.60
 Nodes (5): radius, radius, radius, $type, $value
-
-### Community 240 - "xl"
-Cohesion: 0.67
-Nodes (4): xl, xl, $type, $value
 
 ### Community 241 - "foreground"
 Cohesion: 0.67
@@ -1015,16 +1011,16 @@ Cohesion: 0.67
 Nodes (3): primary-foreground, $type, $value
 
 ## Knowledge Gaps
-- **1538 isolated node(s):** `crypto`, `http`, `fs`, `path`, `OPCODES` (+1533 more)
+- **1546 isolated node(s):** `crypto`, `http`, `fs`, `path`, `OPCODES` (+1541 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **65 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **66 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `primitive` connect `primitive` to `gray`, `fontSize`, `design-tokens-starter.json`, `spacing`, `radius`, `shadow`?**
   _High betweenness centrality (0.008) - this node is a cross-community bridge._
-- **Why does `dependencies` connect `dependencies` to `useInventory`, `core-js`, `@supabase/supabase-js`, `tailwind-merge`, `package.json`, `motion`, `jspdf`?**
+- **Why does `dependencies` connect `dependencies` to `useInventory`, `@supabase/supabase-js`, `clsx`, `tailwind-merge`, `package.json`, `motion`, `jspdf`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
 - **Why does `color` connect `gray` to `primitive`?**
   _High betweenness centrality (0.004) - this node is a cross-community bridge._
@@ -1033,6 +1029,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 23 inferred relationships involving `ShadcnInstaller` (e.g. with `TestShadcnInstaller` and `.test_add_all_components_dry_run()`) actually correct?**
   _`ShadcnInstaller` has 23 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `crypto`, `http`, `fs` to the rest of the system?**
-  _1538 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1546 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.10526315789473684 - nodes in this community are weakly interconnected._

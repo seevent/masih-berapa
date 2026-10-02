@@ -4,12 +4,14 @@ import { MutationType } from '../types';
  * Stock "buckets" a sparepart can be in. `null` means outside the warehouse.
  * Every mutation moves qty from `stok_asal` to `stok_tujuan`:
  *
- *   Masuk         null            -> baru
- *   Pakai         baru            -> null
+ *   Masuk         null             -> baru | bekas | rusak   (condition chosen per line)
+ *   Pakai         baru | bekas     -> null                   (stock chosen per line)
+ *   Serah Terima  null             -> baru | bekas | rusak   (terima)
+ *                 baru|bekas|rusak -> null                   (serahkan)
+ *
+ * Legacy types, no longer offered in the forms but still counted when present:
  *   Bekas         null            -> bekas
  *   Rusak         baru | bekas    -> rusak
- *   Serah Terima  null            -> baru | bekas | rusak   (terima)
- *                 baru|bekas|rusak -> null                  (serahkan)
  *
  * Same rules as the `current_stock` view (docs/migrations/2026-10-02_aliran_stok.sql).
  */
@@ -65,10 +67,19 @@ export const getEffectiveFlow = (m: FlowInput): StockFlow => {
 export const isIncompleteSerahTerima = (m: FlowInput): boolean =>
   m.mutation_type === 'Serah Terima' && !isBucket(m.stok_asal) && !isBucket(m.stok_tujuan);
 
+/** Transaction types offered in the forms (Bekas and Rusak are legacy, see header comment). */
+export const ACTIVE_MUTATION_TYPES: MutationType[] = ['Masuk', 'Pakai', 'Serah Terima'];
+
+/** Conditions a line can have per type: Pakai cannot install a broken part. */
+export const kondisiOptions = (type: MutationType): StockBucket[] =>
+  type === 'Pakai' ? ['baru', 'bekas'] : ['baru', 'bekas', 'rusak'];
+
 /** Options chosen in the transaction form for the types that need them. */
 export interface FlowOptions {
+  /** Legacy 'Rusak' rows only */
   rusakAsal: 'baru' | 'bekas';
   arah: SerahTerimaArah;
+  /** Masuk: condition received · Pakai: stock taken from · Serah Terima: condition handed over/received */
   kondisi: StockBucket;
 }
 
@@ -76,9 +87,9 @@ export interface FlowOptions {
 export const resolveStockFlow = (type: MutationType, opts: FlowOptions): StockFlow => {
   switch (type) {
     case 'Masuk':
-      return { asal: null, tujuan: 'baru' };
+      return { asal: null, tujuan: opts.kondisi };
     case 'Pakai':
-      return { asal: 'baru', tujuan: null };
+      return { asal: opts.kondisi === 'bekas' ? 'bekas' : 'baru', tujuan: null };
     case 'Bekas':
       return { asal: null, tujuan: 'bekas' };
     case 'Rusak':
@@ -153,5 +164,10 @@ export const findNegativeStock = (stock: StockDelta): string | null => {
   return null;
 };
 
-export const isLowStock = (stokAktual: number, minimumStok: number): boolean =>
-  stokAktual <= minimumStok;
+/** Stock that can still be installed: baru + bekas (Pakai can take from both). */
+export const usableStock = (sp: { stok_aktual: number; stok_bekas: number }): number =>
+  Math.max(0, sp.stok_aktual) + Math.max(0, sp.stok_bekas);
+
+/** The only definition of low stock: usable stock (baru + bekas) at or below the minimum. */
+export const isLowStock = (stokTersedia: number, minimumStok: number): boolean =>
+  stokTersedia <= minimumStok;

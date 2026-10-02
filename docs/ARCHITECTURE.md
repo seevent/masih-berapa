@@ -83,7 +83,8 @@ src/
 │   └── shiftUtils.ts             # shift PS/M dan personel berdinas
 ├── components/
 │   ├── layout/                   # AppLayout, Sidebar, HeaderStats (FloatingDock tidak dipakai)
-│   ├── mutation/StockFlowFields.tsx   # field Rusak / Serah Terima, dipakai 3 halaman
+│   ├── mutation/TransactionForm.tsx   # form nota (banyak baris) untuk Input Transaksi dan Scanner
+│   ├── mutation/StockFlowFields.tsx   # KondisiPicker, field Serah Terima, field Rusak (baris lama)
 │   ├── mutation/EquipmentUnitSelect.tsx  # pilihan unit (kompatibel + unit lain), dipakai 3 halaman
 │   ├── predictive/MtbfBadge.tsx  # tampilan MTBF otomatis + keyakinan
 │   └── dashboard/                # (4 komponen tidak dipakai, lihat bagian 12)
@@ -96,9 +97,9 @@ src/
 |---|---|---|
 | `/` | `DashboardPage` | KPI, tren stok 6 bulan, level inventaris, top moving, transaksi terbaru |
 | `/catalog` | `CatalogPage` | CRUD sparepart (list bawaan, grid opsional), pilihan tipe kompatibel; stok minimum otomatis |
-| `/input-sparepart` | `MutationPage` | catat Masuk, Pakai, Bekas, Rusak, Serah Terima |
+| `/input-sparepart` | `MutationPage` | `TransactionForm`: Masuk, Pakai, Serah Terima; banyak sparepart per transaksi, kondisi per baris |
 | `/history` | `HistoryPage` | riwayat, edit, hapus, ekspor Excel |
-| `/scanner` | `ScannerPage` | scan QR (kamera) atau ketik SKU/URL, lalu catat transaksi |
+| `/scanner` | `ScannerPage` | scan QR (kamera) atau ketik SKU/URL; tiap scan menambah baris ke `TransactionForm` (keranjang) |
 | `/print` | `PrintLabelPage` | label QR thermal dan lembar Tom & Jerry, keluaran PDF |
 | `/alerts` | `PredictiveAlertsPage` | umur komponen terpasang (MTBF otomatis) dan kecukupan stok 30 hari @ SLA 98% |
 | `/needs` | `PredictiveNeedsPage` | kebutuhan tahunan dari pemakaian riil, ekspor Excel |
@@ -135,22 +136,22 @@ Field turunan pada `Sparepart` (tidak ada di database): `stok_aktual`, `stok_bek
 ```mermaid
 sequenceDiagram
     participant Form as Form transaksi
-    participant Ctx as InventoryContext.addMutation
+    participant Ctx as InventoryContext.addMutations
     participant SB as Supabase
-    Form->>Ctx: addMutation({ sparepart_id, unit_id, mutation_type, flow, qty, ... })
-    Note over Ctx: Pakai tanpa unit_id? toast "Unit Wajib Dipilih", return false
-    Ctx->>SB: baca SEMUA mutasi sparepart ini (data terbaru, bukan cache)
-    Ctx->>Ctx: tambahkan transaksi baru, hitung stok per kantong (utils/stock.ts)
+    Form->>Ctx: addMutations({ mutation_type, unit_id, lines: [{ sparepart_id, qty, flow, unit_id }], ... })
+    Note over Ctx: baris kosong / qty <= 0 / Pakai tanpa unit_id? toast, return false
+    Ctx->>SB: baca SEMUA mutasi semua sparepart di nota (data terbaru, bukan cache)
+    Ctx->>Ctx: tambahkan semua baris baru, hitung stok per sparepart per kantong (utils/stock.ts)
     alt ada kantong yang minus
-        Ctx-->>Form: toast "Stok Tidak Cukup", return false
+        Ctx-->>Form: toast "Stok Tidak Cukup" (SKU mana), return false, tidak ada yang disimpan
     else semua kantong >= 0
-        Ctx->>SB: INSERT stock_mutations (termasuk stok_asal, stok_tujuan)
+        Ctx->>SB: satu INSERT berisi semua baris (satu statement: semua atau tidak sama sekali)
         Ctx->>Ctx: refreshData()
         Ctx-->>Form: toast sukses, return true
     end
 ```
 
-`updateMutation` dan `deleteMutation` memakai pola yang sama (membaca ulang, mensimulasikan hasilnya, menolak bila ada kantong minus); `updateMutation` juga menolak `Pakai` tanpa unit dan menulis `unit_id`. `addSparepart` menulis `spareparts`, menyamakan `sparepart_compatibility`, lalu mencatat stok awal sebagai mutasi `Masuk`/`Bekas`.
+`updateMutation` dan `deleteMutation` memakai pola yang sama (membaca ulang, mensimulasikan hasilnya, menolak bila ada kantong minus); `updateMutation` juga menolak `Pakai` tanpa unit dan menulis `unit_id`. `addSparepart` menulis `spareparts`, menyamakan `sparepart_compatibility`, lalu mencatat stok awal sebagai mutasi `Masuk` kondisi baru dan `Masuk` kondisi bekas.
 
 Semua aksi menampilkan toast dan mengembalikan `boolean`; halaman hanya menutup modal atau berpindah halaman bila hasilnya `true`.
 
@@ -161,7 +162,7 @@ Semua aksi menampilkan toast dan mengembalikan `boolean`; halaman hanya menutup 
 | Data | `jenisPeralatan`, `tipePeralatan`, `lokasiList`, `titikLokasiList`, `unitPeralatanList`, `penempatanList`, `unitKerjaList`, `personelList`, `jadwalShiftList`, `masterConfigs`, `spareparts`, `mutations`, `sparepartCompatibility` |
 | Status | `isLoading`, `isSupabaseConnected`, `refreshData()` |
 | Sparepart | `addSparepart`, `updateSparepart`, `deleteSparepart` |
-| Mutasi | `addMutation`, `updateMutation`, `deleteMutation` |
+| Mutasi | `addMutations` (nota banyak baris), `updateMutation`, `deleteMutation` (per baris) |
 | Master (**tidak dipakai UI** sejak menu Pengaturan dihapus) | `addJenisPeralatan`, `addTipePeralatan`, `addLokasi`, `addTitikLokasi`, `addUnitPeralatan`, `updateUnitStatus`, `addPersonel`, `addJadwalShift` |
 | Perhitungan | `predictive`: `{ mtbfBySparepart, positionAlerts, stockCoverage, annualNeeds, urgentCount }` dari `buildPredictiveReport` (`utils/reliability.ts`), dihitung ulang dengan `useMemo` saat data berubah |
 
@@ -173,21 +174,22 @@ Konsep: tiga kantong (`baru`, `bekas`, `rusak`) dan `null` = luar gudang. Setiap
 
 | Fungsi | Peran |
 |---|---|
-| `resolveStockFlow(tipe, opsi)` | dari pilihan di form menjadi `{ asal, tujuan }` yang ditulis ke database |
+| `ACTIVE_MUTATION_TYPES`, `kondisiOptions(tipe)` | tipe di form (Masuk, Pakai, Serah Terima) dan kondisi per tipe (Pakai: baru/bekas; lainnya: baru/bekas/rusak). Bekas/Rusak = tipe lama, hanya dihitung |
+| `resolveStockFlow(tipe, opsi)` | dari pilihan di form menjadi `{ asal, tujuan }`: Masuk → tujuan = kondisi; Pakai → asal = kondisi; Serah Terima menurut arah |
 | `flowToOptions(mutasi)` | kebalikannya, untuk mengisi form edit |
 | `getEffectiveFlow(mutasi)` | arah efektif sebuah baris; memakai default tipe bila kolom kosong |
 | `getMutationDelta`, `getUsableStockDelta` | pengaruh satu mutasi pada tiap kantong / pada stok tersedia |
 | `computeStockBySparepart(mutasi[])` | stok semua sparepart sekaligus |
 | `findNegativeStock(stok)` | pesan galat bila ada kantong minus |
 | `describeFlow`, `isIncompleteSerahTerima` | label "Baru → Rusak"; deteksi `Serah Terima` tanpa arah |
-| `isLowStock(stokBaru, minimum)` | `stokBaru <= minimum`; satu definisi dipakai seluruh aplikasi. `minimum` berasal dari `autoMinimumStock` (6.3) |
+| `usableStock(sp)`, `isLowStock(stokTersedia, minimum)` | stok tersedia = baru + bekas; rendah bila `tersedia <= minimum`. Satu definisi dipakai seluruh aplikasi; `minimum` berasal dari `autoMinimumStock` (6.3) |
 
-`StockFlowFields` (komponen) menampilkan pilihan tambahan: asal stok untuk **Rusak**; arah, kondisi, dan pihak untuk **Serah Terima**. Dipakai di Input Transaksi, Scanner, dan modal edit History agar perilakunya sama.
+Komponen form: `TransactionForm` (Input Transaksi dan Scanner) menyusun nota: tipe, daftar baris (sparepart, `KondisiPicker`, jumlah, unit asal untuk Masuk bekas/rusak), unit Pakai (sekali), field Serah Terima (`StockFlowFields`: arah dan pihak), petugas (`PetugasSelect`), catatan; memperingatkan bila total baris melebihi stok. Scanner memberi `incomingPart` pada setiap scan (jumlah +1 untuk sparepart yang sudah ada; QR yang sama diabaikan 3 detik). Modal edit History memakai `KondisiPicker` dan `StockFlowFields` (asal stok untuk baris lama Rusak).
 
 ## 6. Logika domain lainnya
 
 ### 6.1 Kompatibilitas sparepart ↔ peralatan (`utils/compatibility.ts`)
-Untuk sebuah sparepart: kumpulkan semua tipe di `sparepart_compatibility` (kolom `spareparts.id_tipe` tidak lagi dibaca atau ditulis). `InventoryContext` menurunkan `tipe_ids`, `jenis_ids`, `equipment_type_name`, dan `jenis_name` dari tabel itu untuk katalog, filter, label, dan laporan; sparepart tanpa baris kompatibel tampil "Umum". Dari `penempatan_peralatan` aktif dicari **lokasi** yang memuat peralatan bertipe tersebut ("Lokasi Kompatibel" tampil di grup tersendiri), lalu titik dan unit yang bisa dipilih. Dipakai Input Transaksi, Scanner, dan modal edit History untuk transaksi `Pakai`, `Bekas`, dan `Rusak` (`usesEquipmentUnit`). `otherUnits` berisi unit yang tidak tercatat kompatibel; `EquipmentUnitSelect` menampilkannya di grup terpisah agar `Pakai` tidak terblokir saat data kompatibilitas belum lengkap. `requiresEquipmentUnit` = hanya `Pakai`.
+Untuk sebuah sparepart: kumpulkan semua tipe di `sparepart_compatibility` (kolom `spareparts.id_tipe` tidak lagi dibaca atau ditulis). `InventoryContext` menurunkan `tipe_ids`, `jenis_ids`, `equipment_type_name`, dan `jenis_name` dari tabel itu untuk katalog, filter, label, dan laporan; sparepart tanpa baris kompatibel tampil "Umum". Dari `penempatan_peralatan` aktif dicari **lokasi** yang memuat peralatan bertipe tersebut ("Lokasi Kompatibel" tampil di grup tersendiri), lalu titik dan unit yang bisa dipilih. Untuk **nota** berisi banyak sparepart, tipe kompatibel = **irisan** tipe semua sparepart (unit harus cocok dengan semuanya); tanpa sparepart, semua unit masuk grup lain. Dipakai unit Pakai di `TransactionForm`, unit asal Masuk bekas/rusak per baris, dan modal edit History. `otherUnits` berisi unit yang tidak tercatat kompatibel; `EquipmentUnitSelect` menampilkannya di grup terpisah agar `Pakai` tidak terblokir saat data kompatibilitas belum lengkap. `requiresEquipmentUnit` = hanya `Pakai`.
 
 ### 6.2 Shift dan personel berdinas (`utils/shiftUtils.ts`)
 - Dua shift: **PS** (pagi/siang, 08.00–20.00) dan **M** (malam, 20.00–08.00).
@@ -213,15 +215,15 @@ Fungsi murni, diuji dengan `vitest`. Spesifikasi dan contoh angka: [specs/predic
 | `autoMinimumStock(demand)` | stok minimum otomatis = `max(0, titik pesan SLA − 1)`; 0 bila belum ada `Pakai`. Dipanggil `InventoryContext.refreshData` untuk mengisi `Sparepart.minimum_stok` (menggantikan kolom database) |
 | `PLANNING_HORIZON_DAYS` = 30, `SERVICE_LEVEL` = 0,98 | horizon pengganti lead time (belum ada datanya) dan target layanan |
 
-Kecukupan stok: `λ = r × 30`; `reorder_level = max(titik pesan SLA, minimum_stok + 1)`; PESAN bila `stok baru < reorder_level`. "+1" membuat aturan ini selalu memesan bila `isLowStock` benar. Tanpa `Pakai`, titik pesan SLA kosong dan hanya stok minimum yang berlaku.
+Kecukupan stok: `λ = r × 30`; `reorder_level = max(titik pesan SLA, minimum_stok + 1)`; PESAN bila `stok tersedia (baru + bekas) < reorder_level`. "+1" membuat aturan ini selalu memesan bila `isLowStock` benar. Tanpa `Pakai`, titik pesan SLA kosong dan hanya stok minimum yang berlaku.
 
 ### 6.4 Kebutuhan tahunan
 - `kebutuhan = ceil(r × 365)` dengan `r` dari `demandRate`; tanpa `Pakai` → `null` ("belum cukup data").
-- `rekomendasi order = max(0, kebutuhan − stok baru)`. Stok bekas tidak dihitung karena `Pakai` hanya mengambil stok baru. `Serah Terima` dan `Rusak` **tidak** dihitung sebagai pemakaian.
+- `rekomendasi order = max(0, kebutuhan − stok tersedia)` dengan stok tersedia = baru + bekas (`Pakai` bisa mengambil keduanya). `Serah Terima` dan `Rusak` **tidak** dihitung sebagai pemakaian.
 
 ### 6.5 Dashboard
 - **Tren stok 6 bulan**: stok tersedia akhir tiap bulan, dihitung mundur dari stok sekarang dengan membalik mutasi setelah bulan itu.
-- **Level inventaris** (diperiksa berurutan): *Out of Stock* (baru + bekas = 0), lalu *Low Stock* (stok baru ≤ minimum), selebihnya *Healthy*.
+- **Level inventaris** (diperiksa berurutan): *Out of Stock* (baru + bekas = 0), lalu *Low Stock* (stok tersedia ≤ minimum), selebihnya *Healthy*.
 - **Top moving**: qty `Pakai` dalam jendela kebutuhan (`predictive.movements[].demand.usage_qty`, hingga 12 bulan) per sparepart, 5 teratas; kosong bila belum ada pemakaian.
 
 ### 6.6 Cetak label (`PrintLabelPage`)
@@ -234,6 +236,9 @@ Kecukupan stok: `λ = r × 30`; `reorder_level = max(titik pesan SLA, minimum_st
 - Kamera memakai `html5-qrcode` (dimuat dinamis). Callback pemindaian didaftarkan sekali, sehingga daftar sparepart dan fungsi pencarian dibaca lewat `ref` agar tidak basi.
 - Masukan bisa berupa SKU atau URL berisi `?sku=` / `?scan=` (`extractSkuFromInput`).
 - Sparepart hasil scan disimpan sebagai **id**, bukan objek, agar angka stok ikut ter-update setelah transaksi.
+- Setiap scan yang cocok mengirim `incomingPart = { id, nonce }` ke `TransactionForm`: sparepart baru menjadi baris baru (atau mengisi baris kosong), sparepart yang sudah ada mendapat jumlah +1.
+- Kamera melaporkan QR yang sama berkali-kali per detik; kode yang sama dalam 3 detik (`CAMERA_REPEAT_MS`) diabaikan. Masukan manual selalu dihitung.
+- `?sku=` dari URL hanya diproses saat URL berubah atau katalog pertama kali termuat, bukan setiap refresh data (kalau tidak, setiap simpan akan menambah baris lagi).
 
 ## 7. Antarmuka
 
@@ -274,14 +279,14 @@ Tanpa dua variabel pertama, aplikasi tetap terbuka tetapi menampilkan banner "Da
 
 ## 10. Pengujian dan verifikasi
 
-Tes otomatis: `npm test` (`vitest`), saat ini `src/utils/reliability.test.ts` dan `src/utils/shiftUtils.test.ts` (urutan personel berdinas) (contoh angka spesifikasi: MTBF 250 hari, titik pesan 3, ambang status, jendela 30–365, kesesuaian dengan `isLowStock`, pembulatan kebutuhan tahunan, klasifikasi rotasi). Verifikasi lain yang dipakai selama pengembangan:
+Tes otomatis: `npm test` (`vitest`), saat ini `reliability.test.ts`, `stock.test.ts` (aliran stok tiga tipe + vektor uji 4/5/2), `compatibility.test.ts` (irisan unit kompatibel), dan `shiftUtils.test.ts` (urutan personel, petugas manual) di `src/utils/` (contoh angka spesifikasi: MTBF 250 hari, titik pesan 3, ambang status, jendela 30–365, kesesuaian dengan `isLowStock`, pembulatan kebutuhan tahunan, klasifikasi rotasi). Verifikasi lain yang dipakai selama pengembangan:
 
 1. `npm run typecheck`, `npm run build`, dan `npm test` harus bersih (tanpa peringatan).
 2. **Uji browser** dengan Playwright/Chromium terhadap data live: buka semua rute, pastikan tanpa galat konsol. Semua permintaan tulis (`POST/PATCH/DELETE` ke `/rest/v1/`) **dicegat** dan dijawab palsu supaya data produksi tidak berubah, lalu isi payload yang dicegat diperiksa.
 3. **Uji database** dalam blok `DO $$ ... RAISE EXCEPTION` yang dibatalkan, juga sebagai `SET LOCAL ROLE anon` untuk menguji RLS.
 4. **Uji konsistensi stok** dengan vektor di [DATABASE.md 3.3](DATABASE.md#33-dua-implementasi-yang-harus-selalu-sama): view dan `utils/stock.ts` harus sama (4 / 5 / 2).
 
-Kandidat tes berikutnya: `utils/stock.ts` (termasuk vektor uji 4 / 5 / 2), `utils/compatibility.ts`.
+Kandidat tes berikutnya: validasi `addMutations` (perlu memisahkan logika dari `InventoryContext`).
 
 ## 11. Keputusan desain
 
