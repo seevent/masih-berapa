@@ -95,7 +95,7 @@ src/
 | Rute | Halaman | Fungsi |
 |---|---|---|
 | `/` | `DashboardPage` | KPI, tren stok 6 bulan, level inventaris, top moving, transaksi terbaru |
-| `/catalog` | `CatalogPage` | CRUD sparepart (grid/list), pilihan tipe kompatibel |
+| `/catalog` | `CatalogPage` | CRUD sparepart (list bawaan, grid opsional), pilihan tipe kompatibel; stok minimum otomatis |
 | `/input-sparepart` | `MutationPage` | catat Masuk, Pakai, Bekas, Rusak, Serah Terima |
 | `/history` | `HistoryPage` | riwayat, edit, hapus, ekspor Excel |
 | `/scanner` | `ScannerPage` | scan QR (kamera) atau ketik SKU/URL, lalu catat transaksi |
@@ -180,7 +180,7 @@ Konsep: tiga kantong (`baru`, `bekas`, `rusak`) dan `null` = luar gudang. Setiap
 | `computeStockBySparepart(mutasi[])` | stok semua sparepart sekaligus |
 | `findNegativeStock(stok)` | pesan galat bila ada kantong minus |
 | `describeFlow`, `isIncompleteSerahTerima` | label "Baru → Rusak"; deteksi `Serah Terima` tanpa arah |
-| `isLowStock(stokBaru, minimum)` | `stokBaru <= minimum`; satu definisi dipakai seluruh aplikasi |
+| `isLowStock(stokBaru, minimum)` | `stokBaru <= minimum`; satu definisi dipakai seluruh aplikasi. `minimum` berasal dari `autoMinimumStock` (6.3) |
 
 `StockFlowFields` (komponen) menampilkan pilihan tambahan: asal stok untuk **Rusak**; arah, kondisi, dan pihak untuk **Serah Terima**. Dipakai di Input Transaksi, Scanner, dan modal edit History agar perilakunya sama.
 
@@ -208,6 +208,7 @@ Fungsi murni, diuji dengan `vitest`. Spesifikasi dan contoh angka: [specs/predic
 | `poissonReorderPoint(λ, SLA)` | `s` terkecil dengan `P(Poisson(λ) ≤ s) ≥ SLA`; λ > 500 memakai pendekatan normal |
 | `buildPredictiveReport(sparepart, mutasi, unit, now)` | gabungan untuk UI: MTBF per sparepart, `positionAlerts` (hanya unit aktif, paling mendesak dulu), `stockCoverage`, `annualNeeds`, `movements` (rotasi, tercepat dulu), `urgentCount` |
 | `classifyMovement(demand)` | rotasi stok: `FAST_MOVING` bila `qty Pakai × 30 ≥ MOVEMENT_FAST_PER_MONTH × jendela`, `MEDIUM_MOVING` bila ada pemakaian lebih jarang, `SLOW_MOVING` bila tanpa pemakaian dan riwayat ≥ 30 hari, selain itu `BELUM_CUKUP_DATA`. `DemandRate.history_days` = hari sejak transaksi pertama |
+| `autoMinimumStock(demand)` | stok minimum otomatis = `max(0, titik pesan SLA − 1)`; 0 bila belum ada `Pakai`. Dipanggil `InventoryContext.refreshData` untuk mengisi `Sparepart.minimum_stok` (menggantikan kolom database) |
 | `PLANNING_HORIZON_DAYS` = 30, `SERVICE_LEVEL` = 0,98 | horizon pengganti lead time (belum ada datanya) dan target layanan |
 
 Kecukupan stok: `λ = r × 30`; `reorder_level = max(titik pesan SLA, minimum_stok + 1)`; PESAN bila `stok baru < reorder_level`. "+1" membuat aturan ini selalu memesan bila `isLowStock` benar. Tanpa `Pakai`, titik pesan SLA kosong dan hanya stok minimum yang berlaku.
@@ -293,6 +294,7 @@ Kandidat tes berikutnya: `utils/stock.ts` (termasuk vektor uji 4 / 5 / 2), `util
 | D7 | `html2canvas-pro` menggantikan `html2canvas` | mendukung `oklch()` Tailwind v4 | dependensi fork |
 | D8 | Route di-lazy-load, pustaka PDF dimuat dinamis | bundel awal lebih kecil; build tidak lagi memunculkan peringatan chunk >500 kB | ada jeda singkat saat pertama membuka halaman |
 | D9 | `isLowStock` memakai `<=` minimum | satu definisi untuk Dashboard, Katalog, Peringatan | stok sama dengan minimum sudah dihitung rendah |
+| D13 | Stok minimum dihitung otomatis dari pemakaian (titik pesan SLA − 1), bukan diisi manual | sejalan dengan MTBF otomatis; menyesuaikan diri dengan pemakaian sebenarnya | sparepart tanpa pemakaian bernilai 0 (rendah hanya bila habis); tidak ada lagi batas bawah manual |
 | D10 | Database dibagi dengan aplikasi lain | data master (peralatan, lokasi, personel, shift) tunggal | perubahan skema berisiko bagi aplikasi lain |
 | D11 | MTBF dihitung dari data (paparan ÷ penggantian), bukan diisi manual | memakai juga posisi yang belum pernah diganti (data tersensor), sehingga tidak bias ke bawah | "belum cukup data" sampai ada penggantian; `Pakai` wajib unit |
 | D12 | Titik pesan Poisson dengan horizon 30 hari @ 98% | belum ada data lead time; Poisson cocok untuk pemakaian jarang berupa bilangan bulat | ganti horizon dengan lead time bila datanya ada |

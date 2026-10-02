@@ -218,8 +218,8 @@ Master sparepart. **Tidak ada kolom stok.**
 | `name` | varchar(255) | tidak | | |
 | `description` | text | ya | | |
 | `id_tipe` | uuid | ya | | FK → `tipe_peralatan` (SET NULL); **tidak dipakai lagi** (dulu tipe utama), lihat 2 |
-| `unit` | varchar(50) | ya | `'PCS'` | satuan |
-| `minimum_stok` | integer | tidak | `1` | CHECK ≥ 0; batas stok baru minimum |
+| `unit` | varchar(50) | ya | `'PCS'` | satuan; aplikasi mengisi `UNIT` bila kosong saat tambah sparepart |
+| `minimum_stok` | integer | tidak | `1` | CHECK ≥ 0; **tidak dipakai lagi** sejak 2 Okt 2026: stok minimum dihitung aplikasi dari pemakaian (PRD BR-15). Sparepart baru terisi default `1` |
 | `lokasi` | varchar | ya | | nama gudang (teks bebas) |
 | `rack` | varchar | ya | | kode rak |
 | `mtbf_days` | integer | ya | `180` | **tidak dipakai lagi** sejak 2 Okt 2026 (MTBF dihitung dari `stock_mutations`); belum dihapus |

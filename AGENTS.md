@@ -33,7 +33,7 @@ Vite **tidak** memeriksa tipe saat `dev`; galat tipe baru muncul di `typecheck`/
 3. Aturan stok ada di **dua tempat yang harus identik**: `src/utils/stock.ts` dan view SQL `current_stock`. Mengubah salah satunya **wajib** mengubah yang lain + migrasi + dokumen, lalu cocokkan dengan vektor uji (hasil 4 / 5 / 2) di DATABASE.md 3.3.
 4. Tulis mutasi lewat `addMutation`/`updateMutation`/`deleteMutation` saja. Ketiganya membaca ulang mutasi dari database dan menolak hasil yang membuat kantong stok minus. Jangan menambah jalur tulis yang melewati validasi itu.
 5. Kebutuhan tahunan hanya menghitung `Pakai`; `Serah Terima` dan `Rusak` bukan pemakaian.
-6. `isLowStock` (`stok baru <= minimum`) adalah satu-satunya definisi stok rendah. Titik pesan di `reliability.ts` memakai `max(SLA, minimum + 1)` agar selalu selaras dengannya.
+6. `isLowStock` (`stok baru <= minimum`) adalah satu-satunya definisi stok rendah. **`minimum_stok` dihitung otomatis** dari pemakaian (`autoMinimumStock` di `reliability.ts`, = titik pesan SLA − 1; 0 bila belum ada `Pakai`) dan diisi `InventoryContext` saat memuat data; jangan menambah isian atau tulisan manual untuk kolom `spareparts.minimum_stok`. Titik pesan memakai `max(SLA, minimum + 1)` agar selalu selaras dengannya.
 7. **`Pakai` wajib `unit_id`** (form, `addMutation`, `updateMutation`). MTBF dihitung dari `Pakai` per (sparepart, unit); jangan menambah isian MTBF manual dan jangan membaca/menulis `spareparts.mtbf_days`/`last_replaced_at` (kolom usang). Ubah rumus hanya bersama spesifikasi `docs/specs/predictive-maintenance.md` dan tesnya.
 
 ### Database (produksi, dipakai bersama aplikasi lain)
@@ -53,7 +53,7 @@ Vite **tidak** memeriksa tipe saat `dev`; galat tipe baru muncul di `typecheck`/
 19. Cetak label: PDF memakai `html2canvas-pro` (bukan `html2canvas`, gagal pada warna `oklch()` Tailwind v4); pustaka PDF dimuat dinamis. Ukuran label dalam **mm**, tampilan skala sebenarnya.
 20. Callback kamera (`html5-qrcode`) didaftarkan sekali; baca state lewat `ref` agar tidak basi.
 21. Jangan menambah dependensi tanpa alasan. Sudah terpasang tetapi tidak dipakai: `motion`, `clsx`, `tailwind-merge`, `core-js`.
-22. Hubungan sparepart ↔ tipe peralatan **hanya** lewat `sparepart_compatibility` (`Sparepart.tipe_ids`, `jenis_ids`, `equipment_type_name`). Jangan membaca atau menulis kolom usang `spareparts.id_tipe`, `mtbf_days`, `last_replaced_at`.
+22. Hubungan sparepart ↔ tipe peralatan **hanya** lewat `sparepart_compatibility` (`Sparepart.tipe_ids`, `jenis_ids`, `equipment_type_name`). Jangan membaca atau menulis kolom usang `spareparts.id_tipe`, `mtbf_days`, `last_replaced_at`, `minimum_stok`.
 
 ## Cara memverifikasi perubahan
 

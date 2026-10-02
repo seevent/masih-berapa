@@ -197,7 +197,7 @@ export const PredictiveAlertsPage: React.FC = () => {
           <p className="text-xs text-slate-400 mt-1">
             Kebutuhan per hari (r) = total Pakai dalam jendela pengamatan ÷ panjang jendela (30–365 hari). Titik pesan = jumlah
             terkecil yang mencukupi kebutuhan {PLANNING_HORIZON_DAYS} hari dengan peluang {pct(SERVICE_LEVEL)} (distribusi Poisson),
-            minimal stok minimum + 1. Hanya stok baru yang dihitung karena Pakai mengambil stok baru.
+            sehingga stok minimum = titik pesan − 1 (dihitung otomatis, tidak diisi manual). Hanya stok baru yang dihitung karena Pakai mengambil stok baru.
           </p>
         </div>
 
@@ -263,7 +263,7 @@ export const PredictiveAlertsPage: React.FC = () => {
                     <td className="py-3.5 px-4 text-center whitespace-nowrap">
                       <div className="font-bold text-white">{c.reorder_level} {sp.unit}</div>
                       <div className="text-[10px] text-slate-500">
-                        {hasData ? `SLA ${c.reorder_point_sla} · minimum ${sp.minimum_stok}` : `dari stok minimum ${sp.minimum_stok}`}
+                        {hasData ? `SLA 98% · stok minimum ${sp.minimum_stok}` : 'belum ada pemakaian: pesan saat habis'}
                       </div>
                     </td>
                     <td className="py-3.5 px-4 text-center whitespace-nowrap">

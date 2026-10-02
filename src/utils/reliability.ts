@@ -193,6 +193,17 @@ export const demandRate = (mutations: ReliabilityMutation[], now: number): Deman
   };
 };
 
+/**
+ * Minimum stock (stok baru) derived from usage instead of a manual number. A part is "low" when
+ * stok baru <= minimum (isLowStock), i.e. when stok baru < reorder point, so minimum = reorder point − 1.
+ * Without 'Pakai' history there is nothing to base it on: 0, so it is only low when it runs out.
+ */
+export const autoMinimumStock = (demand: DemandRate): number => {
+  if (!(demand.usage_qty > 0)) return 0;
+  const reorderPoint = poissonReorderPoint(demand.rate_per_day * PLANNING_HORIZON_DAYS, SERVICE_LEVEL);
+  return Math.max(0, reorderPoint - 1);
+};
+
 export type MovementClass = 'FAST_MOVING' | 'MEDIUM_MOVING' | 'SLOW_MOVING' | 'BELUM_CUKUP_DATA';
 
 /**
@@ -267,7 +278,7 @@ export interface StockCoverage {
   lambda: number;
   /** Poisson reorder point at SERVICE_LEVEL; null without 'Pakai' history */
   reorder_point_sla: number | null;
-  /** Stock baru must stay at or above this: max(SLA point, minimum_stok + 1) */
+  /** Stock baru must stay at or above this: max(SLA point, minimum_stok + 1); minimum_stok is itself derived (autoMinimumStock) */
   reorder_level: number;
   stok_baru: number;
   needs_order: boolean;
@@ -362,7 +373,8 @@ export const buildPredictiveReport = (
     const lambda = demand.rate_per_day * PLANNING_HORIZON_DAYS;
     const reorderPointSla = hasDemand ? poissonReorderPoint(lambda, SERVICE_LEVEL) : null;
     const stokBaru = Math.max(0, sp.stok_aktual);
-    // minimum_stok stays a manual floor; "+1" keeps this identical to isLowStock (baru <= minimum)
+    // minimum_stok = SLA point − 1 (autoMinimumStock), so this equals the SLA point; the max() only guards
+    // the no-data case (minimum 0 → order when empty). "+1" keeps it identical to isLowStock (baru <= minimum)
     const reorderLevel = Math.max(reorderPointSla ?? 0, sp.minimum_stok + 1);
     const needsOrder = stokBaru < reorderLevel;
     stockCoverage.push({

@@ -19,7 +19,7 @@ import {
 } from '../types';
 import { getSupabaseClient, fetchAllRows } from '../lib/supabase';
 import { computeStockBySparepart, findNegativeStock, StockFlow } from '../utils/stock';
-import { buildPredictiveReport, PredictiveReport } from '../utils/reliability';
+import { autoMinimumStock, buildPredictiveReport, demandRate, PredictiveReport, ReliabilityMutation } from '../utils/reliability';
 import { requiresEquipmentUnit } from '../utils/compatibility';
 import { useNotification } from './NotificationContext';
 
@@ -29,7 +29,6 @@ export interface SparepartFormInput {
   name: string;
   description?: string;
   unit?: string;
-  minimum_stok: number;
   lokasi?: string;
   rack?: string;
   /** Compatible tipe peralatan (written to sparepart_compatibility). */
@@ -279,6 +278,15 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       });
       const jpMap = new Map(jpRes.data.map((j) => [j.id, j]));
 
+      // Minimum stock is derived from usage (reliability.ts), not read from the manual column
+      const mutsBySparepart = new Map<string, ReliabilityMutation[]>();
+      mutsData.forEach((m: any) => {
+        const list = mutsBySparepart.get(m.sparepart_id);
+        if (list) list.push(m);
+        else mutsBySparepart.set(m.sparepart_id, [m]);
+      });
+      const nowMs = Date.now();
+
       const formattedParts: Sparepart[] = spRes.data.map((sp: any) => {
         const tipes = Array.from(compatBySparepart.get(sp.id) || [])
           .map((id) => tpMap.get(id))
@@ -288,7 +296,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         const stock = stockMap[sp.id] || { baru: 0, bekas: 0, rusak: 0 };
         // Legacy columns that are no longer used: MTBF is derived from stock_mutations
         // (utils/reliability.ts) and the equipment type comes from sparepart_compatibility.
-        const { mtbf_days, last_replaced_at, id_tipe, ...row } = sp;
+        const { mtbf_days, last_replaced_at, id_tipe, minimum_stok: legacyMinimum, ...row } = sp;
 
         return {
           ...row,
@@ -299,7 +307,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             jenisIds.length > 0 ? jenisIds.map((id) => jpMap.get(id)?.nama || '-').join(', ') : 'Umum',
           lokasi: sp.lokasi || '',
           rack: sp.rack || '',
-          minimum_stok: Number(sp.minimum_stok) || 0,
+          minimum_stok: autoMinimumStock(demandRate(mutsBySparepart.get(sp.id) || [], nowMs)),
           stok_aktual: Math.max(0, stock.baru),
           stok_bekas: Math.max(0, stock.bekas),
           stok_rusak: Math.max(0, stock.rusak)
@@ -431,8 +439,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     sku: input.sku.trim(),
     name: input.name.trim(),
     description: input.description?.trim() || null,
-    unit: input.unit?.trim().toUpperCase() || 'PCS',
-    minimum_stok: Math.max(0, Number(input.minimum_stok) || 0),
+    unit: input.unit?.trim().toUpperCase() || 'UNIT',
     lokasi: input.lokasi?.trim() || null,
     rack: input.rack?.trim() || null
   });

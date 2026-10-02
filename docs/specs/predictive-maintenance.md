@@ -101,7 +101,8 @@ PESAN bila stok_baru < titik_pesan;  jumlah usulan = titik_pesan − stok_baru
 
 - Yang dihitung **stok baru** saja, karena `Pakai` hanya mengambil dari stok baru.
 - **Penjelasan implementasi:** batas bawahnya `minimum_stok + 1` (bukan `minimum_stok`) agar PESAN selalu muncul bila stok rendah menurut definisi aplikasi (`isLowStock`: stok baru **≤** minimum). Tanpa "+1", stok yang tepat sama dengan minimum dianggap rendah di Dashboard tetapi tidak dipesan di sini.
-- Tanpa transaksi `Pakai` sama sekali, hanya aturan `minimum_stok` yang berlaku, dengan keterangan "belum cukup data".
+- Tanpa transaksi `Pakai` sama sekali, titik pesan SLA kosong dan stok minimum = 0 (PESAN hanya bila stok baru habis), dengan keterangan "belum cukup data".
+- **Perubahan 2 Okt 2026:** `minimum_stok` tidak lagi diisi manual. Nilainya `titik_pesan_SLA − 1` (`autoMinimumStock`), sehingga `titik_pesan = max(titik_pesan_SLA, minimum + 1)` sama dengan titik pesan SLA.
 
 **Contoh.** 6 kali `Pakai` dalam 180 hari → r = 0,0333/hari → λ = 1,0 untuk 30 hari.
 Poisson(1,0): P(≤2) = 92,0%, **P(≤3) = 98,1%** → titik pesan SLA = **3**. Dengan stok baru 1 → PESAN 2.
@@ -172,7 +173,7 @@ Semua usulan U1–U8 **disetujui pemilik** pada 2 Oktober 2026. Untuk U8, bentuk
 | U2 | Horizon 30 hari sampai lead time ada | 14 / 60 / 90 hari |
 | U3 | Ambang umur 70% / 90% / 100% MTBF | angka lain |
 | U4 | Hapus juga isian **Terakhir Diganti** (ikut tidak dipakai) | biarkan sebagai catatan saja |
-| U5 | `minimum_stok` tetap sebagai batas bawah manual titik pesan | hapus, hanya pakai SLA 98% |
+| U5 | ~~`minimum_stok` tetap sebagai batas bawah manual titik pesan~~ **Diganti (2 Okt 2026, atas permintaan pemilik): stok minimum dihitung otomatis** = titik pesan SLA − 1, 0 tanpa pemakaian; isian manual dihapus | hapus, hanya pakai SLA 98% |
 | U6 | Daftar unit untuk `Pakai` mencakup unit non-kompatibel (di grup terpisah) | hanya unit kompatibel |
 | U7 | Tambah `vitest` untuk menguji rumus | tanpa tes otomatis |
 | U8 | Constraint database `Pakai` wajib unit (T8) | hanya di aplikasi |

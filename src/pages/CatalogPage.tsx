@@ -27,7 +27,7 @@ export const CatalogPage: React.FC = () => {
   const { spareparts, mutations, tipePeralatan, jenisPeralatan, sparepartCompatibility, predictive, addSparepart, updateSparepart, deleteSparepart } = useInventory();
 
   // View Mode State (Grid vs List)
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('list');
 
   // Search & Filter State
   const [searchTerm, setSearchTerm] = useState('');
@@ -45,10 +45,9 @@ export const CatalogPage: React.FC = () => {
     name: '',
     description: '',
     id_jenis: '',
-    unit: 'PCS',
+    unit: 'UNIT',
     stok_aktual: 0,
     stok_bekas: 0,
-    minimum_stok: 5,
     lokasi: '',
     rack: ''
   });
@@ -94,7 +93,6 @@ export const CatalogPage: React.FC = () => {
       unit: sp.unit || 'PCS',
       stok_aktual: sp.stok_aktual || 0,
       stok_bekas: sp.stok_bekas || 0,
-      minimum_stok: sp.minimum_stok ?? 0,
       lokasi: sp.lokasi || '',
       rack: sp.rack || ''
     });
@@ -111,7 +109,6 @@ export const CatalogPage: React.FC = () => {
       name: formData.name,
       description: formData.description,
       unit: formData.unit,
-      minimum_stok: formData.minimum_stok,
       lokasi: formData.lokasi,
       rack: formData.rack,
       tipeIds: selectedTipeIds
@@ -605,7 +602,7 @@ export const CatalogPage: React.FC = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-4 gap-3">
+              <div className="grid grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">
                     {editingId ? 'Stok Baru' : 'Stok Awal Baru'}
@@ -633,16 +630,6 @@ export const CatalogPage: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Min. Stok</label>
-                  <input
-                    type="number"
-                    min="0"
-                    value={formData.minimum_stok}
-                    onChange={(e) => setFormData({ ...formData, minimum_stok: Math.max(0, parseInt(e.target.value) || 0) })}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
-                  />
-                </div>
-                <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Satuan Unit</label>
                   <input
                     type="text"
@@ -657,6 +644,7 @@ export const CatalogPage: React.FC = () => {
                 {editingId
                   ? 'Stok dihitung dari riwayat mutasi. Ubah stok melalui menu Input Transaksi.'
                   : 'Stok awal akan dicatat otomatis sebagai transaksi Masuk / Bekas.'}
+                {' '}Stok minimum dihitung otomatis dari pemakaian (Pakai), tidak diisi manual.
               </p>
 
               <div className="grid grid-cols-2 gap-3">

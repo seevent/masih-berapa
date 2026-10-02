@@ -83,8 +83,8 @@ Status: ✅ selesai · ⚠ sebagian · ❌ belum.
 
 ### F-01 Katalog sparepart — ✅
 Pengguna mengelola master sparepart.
-- Daftar dalam tampilan grid atau tabel; pencarian (SKU, nama, deskripsi); filter jenis dan tipe peralatan.
-- Tambah/ubah: SKU otomatis berurutan (`SP-001`, `SP-002`, …) dan tidak bisa diedit; nama, deskripsi, satuan, stok minimum, gudang, rak; pilih **satu atau lebih tipe peralatan kompatibel**. Tidak ada lagi "tipe utama" (dihapus 2 Okt 2026): daftar kompatibel adalah satu-satunya hubungan sparepart ↔ tipe. Jenis dan tipe yang tampil di katalog, filter, label, dan laporan diturunkan dari daftar itu; pilihan jenis di form hanya mempersempit daftar tipe.
+- Daftar dalam tampilan **list (bawaan)** atau grid; pencarian (SKU, nama, deskripsi); filter jenis dan tipe peralatan.
+- Tambah/ubah: SKU otomatis berurutan (`SP-001`, `SP-002`, …) dan tidak bisa diedit; nama, deskripsi, satuan (bawaan `UNIT`), gudang, rak; **stok minimum tidak diisi**: dihitung otomatis dari pemakaian ([7.4](#74-peringatan-prediktif-mtbf-otomatis), BR-15); pilih **satu atau lebih tipe peralatan kompatibel**. Tidak ada lagi "tipe utama" (dihapus 2 Okt 2026): daftar kompatibel adalah satu-satunya hubungan sparepart ↔ tipe. Jenis dan tipe yang tampil di katalog, filter, label, dan laporan diturunkan dari daftar itu; pilihan jenis di form hanya mempersempit daftar tipe.
 - Stok awal (baru/bekas) saat mendaftarkan sparepart dicatat otomatis sebagai transaksi. **Stok tidak dapat diedit langsung** setelah itu.
 - Hapus sparepart meminta konfirmasi dan menyebut jumlah riwayat mutasi yang ikut terhapus.
 - MTBF **tidak diisi manual**: kartu dan form menampilkan MTBF hasil hitung ([7.4](#74-peringatan-prediktif-mtbf-otomatis)) beserta jumlah penggantian dan tingkat keyakinannya, atau "Belum cukup data".
@@ -132,7 +132,7 @@ Dua bagian ([7.4](#74-peringatan-prediktif-mtbf-otomatis)), spesifikasi: [specs/
 - **Umur komponen terpasang**: satu baris per sparepart × unit yang beroperasi; terpasang sejak, umur, MTBF otomatis, rasio umur/MTBF, status NORMAL / PERHATIAN / KRITIS / LEWAT / BELUM CUKUP DATA.
 - **Kecukupan stok 30 hari @ SLA 98%** per sparepart: kebutuhan per hari, perkiraan 30 hari, titik pesan, stok baru, status PESAN dan jumlah usulan; tautan ke Input Transaksi.
 - Header menampilkan jumlah "perlu tindakan" = posisi KRITIS + LEWAT + sparepart PESAN.
-- **Kriteria:** tanpa transaksi `Pakai`, semua MTBF dan kebutuhan berstatus "Belum cukup data" dan hanya stok minimum yang memicu PESAN.
+- **Kriteria:** tanpa transaksi `Pakai`, semua MTBF dan kebutuhan berstatus "Belum cukup data" dan stok minimum = 0, sehingga PESAN hanya bila stok baru habis.
 
 ### F-08 Perencanaan kebutuhan — ✅
 Estimasi kebutuhan tahunan dari pemakaian riil, stok baru, dan rekomendasi order per sparepart ([7.5](#75-kebutuhan-tahunan)); ekspor Excel; tanpa pemakaian ditampilkan "Belum cukup data" (tidak ada lagi estimasi dari MTBF manual).
@@ -185,7 +185,8 @@ Rumus lengkap dan contoh angka: [specs/predictive-maintenance.md bagian 4](specs
 - **MTBF** per sparepart = total paparan semua posisi ÷ total penggantian. Paparan posisi = (akhir − pemasangan pertama) × qty pemasangan pertama; akhir = hari ini, atau tanggal unit berubah status bila unit kini `gudang`/`rusak`. Tanpa penggantian → "Belum cukup data". Keyakinan: 1–2 penggantian rendah, 3–9 sedang, ≥ 10 tinggi.
 - **Status umur** posisi = umur (hari sejak `Pakai` terakhir di posisi itu) ÷ MTBF: NORMAL < 70%, PERHATIAN 70–90%, KRITIS 90–100%, LEWAT > 100%. Hanya unit yang tidak berstatus `gudang`/`rusak` yang ditampilkan.
 - **Kecukupan stok**: kebutuhan per hari `r` = qty `Pakai` dalam jendela ÷ jendela (hari sejak transaksi pertama sparepart, 30–365 hari); `λ = r × 30` (horizon 30 hari pengganti lead time yang belum ada datanya); titik pesan SLA = angka terkecil `s` dengan `P(Poisson(λ) ≤ s) ≥ 98%`.
-- **BR-14** Titik pesan = `max(titik pesan SLA, stok minimum + 1)`; **PESAN** bila stok baru < titik pesan, usulan = titik pesan − stok baru. Dengan "+1", aturan ini selalu memesan bila stok rendah menurut BR-10. Hanya **stok baru** yang dihitung karena `Pakai` mengambil stok baru.
+- **BR-14** Titik pesan = `max(titik pesan SLA, stok minimum + 1)`; **PESAN** bila stok baru < titik pesan, usulan = titik pesan − stok baru. Dengan "+1", aturan ini selalu memesan bila stok rendah menurut BR-10.
+- **BR-15** Stok minimum **otomatis** = titik pesan SLA − 1 (karena stok rendah = stok baru ≤ minimum); tanpa pemakaian = 0 (rendah hanya bila habis). Contoh: 6 `Pakai` dalam 180 hari → titik pesan 3 → minimum 2. Kolom `spareparts.minimum_stok` tidak dibaca dan tidak ditulis lagi; hasil hitung menggantikan nilainya di seluruh aplikasi (katalog, dashboard, peringatan). Hanya **stok baru** yang dihitung karena `Pakai` mengambil stok baru.
 
 ### 7.5 Kebutuhan tahunan
 - Kebutuhan tahunan = `ceil(r × 365)` dengan `r` seperti di 7.4. Tanpa pemakaian: "Belum cukup data" dan tidak ada rekomendasi.
@@ -195,7 +196,7 @@ Rumus lengkap dan contoh angka: [specs/predictive-maintenance.md bagian 4](specs
 - **BR-9** `Serah Terima` dan `Rusak` **tidak** dihitung sebagai pemakaian.
 
 ### 7.6 Lain-lain
-- **BR-10** Stok rendah = stok baru ≤ stok minimum (satu definisi di seluruh aplikasi).
+- **BR-10** Stok rendah = stok baru ≤ stok minimum (satu definisi di seluruh aplikasi); stok minimum dihitung otomatis (BR-15).
 - **BR-11** SKU otomatis berformat `SP-NNN`, berurutan dari angka terbesar yang ada.
 - **BR-12** Menghapus sparepart menghapus riwayat mutasinya; pengguna harus mengonfirmasi.
 - **BR-13** `Pakai` wajib mencatat unit peralatan (dasar perhitungan MTBF per unit). Untuk `Bekas` dan `Rusak` unit tetap opsional. Diberlakukan di aplikasi **dan** di database (trigger `stock_mutations_pakai_wajib_unit`, diterapkan 2 Okt 2026), sehingga penulis lain juga ditolak bila mengirim `Pakai` tanpa `unit_id`.
