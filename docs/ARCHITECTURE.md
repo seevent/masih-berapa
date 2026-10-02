@@ -86,6 +86,7 @@ src/
 │   ├── mutation/TransactionForm.tsx   # form nota (banyak baris) untuk Input Transaksi dan Scanner
 │   ├── mutation/StockFlowFields.tsx   # KondisiPicker, field Serah Terima, field Rusak (baris lama)
 │   ├── mutation/EquipmentUnitSelect.tsx  # pilihan unit (kompatibel + unit lain), dipakai 3 halaman
+│   ├── mutation/EquipmentPlacePicker.tsx # Lokasi → Titik → Unit; dipakai Pakai (tempat dipasang) dan Masuk bekas/rusak (unit asal)
 │   ├── predictive/MtbfBadge.tsx  # tampilan MTBF otomatis + keyakinan
 │   └── dashboard/                # (4 komponen tidak dipakai, lihat bagian 12)
 └── pages/                        # satu file per rute
@@ -189,7 +190,7 @@ Komponen form: `TransactionForm` (Input Transaksi dan Scanner) menyusun nota: ti
 ## 6. Logika domain lainnya
 
 ### 6.1 Kompatibilitas sparepart ↔ peralatan (`utils/compatibility.ts`)
-Untuk sebuah sparepart: kumpulkan semua tipe di `sparepart_compatibility` (kolom `spareparts.id_tipe` tidak lagi dibaca atau ditulis). `InventoryContext` menurunkan `tipe_ids`, `jenis_ids`, `equipment_type_name`, dan `jenis_name` dari tabel itu untuk katalog, filter, label, dan laporan; sparepart tanpa baris kompatibel tampil "Umum". Dari `penempatan_peralatan` aktif dicari **lokasi** yang memuat peralatan bertipe tersebut ("Lokasi Kompatibel" tampil di grup tersendiri), lalu titik dan unit yang bisa dipilih. Untuk **nota** berisi banyak sparepart, tipe kompatibel = **irisan** tipe semua sparepart (unit harus cocok dengan semuanya); tanpa sparepart, semua unit masuk grup lain. Dipakai unit Pakai di `TransactionForm`, unit asal Masuk bekas/rusak per baris, dan modal edit History. `otherUnits` berisi unit yang tidak tercatat kompatibel; `EquipmentUnitSelect` menampilkannya di grup terpisah agar `Pakai` tidak terblokir saat data kompatibilitas belum lengkap. `requiresEquipmentUnit` = hanya `Pakai`.
+Untuk sebuah sparepart: kumpulkan semua tipe di `sparepart_compatibility` (kolom `spareparts.id_tipe` tidak lagi dibaca atau ditulis). `InventoryContext` menurunkan `tipe_ids`, `jenis_ids`, `equipment_type_name`, dan `jenis_name` dari tabel itu untuk katalog, filter, label, dan laporan; sparepart tanpa baris kompatibel tampil "Umum". Dari `penempatan_peralatan` aktif dicari **lokasi** yang memuat peralatan bertipe tersebut ("Lokasi Kompatibel" tampil di grup tersendiri), lalu titik dan unit yang bisa dipilih. Untuk **nota** berisi banyak sparepart, tipe kompatibel = **irisan** tipe semua sparepart (unit harus cocok dengan semuanya); tanpa sparepart, semua unit masuk grup lain. Dipakai unit Pakai di `TransactionForm`, unit asal Masuk bekas/rusak per baris (keduanya lewat `EquipmentPlacePicker`: lokasi dan titik hanya menyaring daftar, yang tersimpan hanya `unit_id`), dan modal edit History (hanya `EquipmentUnitSelect`). `otherUnits` berisi unit yang tidak tercatat kompatibel; `EquipmentUnitSelect` menampilkannya di grup terpisah agar `Pakai` tidak terblokir saat data kompatibilitas belum lengkap. `requiresEquipmentUnit` = hanya `Pakai`.
 
 ### 6.2 Shift dan personel berdinas (`utils/shiftUtils.ts`)
 - Dua shift: **PS** (pagi/siang, 08.00–20.00) dan **M** (malam, 20.00–08.00).
