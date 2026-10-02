@@ -15,7 +15,7 @@ In this session, we built and delivered the complete **SSES T2 Sparepart Managem
 ## 2. Technical Stack & Architecture
 - **Frontend & Styling**: React 19, TypeScript, Vite 6, Tailwind CSS v4, Lucide React Icons.
 - **Charts & Motion**: Recharts (Equipment & Rotable Stock visual distributions), Motion micro-animations.
-- **Database & Cloud**: Supabase Client (`@supabase/supabase-js`) + Local Storage Fallback Store + 1-Click Database Seed Tool.
+- **Database & Cloud**: Supabase Client (`@supabase/supabase-js`), credentials from `.env`; stock derived from `stock_mutations`.
 - **Scanning & Printing**: `html5-qrcode` (Mobile camera QR scanning) & `qrcode.react` (2D Thermal QR labels).
 - **Exports & Documents**: `xlsx` (Excel export for history log & annual demand planner), `jspdf` & `html2canvas` (PDF label printing).
 
@@ -24,14 +24,14 @@ In this session, we built and delivered the complete **SSES T2 Sparepart Managem
 ## 3. Completed Modules & Features
 - [x] **Dashboard (`/`)**: KPI stat cards, Recharts equipment status distribution & rotable asset ratio, shift on-duty personnel summary.
 - [x] **Katalog Sparepart (`/catalog`)**: Search, multi-filtering by `tipe_peralatan` and supplier type, rotable stock breakdown, add/edit modal.
-- [x] **Input Transaksi (`/input-sparepart`)**: Form for 4 mutation types (`INBOUND`, `OUTBOUND`, `ROTABLE_RETURN`, `SCRAP`).
+- [x] **Input Transaksi (`/input-sparepart`)**: Form for 4 mutation types (`Masuk`, `Pakai`, `Bekas`, `Rusak`).
 - [x] **History Log (`/history`)**: Chronological audit log with filter & 1-click **Excel `.xlsx` export**.
 - [x] **Mobile QR Scanner (`/scanner`)**: Live camera scanning (`html5-qrcode`) with real-time SKU lookup & quick mutation actions.
 - [x] **Cetak Label Thermal (`/print`)**: Thermal QR label generator (`qrcode.react`), 50x30mm & 70x40mm presets, **PDF Export**.
 - [x] **Predictive Alerts (`/alerts`)**: MTBF remaining lifespan days calculation `remaining_days = mtbf_days - (current_date - last_replaced_at)`.
 - [x] **Demand Planner (`/needs`)**: Annual order forecasting `order_needed_qty = annual_forecast - (stok_aktual + stok_bekas)` + **Excel export**.
 - [x] **Analytics Reports (`/reports`)**: Fast/Slow moving item evaluation and rotable recovery savings calculation.
-- [x] **Settings (`/settings`)**: Supabase URL/Key config, 1-Click Supabase Seed Tool, Master Editors for `jenis_peralatan`, `tipe_peralatan`, `lokasi`, `titik_lokasi`, `personel`.
+- [x] **Settings (`/settings`)**: Connection status (from `.env`) and add forms for `unit_peralatan`, `jenis_peralatan`, `tipe_peralatan`, `lokasi`, `titik_lokasi`, `personel`.
 
 ---
 
@@ -39,8 +39,8 @@ In this session, we built and delivered the complete **SSES T2 Sparepart Managem
 | File Path | Description | Status |
 | :--- | :--- | :--- |
 | `src/types/index.ts` | Complete TypeScript models matching user's exact Supabase SQL schema | Verified |
-| `src/data/mockSeedData.ts` | Realistic sample seed data for all 12 database tables | Verified |
-| `src/lib/supabase.ts` | Supabase client service, local storage fallback, 1-Click Database Seed | Verified |
+| `src/lib/supabase.ts` | Supabase client + paginated `fetchAllRows` (PostgREST returns max 1000 rows per request) | Verified |
+| `src/utils/stock.ts` | Single definition of how each mutation type changes stock | Verified |
 | `src/context/InventoryContext.tsx` | Central state management for all 12 schema tables & predictive logic | Verified |
 | `src/pages/SettingsPage.tsx` | Master Editors for Jenis/Tipe Peralatan, Lokasi, Personel & Supabase Config | Verified |
 | `src/pages/DashboardPage.tsx` | KPI cards, Recharts visualizations & shift on-duty summary | Verified |
@@ -58,7 +58,9 @@ In this session, we built and delivered the complete **SSES T2 Sparepart Managem
 ---
 
 ## 6. Actionable Next Steps (Backlog for Next Session)
-- [ ] Connect live Supabase project credentials in `/settings` page.
+- [x] Supabase credentials are read from `.env` (the `/settings` config form and seeder were removed).
+- [ ] Add authentication (Supabase Auth) and tighten the RLS policies on `spareparts`, `stock_mutations`, `sparepart_compatibility` (currently full access for `anon`).
+- [x] Stock flow per mutation (`stok_asal` → `stok_tujuan`): `Rusak` from baru or bekas into stok rusak, `Serah Terima` hands over / receives baru, bekas or rusak. Requires migration `docs/migrations/2026-10-02_aliran_stok.sql` to be applied before deploying this code.
 - [ ] Add PDF print template for daily shift schedules.
 - [ ] Add push notifications for mobile PWA camera scanner.
 

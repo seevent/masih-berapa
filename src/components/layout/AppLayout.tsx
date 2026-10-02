@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Sidebar } from './Sidebar';
 import { HeaderStats } from './HeaderStats';
-import { FloatingDock } from './FloatingDock';
 import { useInventory } from '../../context/InventoryContext';
 import { Database, ArrowRight } from 'lucide-react';
 
@@ -44,14 +43,14 @@ export const AppLayout: React.FC = () => {
                 <Database className="w-4 h-4" />
               </div>
               <div>
-                <span className="font-bold text-white">Mode 100% Supabase PostgreSQL Aktif:</span> Kredensial Supabase URL & Anon Key belum terhubung.
+                <span className="font-bold text-white">Database tidak terhubung:</span> isi VITE_SUPABASE_URL & VITE_SUPABASE_ANON_KEY di file .env (lihat .env.example), lalu jalankan ulang aplikasi.
               </div>
             </div>
             <Link
               to="/settings"
               className="px-3 py-1.5 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 font-bold text-xs flex items-center gap-1.5 transition-all self-end sm:self-auto shrink-0"
             >
-              <span>Atur Supabase & Seed Database</span>
+              <span>Cek Status Koneksi</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>

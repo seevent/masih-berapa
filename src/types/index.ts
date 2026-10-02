@@ -1,4 +1,6 @@
-export type MutationType = 'Masuk' | 'Pakai' | 'Bekas' | 'Rusak';
+// How each type moves stock between the baru / bekas / rusak buckets: see src/utils/stock.ts
+export type MutationType = 'Masuk' | 'Pakai' | 'Bekas' | 'Rusak' | 'Serah Terima';
+export type StockBucketValue = 'baru' | 'bekas' | 'rusak';
 export type SupplierType = 'SUP API' | 'SISA PEKERJAAN' | 'IAS' | 'MANDIRI' | 'DARI UNIT LAIN' | 'VENDOR';
 export type UnitStatus = 'operasi' | 'standby' | 'gudang' | 'rusak';
 
@@ -82,7 +84,7 @@ export interface JadwalShift {
   id: string;
   personel_id: string;
   tanggal: string;
-  shift: string; // 'Pagi' | 'Siang' | 'Malam' | 'Off'
+  shift: string; // 'PS' (Pagi/Siang 08-20) | 'M' (Malam 20-08); legacy: 'Pagi' | 'Siang' | 'Malam'
   status_kehadiran?: string;
   created_at?: string;
   personel_nama?: string;
@@ -102,21 +104,21 @@ export interface Sparepart {
   sku: string;
   name: string;
   description?: string;
-  id_tipe: string;
-  id_jenis?: string;
-  equipment_type_name?: string;
+  id_tipe: string | null;
   unit?: string;
-  stok_aktual: number;
-  stok_bekas: number;
   minimum_stok: number;
-  location?: string;
   lokasi?: string;
   rack?: string;
-  location_rack?: string; // backwards compatibility helper
   mtbf_days?: number;
   last_replaced_at?: string;
   created_at?: string;
   updated_at?: string;
+  // Computed client-side (not database columns)
+  id_jenis?: string;
+  equipment_type_name?: string;
+  stok_aktual: number;
+  stok_bekas: number;
+  stok_rusak: number;
 }
 
 export interface StockMutation {
@@ -127,11 +129,18 @@ export interface StockMutation {
   sparepart_sku?: string;
   sparepart_name?: string;
   mutation_type: MutationType;
-  sumber?: SupplierType;
+  sumber?: SupplierType | null;
   qty: number;
+  /** Bucket that decreases (null = from outside the warehouse) */
+  stok_asal?: StockBucketValue | null;
+  /** Bucket that increases (null = leaves the warehouse) */
+  stok_tujuan?: StockBucketValue | null;
+  location?: string | null;
+  /** Serah Terima: the other party (receiver when handed over, giver when received) */
+  penerima?: string | null;
+  unit_penerima?: string | null;
   operator_name?: string;
-  reference_no?: string;
-  notes?: string;
+  notes?: string | null;
   created_at: string;
 }
 
@@ -169,5 +178,6 @@ export interface AnnualNeed {
   annual_forecast_qty: number;
   total_available_stock: number;
   order_needed_qty: number;
-  estimated_cost: number;
+  // HISTORY: dari pemakaian riil 12 bulan terakhir; MTBF: estimasi dari MTBF x jumlah unit terpasang
+  forecast_basis: 'HISTORY' | 'MTBF';
 }

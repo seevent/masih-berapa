@@ -15,10 +15,19 @@ import {
   Filter,
   MapPin,
   Building2,
-  AlertCircle
+  AlertCircle,
+  Handshake
 } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
 import { MutationType, SupplierType } from '../types';
+import { resolveStockFlow } from '../utils/stock';
+import {
+  StockFlowFields,
+  StockFlowFormState,
+  initialStockFlowForm,
+  isStockFlowFormComplete
+} from '../components/mutation/StockFlowFields';
+import { getCompatibleEquipment } from '../utils/compatibility';
 import { getActiveDutyPersonel } from '../utils/shiftUtils';
 
 export const MutationPage: React.FC = () => {
@@ -58,6 +67,7 @@ export const MutationPage: React.FC = () => {
 
   // 5. Quantity, Sumber & Notes
   const [sumber, setSumber] = useState<SupplierType>('IAS');
+  const [flowForm, setFlowForm] = useState<StockFlowFormState>(initialStockFlowForm);
   const [qty, setQty] = useState<number>(1);
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -72,8 +82,9 @@ export const MutationPage: React.FC = () => {
   const { activeShiftLabel, operationalDate } = shiftInfo;
 
   // Default select first available personnel
+  // (also re-selects when the active shift changes and the chosen person is no longer on duty)
   useEffect(() => {
-    if (personelOptions.length > 0 && !selectedPersonelId) {
+    if (personelOptions.length > 0 && !personelOptions.some((p) => p.id === selectedPersonelId)) {
       setSelectedPersonelId(personelOptions[0].id);
     }
   }, [personelOptions, selectedPersonelId]);
@@ -98,59 +109,40 @@ export const MutationPage: React.FC = () => {
   const selectedPart = spareparts.find((p) => p.id === selectedSparepartId);
 
   // --- Compatible Locations & Equipment Units for Selected Sparepart ---
-  const compatTypeIds = selectedPart
-    ? Array.from(
-        new Set([
-          selectedPart.id_tipe,
-          ...sparepartCompatibility
-            .filter((c) => c.sparepart_id === selectedPart.id)
-            .map((c) => c.id_tipe)
-        ])
-      ).filter(Boolean)
-    : [];
+  const { compatibleLokasiList, otherLokasiList, availableTitikList, availableUnits: availableUnitsForLocation } =
+    getCompatibleEquipment({
+      part: selectedPart,
+      sparepartCompatibility,
+      lokasiList,
+      titikLokasiList,
+      unitPeralatanList,
+      penempatanList,
+      selectedLokasiId,
+      selectedTitikId
+    });
 
-  // Find penempatan records for units with compatible tipe
-  const compatPenempatan = penempatanList.filter((pen) => pen.is_active && compatTypeIds.includes(pen.id_tipe || ''));
-  const compatLokasiIds = Array.from(new Set(compatPenempatan.map((p) => p.id_lokasi).filter(Boolean)));
+  const selectedPersonelObj = personelOptions.find((p) => p.id === selectedPersonelId);
 
-  // Compatible locations list + fallback for all locations
-  const compatibleLokasiList = lokasiList.filter((lok) => compatLokasiIds.includes(lok.id));
-
-  // Available Titik for selected Lokasi
-  const availableTitikList = selectedLokasiId
-    ? titikLokasiList.filter((t) => t.id_lokasi === selectedLokasiId)
-    : [];
-
-  // Available Units at selected Lokasi & Titik compatible with selected sparepart
-  const availableUnitsForLocation = unitPeralatanList.filter((unit) => {
-    const isCompatType = compatTypeIds.includes(unit.id_tipe);
-    if (!isCompatType) return false;
-
-    if (selectedLokasiId) {
-      const pen = penempatanList.find((p) => p.id_unit === unit.id && p.is_active);
-      if (!pen || pen.id_lokasi !== selectedLokasiId) return false;
-      if (selectedTitikId && pen.id_titik !== selectedTitikId) return false;
-    }
-    return true;
-  });
-
-  const selectedPersonelObj = sortedPersonelList.find((p) => p.id === selectedPersonelId) || sortedPersonelList[0];
+  // Equipment unit / location applies when a part goes into or comes out of a machine
+  const usesEquipmentUnit = mutationType === 'Pakai' || mutationType === 'Bekas' || mutationType === 'Rusak';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedSparepartId || qty <= 0 || !selectedPersonelObj) return;
+    if (!isStockFlowFormComplete(mutationType, flowForm)) return;
 
     setIsSubmitting(true);
-    const operatorName = selectedPersonelObj.formattedName;
 
     const success = await addMutation({
       sparepart_id: selectedSparepartId,
-      unit_id: mutationType === 'Pakai' || mutationType === 'Bekas' ? selectedUnitId || undefined : undefined,
+      unit_id: usesEquipmentUnit ? selectedUnitId || undefined : undefined,
       personel_id: selectedPersonelObj.id,
       mutation_type: mutationType,
+      flow: resolveStockFlow(mutationType, flowForm),
       sumber: mutationType === 'Masuk' ? sumber : undefined,
+      penerima: flowForm.pihak,
+      unit_penerima: flowForm.unitPihak,
       qty,
-      operator_name: operatorName,
       notes: notes.trim()
     });
 
@@ -185,9 +177,16 @@ export const MutationPage: React.FC = () => {
     {
       type: 'Rusak' as MutationType,
       label: 'Rusak',
-      desc: 'Mengubah status barang menjadi rusak dan menghapus dari stok',
+      desc: 'Barang baru / bekas yang tidak layak pakai dipindah ke stok rusak',
       icon: Trash2,
       color: 'border-rose-500/40 bg-rose-500/10 text-rose-300'
+    },
+    {
+      type: 'Serah Terima' as MutationType,
+      label: 'Serah Terima',
+      desc: 'Menyerahkan atau menerima barang baru / bekas / rusak dari pihak lain',
+      icon: Handshake,
+      color: 'border-violet-500/40 bg-violet-500/10 text-violet-300'
     }
   ];
 
@@ -196,7 +195,7 @@ export const MutationPage: React.FC = () => {
       <div>
         <h1 className="text-2xl md:text-3xl font-extrabold text-white">Input Transaksi & Mutasi Stok</h1>
         <p className="text-sm text-slate-400 mt-1">
-          Form pencatatan barang Masuk, Pakai work order, Pengembalian Bekas, dan Rusak.
+          Form pencatatan barang Masuk, Pakai work order, Pengembalian Bekas, Rusak, dan Serah Terima.
         </p>
       </div>
 
@@ -207,7 +206,7 @@ export const MutationPage: React.FC = () => {
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-3">
               1. Pilih Tipe Transaksi Mutasi
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 gap-3">
               {mutationTypesInfo.map((m) => {
                 const Icon = m.icon;
                 const isSelected = mutationType === m.type;
@@ -313,7 +312,7 @@ export const MutationPage: React.FC = () => {
               <div>
                 <span className="font-mono text-cyan-400 font-bold">{selectedPart.sku}</span>
                 <h4 className="text-sm font-bold text-white mt-0.5">{selectedPart.name}</h4>
-                <p className="text-slate-400 mt-1">Gudang: {selectedPart.location || selectedPart.lokasi || 'Gudang Utama T2'} | Rak: {selectedPart.rack || selectedPart.location_rack || 'RAK-A1'}</p>
+                <p className="text-slate-400 mt-1">Gudang: {selectedPart.lokasi || '-'} | Rak: {selectedPart.rack || '-'}</p>
               </div>
               <div className="flex items-center gap-4 bg-slate-900 px-4 py-2.5 rounded-lg border border-slate-800">
                 <div>
@@ -325,12 +324,20 @@ export const MutationPage: React.FC = () => {
                   <span className="text-[10px] text-slate-400 block uppercase">Stok Bekas</span>
                   <span className="font-bold text-amber-400 text-sm">{selectedPart.stok_bekas} {selectedPart.unit || 'PCS'}</span>
                 </div>
+                <div className="w-px h-8 bg-slate-800" />
+                <div>
+                  <span className="text-[10px] text-slate-400 block uppercase">Stok Rusak</span>
+                  <span className="font-bold text-rose-400 text-sm">{selectedPart.stok_rusak} {selectedPart.unit || 'PCS'}</span>
+                </div>
               </div>
             </div>
           )}
 
-          {/* 3. Dynamic Location & Compatible Equipment Dropdowns (Only for Pakai & Bekas) */}
-          {(mutationType === 'Pakai' || mutationType === 'Bekas') && (
+          {/* Extra fields: Rusak (asal stok) & Serah Terima (arah, kondisi, pihak) */}
+          <StockFlowFields mutationType={mutationType} value={flowForm} onChange={setFlowForm} part={selectedPart} />
+
+          {/* 3. Dynamic Location & Compatible Equipment Dropdowns (Pakai, Bekas & Rusak) */}
+          {usesEquipmentUnit && (
             <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-2">
@@ -368,7 +375,7 @@ export const MutationPage: React.FC = () => {
                     )}
 
                     <optgroup label="📍 Semua Lokasi Lain">
-                      {lokasiList.map((lok) => (
+                      {otherLokasiList.map((lok) => (
                         <option key={lok.id} value={lok.id}>
                           {lok.nama}
                         </option>
@@ -520,7 +527,7 @@ export const MutationPage: React.FC = () => {
           <div className="pt-4 border-t border-slate-800 flex justify-end">
             <button
               type="submit"
-              disabled={isSubmitting || !selectedSparepartId || !selectedPersonelId}
+              disabled={isSubmitting || !selectedSparepartId || !selectedPersonelId || !isStockFlowFormComplete(mutationType, flowForm)}
               className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-xl shadow-cyan-500/25 transition-all cursor-pointer disabled:opacity-50"
             >
               <CheckCircle2 className="w-5 h-5" />

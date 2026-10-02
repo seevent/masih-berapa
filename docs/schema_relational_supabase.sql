@@ -1,5 +1,5 @@
 -- ====================================================================
--- SKEMA SUPABASE POSTGRESQL (EXACT MATCH DENGAN DATABASE SUPABASE SAAT INI)
+-- SKEMA SUPABASE POSTGRESQL (disinkronkan dengan database live, Oktober 2026)
 -- Aplikasi: SSES T2 Sparepart Management ("Masih Berapa")
 -- ====================================================================
 
@@ -113,46 +113,64 @@ CREATE TABLE IF NOT EXISTS public.master_configs (
 );
 
 -- 9. Master Inventaris Sparepart
+-- CATATAN: tabel ini TIDAK menyimpan stok. Stok baru / bekas dihitung dari stock_mutations.
+-- Jenis peralatan diturunkan dari tipe_peralatan.id_jenis (tidak ada kolom id_jenis di sini).
 CREATE TABLE IF NOT EXISTS public.spareparts (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
-  sku character varying NOT NULL UNIQUE,
-  name character varying NOT NULL,
+  sku character varying(100) NOT NULL UNIQUE,
+  name character varying(255) NOT NULL,
   description text,
-  id_tipe uuid,
-  id_jenis uuid,
-  unit character varying DEFAULT 'PCS'::character varying,
-  stok_aktual integer NOT NULL DEFAULT 0 CHECK (stok_aktual >= 0),
-  stok_bekas integer NOT NULL DEFAULT 0 CHECK (stok_bekas >= 0),
+  id_tipe uuid,                       -- tipe utama (tipe tambahan di sparepart_compatibility)
+  unit character varying(50) DEFAULT 'PCS'::character varying,
   minimum_stok integer NOT NULL DEFAULT 1 CHECK (minimum_stok >= 0),
-  lokasi character varying,
-  sumber character varying DEFAULT 'VENDOR'::character varying CHECK (sumber::text = ANY (ARRAY['SUP API'::character varying, 'SISA PEKERJAAN'::character varying, 'IAS'::character varying, 'MANDIRI'::character varying, 'DARI UNIT LAIN'::character varying, 'VENDOR'::character varying, 'LOKAL'::character varying, 'IMPOR'::character varying]::text[])),
+  lokasi character varying,           -- gudang
   mtbf_days integer DEFAULT 180,
   last_replaced_at timestamp with time zone,
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
   rack character varying,
   CONSTRAINT spareparts_pkey PRIMARY KEY (id),
-  CONSTRAINT spareparts_id_tipe_fkey FOREIGN KEY (id_tipe) REFERENCES public.tipe_peralatan(id),
-  CONSTRAINT spareparts_id_jenis_fkey FOREIGN KEY (id_jenis) REFERENCES public.jenis_peralatan(id)
+  CONSTRAINT spareparts_id_tipe_fkey FOREIGN KEY (id_tipe) REFERENCES public.tipe_peralatan(id) ON DELETE SET NULL
 );
 
--- 10. Transaksi Mutasi Stok
+-- 10. Transaksi Mutasi Stok (sumber kebenaran stok)
+-- Setiap mutasi memindahkan qty dari stok_asal ke stok_tujuan (kantong: baru | bekas | rusak,
+-- NULL = luar gudang). Lihat docs/migrations/2026-10-02_aliran_stok.sql.
+--   Masuk         : luar -> baru          Pakai : baru -> luar
+--   Bekas         : luar -> bekas         Rusak : baru|bekas -> rusak
+--   Serah Terima  : luar -> baru|bekas|rusak (terima)  atau  baru|bekas|rusak -> luar (serahkan)
 CREATE TABLE IF NOT EXISTS public.stock_mutations (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   sparepart_id uuid NOT NULL,
   unit_id uuid,
   personel_id uuid,
-  mutation_type character varying NOT NULL CHECK (mutation_type::text = ANY (ARRAY['Masuk'::character varying, 'Pakai'::character varying, 'Bekas'::character varying, 'Rusak'::character varying]::text[])),
+  mutation_type character varying(50) NOT NULL CHECK (mutation_type::text = ANY (ARRAY['Masuk'::text, 'Pakai'::text, 'Bekas'::text, 'Rusak'::text, 'Serah Terima'::text])),
   qty integer NOT NULL CHECK (qty > 0),
   notes text,
   created_at timestamp with time zone DEFAULT now(),
+  sumber character varying DEFAULT 'VENDOR'::character varying,   -- asal barang, hanya untuk 'Masuk'
+  location character varying,
+  penerima text,                      -- Serah Terima: pihak lain
+  unit_penerima text,                 -- Serah Terima: unit pihak lain
+  stok_asal character varying CHECK (stok_asal IS NULL OR stok_asal IN ('baru', 'bekas', 'rusak')),
+  stok_tujuan character varying CHECK (stok_tujuan IS NULL OR stok_tujuan IN ('baru', 'bekas', 'rusak')),
+  CONSTRAINT stock_mutations_aliran_stok_check CHECK (
+    CASE mutation_type
+      WHEN 'Masuk' THEN stok_asal IS NULL AND (stok_tujuan IS NULL OR stok_tujuan = 'baru')
+      WHEN 'Pakai' THEN (stok_asal IS NULL OR stok_asal = 'baru') AND stok_tujuan IS NULL
+      WHEN 'Bekas' THEN stok_asal IS NULL AND (stok_tujuan IS NULL OR stok_tujuan = 'bekas')
+      WHEN 'Rusak' THEN (stok_asal IS NULL OR stok_asal IN ('baru', 'bekas')) AND (stok_tujuan IS NULL OR stok_tujuan = 'rusak')
+      WHEN 'Serah Terima' THEN stok_asal IS NULL OR stok_tujuan IS NULL
+      ELSE true
+    END
+  ),
   CONSTRAINT stock_mutations_pkey PRIMARY KEY (id),
-  CONSTRAINT stock_mutations_sparepart_id_fkey FOREIGN KEY (sparepart_id) REFERENCES public.spareparts(id),
-  CONSTRAINT stock_mutations_unit_id_fkey FOREIGN KEY (unit_id) REFERENCES public.unit_peralatan(id),
-  CONSTRAINT stock_mutations_personel_id_fkey FOREIGN KEY (personel_id) REFERENCES public.personel(id)
+  CONSTRAINT stock_mutations_sparepart_id_fkey FOREIGN KEY (sparepart_id) REFERENCES public.spareparts(id) ON DELETE CASCADE,
+  CONSTRAINT stock_mutations_unit_id_fkey FOREIGN KEY (unit_id) REFERENCES public.unit_peralatan(id) ON DELETE SET NULL,
+  CONSTRAINT stock_mutations_personel_id_fkey FOREIGN KEY (personel_id) REFERENCES public.personel(id) ON DELETE SET NULL
 );
 
--- 11. Kompatibilitas Sparepart
+-- 11. Kompatibilitas Sparepart (sparepart <-> tipe peralatan, banyak-ke-banyak)
 CREATE TABLE IF NOT EXISTS public.sparepart_compatibility (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   sparepart_id uuid NOT NULL,
@@ -160,21 +178,16 @@ CREATE TABLE IF NOT EXISTS public.sparepart_compatibility (
   is_primary boolean DEFAULT true,
   created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT sparepart_compatibility_pkey PRIMARY KEY (id),
-  CONSTRAINT sparepart_compatibility_sparepart_id_fkey FOREIGN KEY (sparepart_id) REFERENCES public.spareparts(id),
-  CONSTRAINT sparepart_compatibility_id_tipe_fkey FOREIGN KEY (id_tipe) REFERENCES public.tipe_peralatan(id)
+  CONSTRAINT sparepart_compatibility_sparepart_id_id_tipe_key UNIQUE (sparepart_id, id_tipe),
+  CONSTRAINT sparepart_compatibility_sparepart_id_fkey FOREIGN KEY (sparepart_id) REFERENCES public.spareparts(id) ON DELETE CASCADE,
+  CONSTRAINT sparepart_compatibility_id_tipe_fkey FOREIGN KEY (id_tipe) REFERENCES public.tipe_peralatan(id) ON DELETE CASCADE
 );
 
--- Disable Row Level Security (RLS) untuk akses ANON/Public API yang seamless
-ALTER TABLE public.jenis_peralatan DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.tipe_peralatan DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.lokasi DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.titik_lokasi DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.unit_peralatan DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.penempatan_peralatan DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.unit_kerja DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.personel DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.jadwal_shift DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.master_configs DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.spareparts DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.stock_mutations DISABLE ROW LEVEL SECURITY;
-ALTER TABLE public.sparepart_compatibility DISABLE ROW LEVEL SECURITY;
+-- View current_stock: stok_aktual (baru), stok_bekas, stok_rusak per sparepart, dihitung dengan
+-- aturan yang sama persis dengan aplikasi (src/utils/stock.ts). Definisi lengkap ada di
+-- docs/migrations/2026-10-02_aliran_stok.sql. View memakai security_invoker = true dan hanya
+-- SELECT untuk anon/authenticated (docs/migrations/2026-10-02_current_stock_security_invoker.sql).
+
+-- Row Level Security: RLS AKTIF di semua tabel. Tabel spareparts, stock_mutations dan
+-- sparepart_compatibility memakai policy "Public full access" untuk role anon & authenticated
+-- (siapa pun yang memegang anon key dapat membaca & menulis). Tabel master lain: baca publik.

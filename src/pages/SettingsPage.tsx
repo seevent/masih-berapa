@@ -85,7 +85,7 @@ export const SettingsPage: React.FC = () => {
           ) : (
             <>
               <AlertCircle className="w-4 h-4 text-amber-400" />
-              <span>Database: Local Storage Mode (VITE_SUPABASE_URL di .env kosong)</span>
+              <span>Database: Tidak terhubung (cek VITE_SUPABASE_URL & VITE_SUPABASE_ANON_KEY di .env)</span>
             </>
           )}
         </div>
@@ -514,13 +514,14 @@ export const SettingsPage: React.FC = () => {
               await addPersonel({
                 nik: personelNik,
                 nama: personelNama,
-                no_hp: personelHp,
+                no_hp: personelHp || undefined,
                 unit_id: personelUnitId || undefined,
-                jabatan: personelJabatan
+                jabatan: personelJabatan || undefined
               });
               setPersonelNik('');
               setPersonelNama('');
               setPersonelHp('');
+              setPersonelJabatan('');
             }}
             className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs"
           >
@@ -547,6 +548,25 @@ export const SettingsPage: React.FC = () => {
               onChange={(e) => setPersonelHp(e.target.value)}
               className="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
             />
+            <select
+              value={personelUnitId}
+              onChange={(e) => setPersonelUnitId(e.target.value)}
+              className="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
+            >
+              <option value="">-- Unit Kerja --</option>
+              {unitKerjaList.map((u) => (
+                <option key={u.id} value={u.id}>
+                  {u.nama}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder="Jabatan"
+              value={personelJabatan}
+              onChange={(e) => setPersonelJabatan(e.target.value)}
+              className="sm:col-span-2 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
+            />
             <button type="submit" className="sm:col-span-3 py-2 bg-cyan-600 text-white font-bold rounded-xl cursor-pointer">
               Tambah Personel Teknisi
             </button>
@@ -558,6 +578,7 @@ export const SettingsPage: React.FC = () => {
                 <tr>
                   <th className="py-2.5 px-3">NIK</th>
                   <th className="py-2.5 px-3">Nama</th>
+                  <th className="py-2.5 px-3">Unit Kerja</th>
                   <th className="py-2.5 px-3">Jabatan</th>
                   <th className="py-2.5 px-3">No. HP</th>
                 </tr>
@@ -567,6 +588,7 @@ export const SettingsPage: React.FC = () => {
                   <tr key={p.id} className="hover:bg-slate-800/40">
                     <td className="py-2.5 px-3 font-mono font-bold text-cyan-400">{p.nik}</td>
                     <td className="py-2.5 px-3 font-semibold text-white">{p.nama}</td>
+                    <td className="py-2.5 px-3 text-slate-300">{unitKerjaList.find((u) => u.id === p.unit_id)?.nama || '-'}</td>
                     <td className="py-2.5 px-3 text-slate-300">{p.jabatan || '-'}</td>
                     <td className="py-2.5 px-3 text-slate-400 font-mono">{p.no_hp || '-'}</td>
                   </tr>

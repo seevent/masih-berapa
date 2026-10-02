@@ -24,7 +24,7 @@ export const PredictiveAlertsPage: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="glass-panel p-5 rounded-2xl border border-rose-500/30 bg-rose-950/20">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-rose-300 uppercase">Gantian Kritis (&lt; 15 Hari)</span>
+            <span className="text-xs font-bold text-rose-300 uppercase">Kritis (≤ 7 Hari / Stok ≤ Min)</span>
             <ShieldAlert className="w-5 h-5 text-rose-400" />
           </div>
           <div className="mt-3">
@@ -35,7 +35,7 @@ export const PredictiveAlertsPage: React.FC = () => {
 
         <div className="glass-panel p-5 rounded-2xl border border-amber-500/30 bg-amber-950/20">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-amber-300 uppercase">Peringatan Usia (&lt; 45 Hari)</span>
+            <span className="text-xs font-bold text-amber-300 uppercase">Peringatan (≤ 21 Hari)</span>
             <AlertTriangle className="w-5 h-5 text-amber-400" />
           </div>
           <div className="mt-3">
@@ -104,8 +104,8 @@ export const PredictiveAlertsPage: React.FC = () => {
                   </td>
 
                   <td className="py-3.5 px-4 text-slate-400">
-                    <div>{sp.last_replaced_at || 'Terjadwal'}</div>
-                    <div className="text-[10px] text-slate-500">Terpakai: {days_used} hari dari MTBF {sp.mtbf_days} hari</div>
+                    <div>{sp.last_replaced_at ? new Date(sp.last_replaced_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : '-'}</div>
+                    <div className="text-[10px] text-slate-500">Terpakai: {days_used} hari dari MTBF {sp.mtbf_days || 180} hari</div>
                   </td>
 
                   <td className="py-3.5 px-4 text-center">

@@ -19,6 +19,7 @@ export const PredictiveNeedsPage: React.FC = () => {
       'Stok Bekas (Unit)': n.sparepart.stok_bekas,
       'Total Stok Fisik Ada': n.total_available_stock,
       'Estimasi Kebutuhan Tahunan (Unit)': n.annual_forecast_qty,
+      'Dasar Estimasi': n.forecast_basis === 'HISTORY' ? 'Pemakaian riil 12 bulan' : 'MTBF x unit terpasang',
       'Kuantitas Rekomendasi Order (Unit)': n.order_needed_qty,
       'Status Defisit': n.order_needed_qty > 0 ? 'PERLU PASOKAN' : 'STOK CUKUP'
     }));
@@ -81,6 +82,8 @@ export const PredictiveNeedsPage: React.FC = () => {
         <Calculator className="w-5 h-5 text-cyan-400 shrink-0" />
         <div>
           <span className="font-bold">Formula Perhitungan Otomatis:</span> Kuantitas Rekomendasi Order = Estimasi Kebutuhan Tahunan - (Stok Baru + Stok Bekas Layak Pakai).
+          {' '}Estimasi tahunan memakai total transaksi Pakai 12 bulan terakhir (disetahunkan bila riwayat lebih pendek);
+          bila belum ada pemakaian, dipakai 365 / MTBF x jumlah unit peralatan kompatibel yang operasi/standby.
         </div>
       </div>
 
@@ -99,7 +102,7 @@ export const PredictiveNeedsPage: React.FC = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-xs">
-              {needs.map(({ sparepart: sp, total_available_stock, annual_forecast_qty, order_needed_qty }) => (
+              {needs.map(({ sparepart: sp, total_available_stock, annual_forecast_qty, order_needed_qty, forecast_basis }) => (
                 <tr key={sp.id} className="hover:bg-slate-800/40 transition-colors">
                   <td className="py-3.5 px-4">
                     <div className="font-mono text-cyan-400 font-bold">{sp.sku}</div>
@@ -114,6 +117,9 @@ export const PredictiveNeedsPage: React.FC = () => {
                   </td>
                   <td className="py-3.5 px-4 text-center font-semibold text-slate-300 whitespace-nowrap">
                     {annual_forecast_qty} {sp.unit}
+                    <div className="text-[10px] font-normal text-slate-500">
+                      {forecast_basis === 'HISTORY' ? 'dari pemakaian riil' : 'estimasi MTBF'}
+                    </div>
                   </td>
                   <td className="py-3.5 px-4 text-center whitespace-nowrap">
                     <span

@@ -20,9 +20,10 @@ import {
 } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
 import { Sparepart } from '../types';
+import { isLowStock } from '../utils/stock';
 
 export const CatalogPage: React.FC = () => {
-  const { spareparts, tipePeralatan, jenisPeralatan, sparepartCompatibility, addSparepart, updateSparepart, deleteSparepart } = useInventory();
+  const { spareparts, mutations, tipePeralatan, jenisPeralatan, sparepartCompatibility, addSparepart, updateSparepart, deleteSparepart } = useInventory();
 
   // View Mode State (Grid vs List)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -35,9 +36,11 @@ export const CatalogPage: React.FC = () => {
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Form State
-  const [formData, setFormData] = useState({
+  // Form State (mirrors the columns of the `spareparts` table)
+  const todayStr = () => new Date().toISOString().split('T')[0];
+  const emptyForm = () => ({
     sku: '',
     name: '',
     description: '',
@@ -46,75 +49,59 @@ export const CatalogPage: React.FC = () => {
     stok_aktual: 0,
     stok_bekas: 0,
     minimum_stok: 5,
-    location: 'Gudang Utility Chiller T2',
-    rack: 'RAK-A1-01',
+    lokasi: '',
+    rack: '',
     mtbf_days: 180,
-    last_replaced_at: new Date().toISOString().split('T')[0]
+    last_replaced_at: todayStr()
   });
+  const [formData, setFormData] = useState(emptyForm);
 
   const [selectedTipeIds, setSelectedTipeIds] = useState<string[]>([]);
 
+  // Next sequential SKU in the "SP-001" format (other SKU formats are ignored)
   const generateNextSku = (): string => {
     let maxNum = 0;
     spareparts.forEach((sp) => {
-      if (sp.sku) {
-        const matches = sp.sku.match(/\d+/);
-        if (matches) {
-          const num = parseInt(matches[0], 10);
-          if (!isNaN(num) && num > maxNum) {
-            maxNum = num;
-          }
-        }
+      const match = /^SP-(\d+)$/i.exec((sp.sku || '').trim());
+      if (match) {
+        const num = parseInt(match[1], 10);
+        if (num > maxNum) maxNum = num;
       }
     });
-    const nextNum = maxNum + 1;
-    return `SP-${String(nextNum).padStart(3, '0')}`;
+    return `SP-${String(maxNum + 1).padStart(3, '0')}`;
   };
 
   const handleOpenAddModal = () => {
     setEditingId(null);
-    const defaultJenis = jenisPeralatan[0];
-    const defaultTipes = defaultJenis ? tipePeralatan.filter(t => t.id_jenis === defaultJenis.id) : [];
-    
     setFormData({
+      ...emptyForm(),
       sku: generateNextSku(),
-      name: '',
-      description: '',
-      id_jenis: defaultJenis?.id || '',
-      unit: 'PCS',
-      stok_aktual: 0,
-      stok_bekas: 0,
-      minimum_stok: 5,
-      location: '',
-      rack: '',
-      mtbf_days: 180,
-      last_replaced_at: new Date().toISOString().split('T')[0]
+      id_jenis: jenisPeralatan[0]?.id || ''
     });
-    setSelectedTipeIds(defaultTipes.map(t => t.id));
+    setSelectedTipeIds([]);
     setIsModalOpen(true);
   };
 
   const handleOpenEditModal = (sp: Sparepart) => {
     setEditingId(sp.id);
-    const mainTipe = tipePeralatan.find((t) => t.id === sp.id_tipe);
-    const mainJenis = mainTipe ? jenisPeralatan.find((j) => j.id === mainTipe.id_jenis) : undefined;
-    const compatRecords = sparepartCompatibility.filter((c) => c.sparepart_id === sp.id);
-    const compatTipeIds = compatRecords.map((c) => c.id_tipe);
-    const initialTipeIds = Array.from(new Set([sp.id_tipe, ...compatTipeIds])).filter(Boolean);
+    const compatTipeIds = sparepartCompatibility
+      .filter((c) => c.sparepart_id === sp.id)
+      .map((c) => c.id_tipe);
+    const initialTipeIds = Array.from(new Set([sp.id_tipe || '', ...compatTipeIds])).filter(Boolean);
 
     setFormData({
       sku: sp.sku || '',
       name: sp.name || '',
       description: sp.description || '',
-      id_jenis: sp.id_jenis || mainJenis?.id || '',
+      id_jenis: sp.id_jenis || '',
       unit: sp.unit || 'PCS',
       stok_aktual: sp.stok_aktual || 0,
       stok_bekas: sp.stok_bekas || 0,
-      minimum_stok: sp.minimum_stok || 1,
-      location: sp.location || sp.lokasi || '',
-      rack: sp.rack || sp.location_rack || '',
+      minimum_stok: sp.minimum_stok ?? 0,
+      lokasi: sp.lokasi || '',
+      rack: sp.rack || '',
       mtbf_days: sp.mtbf_days || 180,
-      last_replaced_at: sp.last_replaced_at || new Date().toISOString().split('T')[0]
+      last_replaced_at: sp.last_replaced_at ? sp.last_replaced_at.slice(0, 10) : ''
     });
     setSelectedTipeIds(initialTipeIds);
     setIsModalOpen(true);
@@ -122,24 +109,44 @@ export const CatalogPage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.name || !formData.sku || !formData.id_jenis) return;
+    if (!formData.name.trim() || !formData.sku.trim() || isSaving) return;
 
-    const primaryTipeId = selectedTipeIds[0] || '';
-
-    const payload = {
-      ...formData,
-      id_tipe: primaryTipeId,
-      lokasi: formData.location,
-      sumber: formData.supplier_type as any,
-      location_rack: formData.rack
+    const input = {
+      sku: formData.sku,
+      name: formData.name,
+      description: formData.description,
+      unit: formData.unit,
+      minimum_stok: formData.minimum_stok,
+      lokasi: formData.lokasi,
+      rack: formData.rack,
+      mtbf_days: formData.mtbf_days,
+      last_replaced_at: formData.last_replaced_at || null,
+      tipeIds: selectedTipeIds
     };
 
-    if (editingId) {
-      await updateSparepart(editingId, payload);
-    } else {
-      await addSparepart(payload);
+    setIsSaving(true);
+    try {
+      const success = editingId
+        ? await updateSparepart(editingId, input)
+        : await addSparepart({
+            ...input,
+            stok_awal_baru: formData.stok_aktual,
+            stok_awal_bekas: formData.stok_bekas
+          });
+      if (success) setIsModalOpen(false);
+    } finally {
+      setIsSaving(false);
     }
-    setIsModalOpen(false);
+  };
+
+  const handleDelete = async (sp: Sparepart) => {
+    const mutationCount = mutations.filter((m) => m.sparepart_id === sp.id).length;
+    const warning =
+      mutationCount > 0
+        ? `\n\nPERHATIAN: ${mutationCount} riwayat mutasi stok milik sparepart ini juga akan TERHAPUS PERMANEN.`
+        : '';
+    if (!window.confirm(`Hapus sparepart [${sp.sku}] ${sp.name}?${warning}`)) return;
+    await deleteSparepart(sp.id);
   };
 
   const toggleTipeSelection = (tipeId: string) => {
@@ -279,7 +286,7 @@ export const CatalogPage: React.FC = () => {
       {viewMode === 'grid' ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {filteredSpareparts.map((sp) => {
-            const isCritical = sp.stok_aktual < sp.minimum_stok;
+            const isCritical = isLowStock(sp.stok_aktual, sp.minimum_stok);
             const tpObj = tipePeralatan.find((t) => t.id === sp.id_tipe);
             const jpObj = jenisPeralatan.find((j) => j.id === sp.id_jenis);
             const compatRecords = sparepartCompatibility.filter((c) => c.sparepart_id === sp.id);
@@ -335,12 +342,12 @@ export const CatalogPage: React.FC = () => {
                     <div className="flex items-center gap-2">
                       <Building2 className="w-3.5 h-3.5 text-slate-500" />
                       <span className="text-slate-400">Gudang:</span>
-                      <span className="font-semibold text-slate-200">{sp.location || sp.lokasi || '-'}</span>
+                      <span className="font-semibold text-slate-200">{sp.lokasi || '-'}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <MapPin className="w-3.5 h-3.5 text-slate-500" />
                       <span className="text-slate-400">Rak:</span>
-                      <span className="font-mono font-semibold text-cyan-300">{sp.rack || sp.location_rack || '-'}</span>
+                      <span className="font-mono font-semibold text-cyan-300">{sp.rack || '-'}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <Clock className="w-3.5 h-3.5 text-slate-500" />
@@ -384,7 +391,9 @@ export const CatalogPage: React.FC = () => {
                           className="h-full bg-amber-400 transition-all duration-300"
                         />
                       </div>
-                      <span className="text-[10px] text-slate-500 block mt-1">Rotable Reusable</span>
+                      <span className={`text-[10px] block mt-1 ${sp.stok_rusak > 0 ? 'text-rose-400' : 'text-slate-500'}`}>
+                        Rusak: {sp.stok_rusak} {sp.unit || 'PCS'}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -392,7 +401,7 @@ export const CatalogPage: React.FC = () => {
                 {/* Card Footer Actions */}
                 <div className="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between">
                   <span className="text-xs font-semibold text-slate-400 font-mono">
-                    Rak: {sp.rack || sp.location_rack || '-'}
+                    Rak: {sp.rack || '-'}
                   </span>
                   <div className="flex items-center gap-2">
                     <button
@@ -403,7 +412,7 @@ export const CatalogPage: React.FC = () => {
                       <Edit className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => deleteSparepart(sp.id)}
+                      onClick={() => handleDelete(sp)}
                       className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer"
                       title="Hapus Item"
                     >
@@ -439,7 +448,7 @@ export const CatalogPage: React.FC = () => {
                   </tr>
                 ) : (
                   filteredSpareparts.map((sp) => {
-                    const isCritical = sp.stok_aktual < sp.minimum_stok;
+                    const isCritical = isLowStock(sp.stok_aktual, sp.minimum_stok);
                     const tpObj = tipePeralatan.find((t) => t.id === sp.id_tipe);
                     const jpObj = jenisPeralatan.find((j) => j.id === sp.id_jenis);
 
@@ -459,8 +468,8 @@ export const CatalogPage: React.FC = () => {
                           <div className="text-slate-300 text-xs">{tpObj?.nama || sp.equipment_type_name || '-'}</div>
                         </td>
                         <td className="py-3.5 px-4 whitespace-nowrap">
-                          <div className="text-slate-200 font-medium">{sp.location || sp.lokasi || '-'}</div>
-                          <div className="font-mono text-cyan-300 text-xs font-semibold">Rak: {sp.rack || sp.location_rack || '-'}</div>
+                          <div className="text-slate-200 font-medium">{sp.lokasi || '-'}</div>
+                          <div className="font-mono text-cyan-300 text-xs font-semibold">Rak: {sp.rack || '-'}</div>
                         </td>
                         <td className="py-3.5 px-4 text-center whitespace-nowrap">
                           <span className={`font-extrabold text-sm ${isCritical ? 'text-rose-400' : 'text-emerald-400'}`}>
@@ -472,7 +481,7 @@ export const CatalogPage: React.FC = () => {
                           <span className="font-extrabold text-sm text-amber-400">
                             {sp.stok_bekas} {sp.unit || 'PCS'}
                           </span>
-                          <div className="text-[10px] text-slate-500">Rotable</div>
+                          <div className={`text-[10px] ${sp.stok_rusak > 0 ? 'text-rose-400' : 'text-slate-500'}`}>Rusak: {sp.stok_rusak}</div>
                         </td>
                         <td className="py-3.5 px-4 text-center whitespace-nowrap">
                           <div className="flex items-center justify-center gap-1.5">
@@ -484,7 +493,7 @@ export const CatalogPage: React.FC = () => {
                               <Edit className="w-3.5 h-3.5" />
                             </button>
                             <button
-                              onClick={() => deleteSparepart(sp.id)}
+                              onClick={() => handleDelete(sp)}
                               className="p-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 transition-colors cursor-pointer"
                               title="Hapus Item"
                             >
@@ -540,8 +549,10 @@ export const CatalogPage: React.FC = () => {
                     onChange={(e) => {
                       const newJenisId = e.target.value;
                       setFormData({ ...formData, id_jenis: newJenisId });
-                      const newAvailableTipes = tipePeralatan.filter(t => t.id_jenis === newJenisId);
-                      setSelectedTipeIds(newAvailableTipes.map(t => t.id));
+                      // Keep only the selected tipes that belong to the new jenis
+                      setSelectedTipeIds((prev) =>
+                        prev.filter((id) => tipePeralatan.some((t) => t.id === id && t.id_jenis === newJenisId))
+                      );
                     }}
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs font-semibold"
                   >
@@ -558,7 +569,7 @@ export const CatalogPage: React.FC = () => {
               {/* Checklist Tipe Peralatan */}
               <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1">
-                  Tipe Peralatan (Bisa pilih lebih dari satu)
+                  Tipe Peralatan Kompatibel (bisa lebih dari satu, pilihan pertama = tipe utama)
                 </label>
                 <div className="bg-slate-950 border border-slate-700 rounded-xl p-3 max-h-36 overflow-y-auto space-y-2">
                   {modalAvailableTipes.length === 0 ? (
@@ -580,6 +591,9 @@ export const CatalogPage: React.FC = () => {
                             {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
                           </div>
                           <span>{tp.nama} {tp.varian ? `(${tp.varian})` : ''}</span>
+                          {selectedTipeIds[0] === tp.id && (
+                            <span className="ml-auto text-[9px] font-bold uppercase px-1.5 py-0.5 rounded bg-cyan-500 text-slate-950">Utama</span>
+                          )}
                         </label>
                       );
                     })
@@ -612,32 +626,38 @@ export const CatalogPage: React.FC = () => {
 
               <div className="grid grid-cols-4 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Stok Baru</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    {editingId ? 'Stok Baru' : 'Stok Awal Baru'}
+                  </label>
                   <input
                     type="number"
                     min="0"
+                    disabled={!!editingId}
                     value={formData.stok_aktual}
                     onChange={(e) => setFormData({ ...formData, stok_aktual: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold"
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Stok Bekas</label>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    {editingId ? 'Stok Bekas' : 'Stok Awal Bekas'}
+                  </label>
                   <input
                     type="number"
                     min="0"
+                    disabled={!!editingId}
                     value={formData.stok_bekas}
                     onChange={(e) => setFormData({ ...formData, stok_bekas: parseInt(e.target.value) || 0 })}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-amber-400 font-bold"
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-amber-400 font-bold disabled:opacity-50 disabled:cursor-not-allowed"
                   />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Min. Stok</label>
                   <input
                     type="number"
-                    min="1"
+                    min="0"
                     value={formData.minimum_stok}
-                    onChange={(e) => setFormData({ ...formData, minimum_stok: parseInt(e.target.value) || 1 })}
+                    onChange={(e) => setFormData({ ...formData, minimum_stok: Math.max(0, parseInt(e.target.value) || 0) })}
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
                   />
                 </div>
@@ -652,13 +672,19 @@ export const CatalogPage: React.FC = () => {
                 </div>
               </div>
 
+              <p className="text-[11px] text-slate-500 -mt-2">
+                {editingId
+                  ? 'Stok dihitung dari riwayat mutasi. Ubah stok melalui menu Input Transaksi.'
+                  : 'Stok awal akan dicatat otomatis sebagai transaksi Masuk / Bekas.'}
+              </p>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-slate-300 mb-1">Gudang</label>
                   <input
                     type="text"
-                    value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    value={formData.lokasi}
+                    onChange={(e) => setFormData({ ...formData, lokasi: e.target.value })}
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs"
                   />
                 </div>
@@ -678,9 +704,19 @@ export const CatalogPage: React.FC = () => {
                   <label className="block text-xs font-semibold text-slate-300 mb-1">MTBF (Hari Usia Pakai)</label>
                   <input
                     type="number"
+                    min="1"
                     value={formData.mtbf_days}
                     onChange={(e) => setFormData({ ...formData, mtbf_days: parseInt(e.target.value) || 180 })}
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">Terakhir Diganti</label>
+                  <input
+                    type="date"
+                    value={formData.last_replaced_at}
+                    onChange={(e) => setFormData({ ...formData, last_replaced_at: e.target.value })}
+                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs"
                   />
                 </div>
               </div>
@@ -695,9 +731,10 @@ export const CatalogPage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold shadow-lg shadow-cyan-500/25 cursor-pointer"
+                  disabled={isSaving}
+                  className="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-xs font-bold shadow-lg shadow-cyan-500/25 cursor-pointer disabled:opacity-50"
                 >
-                  {editingId ? 'Simpan Perubahan' : 'Tambah Sparepart'}
+                  {isSaving ? 'Menyimpan...' : editingId ? 'Simpan Perubahan' : 'Tambah Sparepart'}
                 </button>
               </div>
             </form>
