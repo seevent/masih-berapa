@@ -17,7 +17,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, AreaChart, Area } fr
 import { getEffectiveFlow, getUsableStockDelta, isIncompleteSerahTerima, isLowStock } from '../utils/stock';
 
 export const DashboardPage: React.FC = () => {
-  const { spareparts, mutations, personelList } = useInventory();
+  const { spareparts, mutations, personelList, predictive } = useInventory();
 
   // 1. Total Parts in Stock calculation (Live Supabase DB)
   const totalNewStock = useMemo(
@@ -112,38 +112,32 @@ export const DashboardPage: React.FC = () => {
     ];
   }, [spareparts]);
 
-  // 4. Top Moving Parts List (total qty moved per sparepart, from real mutations only)
-  const topMovingParts = useMemo(() => {
-    const movedMap = new Map<string, number>();
+  // 4. Top Moving Parts List: 'Pakai' qty in the demand window (up to 12 months), same basis as /reports
+  const topMovingParts = useMemo(
+    () =>
+      predictive.movements
+        .map(({ sparepart: p, demand }) => {
+          const minStock = p.minimum_stok || 0;
+          const stockRatio = Math.min(100, Math.round((p.stok_aktual / Math.max(1, minStock * 2)) * 100));
 
-    mutations.forEach((m) => {
-      if (m.sparepart_id) {
-        movedMap.set(m.sparepart_id, (movedMap.get(m.sparepart_id) || 0) + (m.qty || 0));
-      }
-    });
-
-    return spareparts
-      .map((p) => {
-        const minStock = p.minimum_stok || 0;
-        const stockRatio = Math.min(100, Math.round((p.stok_aktual / Math.max(1, minStock * 2)) * 100));
-
-        return {
-          id: p.id,
-          sku: p.sku || 'SKU-UNSET',
-          name: p.name,
-          quant: movedMap.get(p.id) || 0,
-          stok_aktual: p.stok_aktual,
-          stok_bekas: p.stok_bekas,
-          location: p.lokasi || '-',
-          rack: p.rack || '-',
-          stockRatio,
-          color: isLowStock(p.stok_aktual, minStock) ? 'bg-amber-400' : 'bg-emerald-500'
-        };
-      })
-      .filter((item) => item.quant > 0)
-      .sort((a, b) => b.quant - a.quant)
-      .slice(0, 5);
-  }, [spareparts, mutations]);
+          return {
+            id: p.id,
+            sku: p.sku || 'SKU-UNSET',
+            name: p.name,
+            quant: demand.usage_qty,
+            stok_aktual: p.stok_aktual,
+            stok_bekas: p.stok_bekas,
+            location: p.lokasi || '-',
+            rack: p.rack || '-',
+            stockRatio,
+            color: isLowStock(p.stok_aktual, minStock) ? 'bg-amber-400' : 'bg-emerald-500'
+          };
+        })
+        .filter((item) => item.quant > 0)
+        .sort((a, b) => b.quant - a.quant)
+        .slice(0, 5),
+    [predictive]
+  );
 
   // 5. Recent Transactions Timeline List (Live Supabase DB)
   const recentTransactions = useMemo(() => {
@@ -476,7 +470,7 @@ export const DashboardPage: React.FC = () => {
                       {topMovingParts.length === 0 && (
                         <tr>
                           <td colSpan={4} className="py-6 text-center text-slate-500">
-                            Belum ada pergerakan stok tercatat.
+                            Belum ada pemakaian tercatat.
                           </td>
                         </tr>
                       )}

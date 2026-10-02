@@ -125,7 +125,7 @@ Lima tipe transaksi; detail aturan di [bagian 7](#7-aturan-bisnis).
 - ⚠ Margin dan jarak lembar Tom & Jerry masih asumsi; perlu dicocokkan dengan lembar fisik.
 
 ### F-06 Dashboard — ✅
-KPI total stok tersedia (dengan tren 6 bulan), jumlah SKU di bawah minimum, rasio stok baru vs bekas; grafik level inventaris; top moving parts; transaksi terbaru.
+KPI total stok tersedia (dengan tren 6 bulan), jumlah SKU di bawah minimum, rasio stok baru vs bekas; grafik level inventaris; top moving parts (5 sparepart dengan pemakaian `Pakai` terbanyak, dasar yang sama dengan F-09); transaksi terbaru.
 
 ### F-07 Peringatan prediktif — ✅ (v2, Oktober 2026)
 Dua bagian ([7.4](#74-peringatan-prediktif-mtbf-otomatis)), spesifikasi: [specs/predictive-maintenance.md](specs/predictive-maintenance.md).
@@ -138,7 +138,11 @@ Dua bagian ([7.4](#74-peringatan-prediktif-mtbf-otomatis)), spesifikasi: [specs/
 Estimasi kebutuhan tahunan dari pemakaian riil, stok baru, dan rekomendasi order per sparepart ([7.5](#75-kebutuhan-tahunan)); ekspor Excel; tanpa pemakaian ditampilkan "Belum cukup data" (tidak ada lagi estimasi dari MTBF manual).
 
 ### F-09 Laporan rotasi — ✅
-Klasifikasi *fast / medium / slow moving* menurut jumlah transaksi (≥ 2, 1, 0), total stok bekas, total stok fisik.
+Klasifikasi *fast / medium / slow moving* dari **pemakaian** ([7.5](#75-kebutuhan-tahunan)), total stok bekas, total stok fisik.
+- **Fast**: rata-rata ≥ 1 buah `Pakai` per bulan. **Medium**: ada pemakaian, kurang dari itu. **Slow**: tidak ada pemakaian. **Belum cukup data**: tidak ada pemakaian dan sparepart baru dikenal < 30 hari.
+- Dasar hitung: qty `Pakai` dalam jendela 12 bulan terakhir (atau sejak transaksi pertama bila lebih singkat, minimal 30 hari), sama dengan kebutuhan tahunan. Transaksi lain (Masuk, Bekas, Rusak, Serah Terima, termasuk stok awal) **tidak** dihitung.
+- Kartu menampilkan jumlah Fast, rincian Medium/Slow, dan berapa Slow yang masih menyimpan stok.
+- *Perubahan 2 Okt 2026:* sebelumnya dihitung dari jumlah transaksi apa pun sepanjang masa (≥ 2 = Fast), sehingga sparepart yang baru didaftarkan dengan stok baru + bekas langsung tampil Fast.
 
 ### F-10 Data master (Pengaturan) — ❌ dihapus
 Menu **Pengaturan Sistem** (halaman `/settings`) **dihapus pada 2 Oktober 2026** atas permintaan pemilik (alasan tidak dicatat). Catatan teknis: sebelum dihapus, sebagian form di dalamnya tidak dapat berfungsi tanpa login karena kebijakan database ([DATABASE.md bagian 6](DATABASE.md#6-keamanan-rls-dan-hak-akses)).
@@ -185,7 +189,9 @@ Rumus lengkap dan contoh angka: [specs/predictive-maintenance.md bagian 4](specs
 
 ### 7.5 Kebutuhan tahunan
 - Kebutuhan tahunan = `ceil(r × 365)` dengan `r` seperti di 7.4. Tanpa pemakaian: "Belum cukup data" dan tidak ada rekomendasi.
-- Rekomendasi order = `kebutuhan − stok baru`, minimal 0 (stok bekas tidak dihitung, sama dengan 7.4).
+- Rekomendasi order = `kebutuhan − stok baru`, minimal 0 (stok bekas tidak dihitung, sama dengan 7.4). Total rekomendasi di kartu dijumlahkan **per satuan** (mis. `7 PCS + 2 UNIT`), tidak dicampur.
+- Pembulatan ke atas mengabaikan galat desimal (`29/365 × 365` tidak menjadi 30).
+- **Klasifikasi rotasi** (F-09) memakai `r` yang sama: Fast bila `qty Pakai × 30 ≥ jendela` (rata-rata ≥ 1 per bulan).
 - **BR-9** `Serah Terima` dan `Rusak` **tidak** dihitung sebagai pemakaian.
 
 ### 7.6 Lain-lain

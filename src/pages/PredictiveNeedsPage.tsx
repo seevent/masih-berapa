@@ -7,7 +7,14 @@ export const PredictiveNeedsPage: React.FC = () => {
   const { predictive } = useInventory();
   const needs = predictive.annualNeeds;
 
-  const totalOrderUnits = needs.reduce((sum, n) => sum + n.order_needed_qty, 0);
+  // Spareparts use different units (PCS, UNIT, ...): total per unit instead of one mixed sum
+  const orderTotalsByUnit = new Map<string, number>();
+  needs.forEach((n) => {
+    if (n.order_needed_qty <= 0) return;
+    const unit = n.sparepart.unit || 'PCS';
+    orderTotalsByUnit.set(unit, (orderTotalsByUnit.get(unit) || 0) + n.order_needed_qty);
+  });
+  const orderTotals = Array.from(orderTotalsByUnit.entries());
   const itemsNeedingOrderCount = needs.filter((n) => n.order_needed_qty > 0).length;
 
   const handleExportNeedsExcel = () => {
@@ -57,7 +64,16 @@ export const PredictiveNeedsPage: React.FC = () => {
           <div>
             <span className="text-xs font-semibold text-slate-400 uppercase">TOTAL REKOMENDASI ORDER</span>
             <div className="text-3xl font-bold text-white mt-1">
-              {totalOrderUnits.toLocaleString('id-ID')} <span className="text-xs text-slate-400 font-normal">Unit</span>
+              {orderTotals.length === 0 ? (
+                <>0 <span className="text-xs text-slate-400 font-normal">Unit</span></>
+              ) : (
+                orderTotals.map(([unit, qty], idx) => (
+                  <span key={unit}>
+                    {idx > 0 && <span className="text-slate-600 font-normal"> + </span>}
+                    {qty.toLocaleString('id-ID')} <span className="text-xs text-slate-400 font-normal">{unit}</span>
+                  </span>
+                ))
+              )}
             </div>
           </div>
           <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">

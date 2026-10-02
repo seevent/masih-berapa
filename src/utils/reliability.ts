@@ -19,6 +19,9 @@ export const AGE_RATIO_KRITIS = 0.9;
 /** Demand window: days since the first transaction of the sparepart, clamped to this range. */
 export const DEMAND_WINDOW_MIN_DAYS = 30;
 export const DEMAND_WINDOW_MAX_DAYS = 365;
+/** Fast moving = on average at least this many pieces of 'Pakai' per 30 days. */
+export const MOVEMENT_FAST_PER_MONTH = 1;
+const DAYS_PER_MONTH = 30;
 
 export const DAY_MS = 1000 * 60 * 60 * 24;
 
@@ -74,6 +77,8 @@ export interface MtbfEstimate {
 export type PositionStatus = 'NORMAL' | 'PERHATIAN' | 'KRITIS' | 'LEWAT' | 'BELUM_CUKUP_DATA';
 
 export interface DemandRate {
+  /** Days since the first transaction of the sparepart (0 without transactions), not clamped */
+  history_days: number;
   window_days: number;
   /** Total 'Pakai' qty inside the window */
   usage_qty: number;
@@ -180,7 +185,29 @@ export const demandRate = (mutations: ReliabilityMutation[], now: number): Deman
     .filter((m) => m.mutation_type === 'Pakai' && toTime(m.created_at) >= windowStart)
     .reduce((sum, m) => sum + Math.max(0, Number(m.qty) || 0), 0);
 
-  return { window_days: windowDays, usage_qty: usageQty, rate_per_day: usageQty / windowDays };
+  return {
+    history_days: times.length > 0 ? Math.max(0, (now - firstTime) / DAY_MS) : 0,
+    window_days: windowDays,
+    usage_qty: usageQty,
+    rate_per_day: usageQty / windowDays
+  };
+};
+
+export type MovementClass = 'FAST_MOVING' | 'MEDIUM_MOVING' | 'SLOW_MOVING' | 'BELUM_CUKUP_DATA';
+
+/**
+ * Stock rotation class from 'Pakai' usage in the demand window (same window as the needs forecast):
+ * FAST ≥ 1 per month on average, MEDIUM = some usage but less, SLOW = no usage although the part has
+ * been known for at least DEMAND_WINDOW_MIN_DAYS, BELUM_CUKUP_DATA = no usage and a younger history.
+ */
+export const classifyMovement = (demand: DemandRate): MovementClass => {
+  if (demand.usage_qty > 0) {
+    // usage / window ≥ fast / 30  ⇔  usage × 30 ≥ fast × window (avoids decimal division)
+    return demand.usage_qty * DAYS_PER_MONTH >= MOVEMENT_FAST_PER_MONTH * demand.window_days
+      ? 'FAST_MOVING'
+      : 'MEDIUM_MOVING';
+  }
+  return demand.history_days >= DEMAND_WINDOW_MIN_DAYS ? 'SLOW_MOVING' : 'BELUM_CUKUP_DATA';
 };
 
 /** Smallest s with P(Poisson(λ) ≤ s) ≥ serviceLevel. */
@@ -256,6 +283,14 @@ export interface AnnualNeed {
   order_needed_qty: number;
 }
 
+export interface SparepartMovement {
+  sparepart: Sparepart;
+  demand: DemandRate;
+  category: MovementClass;
+  /** Average 'Pakai' pieces per 30 days in the window */
+  per_month: number;
+}
+
 export interface PredictiveReport {
   mtbfBySparepart: Record<string, MtbfEstimate>;
   /** Positions in running units, most urgent first */
@@ -263,6 +298,8 @@ export interface PredictiveReport {
   /** Per sparepart, parts needing an order first */
   stockCoverage: StockCoverage[];
   annualNeeds: AnnualNeed[];
+  /** Rotation class per sparepart, fastest first */
+  movements: SparepartMovement[];
   /** Positions KRITIS + LEWAT + spareparts needing an order */
   urgentCount: number;
 }
@@ -299,6 +336,7 @@ export const buildPredictiveReport = (
   const positionAlerts: PositionAlert[] = [];
   const stockCoverage: StockCoverage[] = [];
   const annualNeeds: AnnualNeed[] = [];
+  const movements: SparepartMovement[] = [];
 
   spareparts.forEach((sp) => {
     const positions = positionsBySparepart.get(sp.id) || [];
@@ -338,6 +376,13 @@ export const buildPredictiveReport = (
       order_qty: needsOrder ? reorderLevel - stokBaru : 0
     });
 
+    movements.push({
+      sparepart: sp,
+      demand,
+      category: classifyMovement(demand),
+      per_month: demand.rate_per_day * DAYS_PER_MONTH
+    });
+
     const annual = hasDemand ? ceilQty((demand.usage_qty * 365) / demand.window_days) : null;
     annualNeeds.push({
       sparepart: sp,
@@ -358,9 +403,22 @@ export const buildPredictiveReport = (
     (a, b) => Number(b.needs_order) - Number(a.needs_order) || b.order_qty - a.order_qty || a.sparepart.sku.localeCompare(b.sparepart.sku)
   );
 
+  const MOVEMENT_ORDER: Record<MovementClass, number> = {
+    FAST_MOVING: 0,
+    MEDIUM_MOVING: 1,
+    SLOW_MOVING: 2,
+    BELUM_CUKUP_DATA: 3
+  };
+  movements.sort(
+    (a, b) =>
+      MOVEMENT_ORDER[a.category] - MOVEMENT_ORDER[b.category] ||
+      b.per_month - a.per_month ||
+      a.sparepart.sku.localeCompare(b.sparepart.sku)
+  );
+
   const urgentCount =
     positionAlerts.filter((a) => a.status === 'KRITIS' || a.status === 'LEWAT').length +
     stockCoverage.filter((c) => c.needs_order).length;
 
-  return { mtbfBySparepart, positionAlerts, stockCoverage, annualNeeds, urgentCount };
+  return { mtbfBySparepart, positionAlerts, stockCoverage, annualNeeds, movements, urgentCount };
 };

@@ -102,7 +102,7 @@ src/
 | `/print` | `PrintLabelPage` | label QR thermal dan lembar Tom & Jerry, keluaran PDF |
 | `/alerts` | `PredictiveAlertsPage` | umur komponen terpasang (MTBF otomatis) dan kecukupan stok 30 hari @ SLA 98% |
 | `/needs` | `PredictiveNeedsPage` | kebutuhan tahunan dari pemakaian riil, ekspor Excel |
-| `/reports` | `ReportsPage` | klasifikasi fast/medium/slow moving |
+| `/reports` | `ReportsPage` | klasifikasi fast/medium/slow moving dari pemakaian (`predictive.movements`) |
 
 `AppLayout` membungkus semua rute: sidebar, `HeaderStats` (total stok, jumlah "perlu tindakan" = posisi KRITIS/LEWAT + sparepart PESAN dengan tautan ke `/alerts`, status koneksi, tombol muat ulang), banner bila database tidak terhubung, dan pengalihan `?sku=` / `?scan=` ke `/scanner`.
 
@@ -206,7 +206,8 @@ Fungsi murni, diuji dengan `vitest`. Spesifikasi dan contoh angka: [specs/predic
 | `positionStatus(umur, mtbf)` | rasio < `AGE_RATIO_PERHATIAN` (0,7) NORMAL, < `AGE_RATIO_KRITIS` (0,9) PERHATIAN, ≤ 1 KRITIS, > 1 LEWAT |
 | `demandRate(mutasi, now)` | `r` = qty `Pakai` dalam jendela ÷ jendela; jendela = hari sejak transaksi pertama, dibatasi `DEMAND_WINDOW_MIN_DAYS`–`MAX` (30–365) |
 | `poissonReorderPoint(λ, SLA)` | `s` terkecil dengan `P(Poisson(λ) ≤ s) ≥ SLA`; λ > 500 memakai pendekatan normal |
-| `buildPredictiveReport(sparepart, mutasi, unit, now)` | gabungan untuk UI: MTBF per sparepart, `positionAlerts` (hanya unit aktif, paling mendesak dulu), `stockCoverage`, `annualNeeds`, `urgentCount` |
+| `buildPredictiveReport(sparepart, mutasi, unit, now)` | gabungan untuk UI: MTBF per sparepart, `positionAlerts` (hanya unit aktif, paling mendesak dulu), `stockCoverage`, `annualNeeds`, `movements` (rotasi, tercepat dulu), `urgentCount` |
+| `classifyMovement(demand)` | rotasi stok: `FAST_MOVING` bila `qty Pakai × 30 ≥ MOVEMENT_FAST_PER_MONTH × jendela`, `MEDIUM_MOVING` bila ada pemakaian lebih jarang, `SLOW_MOVING` bila tanpa pemakaian dan riwayat ≥ 30 hari, selain itu `BELUM_CUKUP_DATA`. `DemandRate.history_days` = hari sejak transaksi pertama |
 | `PLANNING_HORIZON_DAYS` = 30, `SERVICE_LEVEL` = 0,98 | horizon pengganti lead time (belum ada datanya) dan target layanan |
 
 Kecukupan stok: `λ = r × 30`; `reorder_level = max(titik pesan SLA, minimum_stok + 1)`; PESAN bila `stok baru < reorder_level`. "+1" membuat aturan ini selalu memesan bila `isLowStock` benar. Tanpa `Pakai`, titik pesan SLA kosong dan hanya stok minimum yang berlaku.
@@ -218,7 +219,7 @@ Kecukupan stok: `λ = r × 30`; `reorder_level = max(titik pesan SLA, minimum_st
 ### 6.5 Dashboard
 - **Tren stok 6 bulan**: stok tersedia akhir tiap bulan, dihitung mundur dari stok sekarang dengan membalik mutasi setelah bulan itu.
 - **Level inventaris** (diperiksa berurutan): *Out of Stock* (baru + bekas = 0), lalu *Low Stock* (stok baru ≤ minimum), selebihnya *Healthy*.
-- **Top moving**: total qty semua mutasi per sparepart, 5 teratas; kosong bila belum ada mutasi.
+- **Top moving**: qty `Pakai` dalam jendela kebutuhan (`predictive.movements[].demand.usage_qty`, hingga 12 bulan) per sparepart, 5 teratas; kosong bila belum ada pemakaian.
 
 ### 6.6 Cetak label (`PrintLabelPage`)
 - Preset: thermal 50×30 dan 70×40 mm (satu label), lembar Tom & Jerry 103, 108, 121, 107 (grid).
@@ -270,7 +271,7 @@ Tanpa dua variabel pertama, aplikasi tetap terbuka tetapi menampilkan banner "Da
 
 ## 10. Pengujian dan verifikasi
 
-Tes otomatis: `npm test` (`vitest`), saat ini hanya `src/utils/reliability.test.ts` (contoh angka spesifikasi: MTBF 250 hari, titik pesan 3, ambang status, jendela 30–365, kesesuaian dengan `isLowStock`). Verifikasi lain yang dipakai selama pengembangan:
+Tes otomatis: `npm test` (`vitest`), saat ini hanya `src/utils/reliability.test.ts` (contoh angka spesifikasi: MTBF 250 hari, titik pesan 3, ambang status, jendela 30–365, kesesuaian dengan `isLowStock`, pembulatan kebutuhan tahunan, klasifikasi rotasi). Verifikasi lain yang dipakai selama pengembangan:
 
 1. `npm run typecheck`, `npm run build`, dan `npm test` harus bersih (tanpa peringatan).
 2. **Uji browser** dengan Playwright/Chromium terhadap data live: buka semua rute, pastikan tanpa galat konsol. Semua permintaan tulis (`POST/PATCH/DELETE` ke `/rest/v1/`) **dicegat** dan dijawab palsu supaya data produksi tidak berubah, lalu isi payload yang dicegat diperiksa.

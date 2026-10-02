@@ -112,6 +112,19 @@ Poisson(1,0): P(≤2) = 92,0%, **P(≤3) = 98,1%** → titik pesan SLA = **3**. 
 
 Rekomendasi order tahunan = `max(0, kebutuhan_tahunan − stok_baru)`. Stok bekas tidak lagi ikut dikurangkan (sebelumnya `baru + bekas`), dengan alasan yang sama seperti 4.3: `Pakai` hanya mengambil stok baru.
 
+### 4.5 Klasifikasi rotasi stok (ditambahkan 2 Okt 2026)
+
+Memakai `r` dan jendela yang sama dengan 4.3/4.4, supaya laporan rotasi, kebutuhan tahunan, dan "top moving" di Dashboard satu angka.
+
+| Kelas | Syarat |
+|---|---|
+| Fast | qty `Pakai` dalam jendela × 30 ≥ panjang jendela (rata-rata ≥ 1 per bulan) |
+| Medium | ada `Pakai`, kurang dari itu |
+| Slow | tanpa `Pakai`, riwayat sparepart ≥ 30 hari |
+| Belum cukup data | tanpa `Pakai`, riwayat < 30 hari |
+
+Hanya `Pakai` yang dihitung; Masuk, Bekas, Rusak, dan Serah Terima (termasuk stok awal saat mendaftar) bukan perputaran.
+
 ## 5. Perubahan aplikasi
 
 | Area | Perubahan |

@@ -7,6 +7,7 @@ import {
   ReliabilityUnit,
   buildPositions,
   buildPredictiveReport,
+  classifyMovement,
   demandRate,
   estimateMtbf,
   poissonReorderPoint,
@@ -243,5 +244,57 @@ describe('Laporan gabungan', () => {
     expect(report.positionAlerts[0].status).toBe('KRITIS');
     expect(report.stockCoverage[0].needs_order).toBe(true);
     expect(report.urgentCount).toBe(2);
+  });
+});
+
+describe('Klasifikasi rotasi stok', () => {
+  const now = DAY0 + 400 * DAY_MS;
+  const classify = (muts: ReliabilityMutation[]) => classifyMovement(demandRate(muts, now));
+  const masuk = (dayNo: number): ReliabilityMutation => ({ ...pakai('sp1', null, dayNo), mutation_type: 'Masuk' });
+
+  it('Fast: rata-rata ≥ 1 per bulan; Medium: ada pemakaian tetapi lebih jarang', () => {
+    // jendela penuh 365 hari = 12,17 bulan: 13 Pakai ≥ 1 per bulan, 12 Pakai kurang dari itu
+    const many = Array.from({ length: 13 }, (_, i) => pakai('sp1', 'A', 40 + i * 25));
+    const few = Array.from({ length: 12 }, (_, i) => pakai('sp1', 'A', 40 + i * 25));
+    expect(classify([masuk(0), ...many])).toBe('FAST_MOVING');
+    expect(classify([masuk(0), ...few])).toBe('MEDIUM_MOVING');
+    expect(classify([masuk(0), pakai('sp1', 'A', 300)])).toBe('MEDIUM_MOVING');
+  });
+
+  it('batas Fast tepat 1 per bulan pada jendela 30 hari', () => {
+    const recent = (qty: number) => [{ ...masuk(0), created_at: day(380) }, pakai('sp1', 'A', 390, qty)];
+    expect(classify(recent(1))).toBe('FAST_MOVING'); // 1 per 30 hari
+  });
+
+  it('transaksi selain Pakai tidak membuat sparepart menjadi Fast', () => {
+    // stok awal baru + bekas dicatat sebagai dua transaksi, tetapi belum pernah dipakai
+    const registered = [masuk(0), { ...masuk(0), mutation_type: 'Bekas' as const }];
+    expect(classify(registered)).toBe('SLOW_MOVING');
+  });
+
+  it('Pakai di luar jendela 12 bulan tidak dihitung: jadi Slow', () => {
+    expect(classify([masuk(0), pakai('sp1', 'A', 10)])).toBe('SLOW_MOVING');
+  });
+
+  it('sparepart yang baru dikenal (< 30 hari) tanpa pemakaian: belum cukup data', () => {
+    expect(classifyMovement(demandRate([{ ...masuk(0), created_at: day(390) }], now))).toBe('BELUM_CUKUP_DATA');
+    expect(classifyMovement(demandRate([], now))).toBe('BELUM_CUKUP_DATA');
+  });
+
+  it('laporan mengurutkan Fast lebih dulu dan mengisi per_month', () => {
+    const muts = [
+      masuk(0),
+      ...Array.from({ length: 13 }, (_, i) => pakai('sp1', 'A', 40 + i * 25)),
+      { ...pakai('sp2', 'A', 300), sparepart_id: 'sp2' }
+    ];
+    const report = buildPredictiveReport(
+      [part({ id: 'sp2', sku: 'SP-002' }), part({ id: 'sp1', sku: 'SP-001' })],
+      muts,
+      activeUnits,
+      now
+    );
+    expect(report.movements.map((m) => m.sparepart.id)).toEqual(['sp1', 'sp2']);
+    expect(report.movements[0].category).toBe('FAST_MOVING');
+    expect(report.movements[0].per_month).toBeCloseTo((13 / 365) * 30);
   });
 });

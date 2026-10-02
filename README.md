@@ -8,7 +8,7 @@ Produksi: **https://masih-berapa.vercel.app** · Repo: `seevent/masih-berapa`
 
 | Modul | Rute | Fungsi |
 |---|---|---|
-| Dashboard | `/` | total stok dan tren 6 bulan, SKU di bawah minimum, rasio baru vs bekas, level inventaris, top moving, transaksi terbaru |
+| Dashboard | `/` | total stok dan tren 6 bulan, SKU di bawah minimum, rasio baru vs bekas, level inventaris, top moving (pemakaian), transaksi terbaru |
 | Katalog | `/catalog` | CRUD sparepart (grid/list), SKU otomatis `SP-001`, banyak tipe peralatan kompatibel |
 | Input Transaksi | `/input-sparepart` | catat **Masuk, Pakai, Bekas, Rusak, Serah Terima**; pilih lokasi/unit (**Pakai wajib unit**); petugas = personel yang sedang berdinas |
 | History & Audit | `/history` | riwayat dengan aliran stok, edit, hapus, ekspor Excel |
@@ -16,7 +16,7 @@ Produksi: **https://masih-berapa.vercel.app** · Repo: `seevent/masih-berapa`
 | Cetak Label | `/print` | label thermal 50×30 / 70×40 mm dan lembar stiker Tom & Jerry, keluaran PDF |
 | Peringatan | `/alerts` | umur komponen terpasang per unit vs **MTBF otomatis** dari data; kecukupan stok 30 hari @ SLA 98% (titik pesan Poisson) |
 | Kebutuhan | `/needs` | kebutuhan tahunan dari pemakaian riil dan rekomendasi order, ekspor Excel |
-| Laporan | `/reports` | klasifikasi fast / medium / slow moving |
+| Laporan | `/reports` | klasifikasi fast / medium / slow moving dari pemakaian (`Pakai`) 12 bulan terakhir |
 
 ## Cara kerja stok
 
