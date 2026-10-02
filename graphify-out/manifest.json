@@ -910,8 +910,8 @@
     "semantic_hash": ""
   },
   "src/utils/shiftUtils.ts": {
-    "mtime": 1790930771.373452,
-    "ast_hash": "970e5b798062c98852210d82c318fa84",
+    "mtime": 1790961166.926052,
+    "ast_hash": "0bf930ecedfb0fc942f1d55696fd674d",
     "semantic_hash": ""
   },
   "docs/migrations/2026-10-02_aliran_stok.sql": {
@@ -955,8 +955,8 @@
     "semantic_hash": ""
   },
   "docs/ARCHITECTURE.md": {
-    "mtime": 1790960296.1001458,
-    "ast_hash": "a083a4f92aa7b0a225023f2e505446ad",
+    "mtime": 1790961240.1516137,
+    "ast_hash": "39d1516e4043e1c1083104b2179ece28",
     "semantic_hash": ""
   },
   "docs/DATABASE.md": {
@@ -965,8 +965,8 @@
     "semantic_hash": ""
   },
   "docs/PRD.md": {
-    "mtime": 1790960296.0996778,
-    "ast_hash": "44d9e9d5468156969fc51ba3de616d9f",
+    "mtime": 1790961185.1991835,
+    "ast_hash": "747c0739ed012144b28a11fe634c3150",
     "semantic_hash": ""
   },
   "docs/migrations/2026-10-02_pakai_wajib_unit.sql": {
@@ -1002,6 +1002,11 @@
   "docs/migrations/2026-10-02_kompatibilitas_dari_tipe_utama.sql": {
     "mtime": 1790959389.0251493,
     "ast_hash": "c8ee9f367c7bd308663abe1c0183b569",
+    "semantic_hash": ""
+  },
+  "src/utils/shiftUtils.test.ts": {
+    "mtime": 1790961166.930441,
+    "ast_hash": "293fe4196145553b0125f65e6eeeb925",
     "semantic_hash": ""
   }
 }

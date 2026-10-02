@@ -101,7 +101,7 @@ Lima tipe transaksi; detail aturan di [bagian 7](#7-aturan-bisnis).
 | Rusak | memindahkan barang yang tidak layak pakai ke stok rusak | **asal: stok baru atau stok bekas**; lokasi/unit (opsional) |
 | Serah Terima | menyerahkan atau menerima barang ke/dari pihak lain | **arah** (serahkan/terima), **kondisi** (baru/bekas/rusak), **pihak** (wajib), unit pihak |
 
-- Setiap transaksi wajib punya petugas; pilihan petugas = personel yang berdinas pada shift saat ini (bila jadwal kosong, semua personel + peringatan).
+- Setiap transaksi wajib punya petugas; pilihan petugas = personel yang berdinas pada shift saat ini (bila jadwal kosong, semua personel + peringatan), diurutkan **API dulu, lalu IAS**, di dalam unit menurut nomor urut.
 - Ada kolom catatan.
 - **Kriteria:** transaksi yang membuat stok kantong mana pun minus **ditolak** dengan pesan jelas dan tidak tersimpan.
 - **Kriteria:** `Pakai` tanpa unit tidak bisa dikirim dari form dan ditolak oleh aplikasi (BR-13).

@@ -195,6 +195,7 @@ Untuk sebuah sparepart: kumpulkan semua tipe di `sparepart_compatibility` (kolom
 - Seorang personel berdinas bila ada baris `jadwal_shift` pada tanggal operasional dengan shift yang cocok (`PS`/`Pagi`/`Siang` atau `M`/`Malam`) dan status kehadiran bukan izin, sakit, cuti, alpa, off, atau libur.
 - Bila tidak ada jadwal sama sekali, daftar personel jatuh kembali ke **semua personel** dan UI menampilkan peringatan.
 - Nama ditampilkan dengan awalan unit kerja, mis. `[OM/IAS T2] Nama`.
+- **Urutan daftar:** unit **API** dulu, lalu **IAS**, lalu unit lain (menurut nama unit), lalu personel tanpa unit; di dalam unit menurut `personel.urutan` (kosong di akhir), lalu nama (`compareDutyPersonel`). Berlaku juga pada daftar cadangan.
 
 ### 6.3 Predictive maintenance (`utils/reliability.ts`)
 Fungsi murni, diuji dengan `vitest`. Spesifikasi dan contoh angka: [specs/predictive-maintenance.md](specs/predictive-maintenance.md).
@@ -272,14 +273,14 @@ Tanpa dua variabel pertama, aplikasi tetap terbuka tetapi menampilkan banner "Da
 
 ## 10. Pengujian dan verifikasi
 
-Tes otomatis: `npm test` (`vitest`), saat ini hanya `src/utils/reliability.test.ts` (contoh angka spesifikasi: MTBF 250 hari, titik pesan 3, ambang status, jendela 30–365, kesesuaian dengan `isLowStock`, pembulatan kebutuhan tahunan, klasifikasi rotasi). Verifikasi lain yang dipakai selama pengembangan:
+Tes otomatis: `npm test` (`vitest`), saat ini `src/utils/reliability.test.ts` dan `src/utils/shiftUtils.test.ts` (urutan personel berdinas) (contoh angka spesifikasi: MTBF 250 hari, titik pesan 3, ambang status, jendela 30–365, kesesuaian dengan `isLowStock`, pembulatan kebutuhan tahunan, klasifikasi rotasi). Verifikasi lain yang dipakai selama pengembangan:
 
 1. `npm run typecheck`, `npm run build`, dan `npm test` harus bersih (tanpa peringatan).
 2. **Uji browser** dengan Playwright/Chromium terhadap data live: buka semua rute, pastikan tanpa galat konsol. Semua permintaan tulis (`POST/PATCH/DELETE` ke `/rest/v1/`) **dicegat** dan dijawab palsu supaya data produksi tidak berubah, lalu isi payload yang dicegat diperiksa.
 3. **Uji database** dalam blok `DO $$ ... RAISE EXCEPTION` yang dibatalkan, juga sebagai `SET LOCAL ROLE anon` untuk menguji RLS.
 4. **Uji konsistensi stok** dengan vektor di [DATABASE.md 3.3](DATABASE.md#33-dua-implementasi-yang-harus-selalu-sama): view dan `utils/stock.ts` harus sama (4 / 5 / 2).
 
-Kandidat tes berikutnya: `utils/stock.ts` (termasuk vektor uji 4 / 5 / 2), `utils/shiftUtils.ts`, `utils/compatibility.ts`.
+Kandidat tes berikutnya: `utils/stock.ts` (termasuk vektor uji 4 / 5 / 2), `utils/compatibility.ts`.
 
 ## 11. Keputusan desain
 
