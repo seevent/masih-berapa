@@ -1,5 +1,7 @@
 # Technical Specification: Schema Alignment & Multi-Compatibility Support
 
+> **⚠️ Dokumen historis.** Dibuat pada tahap awal pengembangan (Juli 2026) dan **tidak lagi mencerminkan produk saat ini** (mis. nama tipe transaksi, kolom stok di database, model stok). Acuan terkini: [PRD](../PRD.md), [ARCHITECTURE](../ARCHITECTURE.md), [DATABASE](../DATABASE.md).
+
 ## 1. Overview & Objective
 - **Problem Statement**: The application needs to strictly align with the user's 13-table Supabase PostgreSQL database schema (`jenis_peralatan`, `tipe_peralatan`, `lokasi`, `titik_lokasi`, `penempatan_peralatan`, `unit_kerja`, `personel`, `jadwal_shift`, `master_configs`, `unit_peralatan`, `spareparts`, `stock_mutations`, `sparepart_compatibility`). Specifically:
   1. `stock_mutations.mutation_type` must strictly use exact PostgreSQL values: `'Masuk'`, `'Pakai'`, `'Bekas'`, `'Rusak'`.

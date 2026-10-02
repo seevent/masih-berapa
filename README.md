@@ -1,114 +1,127 @@
-# SSES T2 Sparepart Management ("Masih Berapa") 🛠️📦
+# Masih Berapa
 
-A mobile-friendly web application for managing equipment, spareparts, inventory mutations, rotable assets, predictive maintenance, and annual demand planning for SSES T2.
+**Manajemen sparepart SSES T2** — catat setiap barang masuk, dipakai, dikembalikan bekas, rusak, atau diserahterimakan, dan lihat stoknya *saat itu juga*. Barang diidentifikasi dengan label QR yang dipindai dari kamera HP.
 
-![React](https://img.shields.io/badge/React-19-61dafb?logo=react)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?logo=typescript)
-![TailwindCSS](https://img.shields.io/badge/Tailwind-v4-06b6d4?logo=tailwindcss)
-![Vite](https://img.shields.io/badge/Vite-v6-646cff?logo=vite)
-![Supabase](https://img.shields.io/badge/Supabase-Supported-3ecf8e?logo=supabase)
+Produksi: **https://masih-berapa.vercel.app** · Repo: `seevent/masih-berapa`
 
----
+## Fitur
 
-## 📌 Features & Key Modules
+| Modul | Rute | Fungsi |
+|---|---|---|
+| Dashboard | `/` | total stok dan tren 6 bulan, SKU di bawah minimum, rasio baru vs bekas, level inventaris, top moving, transaksi terbaru |
+| Katalog | `/catalog` | CRUD sparepart (grid/list), SKU otomatis `SP-001`, banyak tipe peralatan kompatibel |
+| Input Transaksi | `/input-sparepart` | catat **Masuk, Pakai, Bekas, Rusak, Serah Terima**; pilih lokasi/unit; petugas = personel yang sedang berdinas |
+| History & Audit | `/history` | riwayat dengan aliran stok, edit, hapus, ekspor Excel |
+| Scanner QR | `/scanner` | pindai QR dengan kamera atau ketik SKU/URL, lalu catat transaksi |
+| Cetak Label | `/print` | label thermal 50×30 / 70×40 mm dan lembar stiker Tom & Jerry, keluaran PDF |
+| Peringatan | `/alerts` | status KRITIS / PERINGATAN / AMAN dari MTBF dan stok |
+| Kebutuhan | `/needs` | estimasi kebutuhan tahunan dan rekomendasi order, ekspor Excel |
+| Laporan | `/reports` | klasifikasi fast / medium / slow moving |
+| Pengaturan | `/settings` | status koneksi dan data master (lihat [batasan](#batasan-yang-diketahui)) |
 
-- 📊 **Dashboard & Visual Analytics**: Live KPI cards, 6-month stock trend reconstructed from real mutations, inventory level distribution, new vs. used stock ratio, top moving parts and recent transactions.
-- 📦 **Sparepart Catalog**: Searchable and multi-filterable catalog with Grid / List view, automatic `SP-001` SKU numbering and multi-tipe compatibility (`sparepart_compatibility`).
-- 🔄 **Transaction Mutations**: Instant logging for `Masuk` (Penerimaan), `Pakai` (Pemakaian Work Order), `Bekas` (Pengembalian Rotable), and `Rusak` (Afkir). Stock is never edited directly: it is always the sum of `stock_mutations`, and every transaction is validated against the latest stock in the database. Includes **6 Dynamic Source Options** (`IAS`, `SUP API`, `SISA PEKERJAAN`, `MANDIRI`, `DARI UNIT LAIN`, `VENDOR`) on incoming transactions.
-- 📜 **Audit History Log & Management**: Full CRUD support to edit or delete mutation records with automatic real-time stock recalculation, search filters, and 1-click Excel (`.xlsx`) export.
-- 📷 **Mobile QR Code Scanner**: Built-in camera barcode/QR scanner (`html5-qrcode`) for fast SKU lookups and on-the-spot inventory updates.
-- 🏷️ **QR Label Generator**: Thermal labels (50x30mm & 70x40mm) and Tom & Jerry sticker sheets at true size, with QR code, `SKU`, `Nama Sparepart`, `Sumber`, `Tipe Peralatan`, and PDF download (`jspdf` & `html2canvas-pro`).
-- ⚠️ **Predictive Maintenance Alerts**: MTBF lifespan tracking (`remaining_days = mtbf_days - (current_date - last_replaced_at)`), where `last_replaced_at` is automatically the latest `Pakai` transaction.
-- 📈 **Annual Demand Planner**: `order_needed_qty = annual_forecast - (stok_aktual + stok_bekas)`, where the forecast is the real `Pakai` usage of the last 12 months (or `365 / MTBF × installed compatible units` when there is no history yet), with Excel export.
-- ⚙️ **Master Data**: Add forms for `unit_peralatan`, `jenis_peralatan`, `tipe_peralatan`, `lokasi`, `titik_lokasi` and `personel`, read directly from Supabase.
+## Cara kerja stok
 
----
+Aplikasi **tidak menyimpan saldo**. Stok dihitung dari seluruh riwayat transaksi, jadi selalu bisa diaudit. Ada tiga kantong stok: **baru**, **bekas** (layak pakai kembali), dan **rusak**. Setiap transaksi memindahkan jumlah dari satu kantong ke kantong lain:
 
-## 🛠️ Tech Stack
+| Transaksi | Berkurang dari | Bertambah ke |
+|---|---|---|
+| Masuk | luar gudang | baru |
+| Pakai | baru | keluar gudang |
+| Bekas | luar gudang | bekas |
+| Rusak | baru **atau** bekas | rusak |
+| Serah Terima (serahkan) | baru / bekas / rusak | keluar gudang |
+| Serah Terima (terima) | luar gudang | baru / bekas / rusak |
 
-- **Frontend Core**: React 19, TypeScript, Vite 6, Tailwind CSS v4, Motion (Animations)
-- **Icons & Visuals**: Lucide React, Recharts
-- **Database & Cloud**: Supabase Client (`@supabase/supabase-js`), configured via `.env`
-- **Scanner & QR**: `html5-qrcode`, `qrcode.react`
-- **Document Export**: `xlsx` (Excel), `jspdf` & `html2canvas-pro` (PDF)
+Stok di kantong mana pun tidak boleh minus; transaksi yang membuatnya minus ditolak.
 
----
+## Teknologi
 
-## 🚀 Getting Started
+React 19 · TypeScript 5.9 (strict) · Vite 6 · Tailwind CSS 4 · React Router 7 · Supabase (`@supabase/supabase-js`) · Recharts · `html5-qrcode` + `qrcode.react` · `xlsx` · `jspdf` + `html2canvas-pro` · `lucide-react`
 
-### Prerequisites
+Tanpa backend: browser berbicara langsung ke Supabase. Hosting di Vercel.
 
-- Node.js (v18 or higher recommended)
-- npm or yarn
+## Memulai
 
-### Installation
+Prasyarat: **Node.js 18 atau lebih baru** dan akses ke project Supabase.
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/seevent/masih-berapa.git
-   cd masih-berapa
-   ```
+```bash
+git clone https://github.com/seevent/masih-berapa.git
+cd masih-berapa
+npm install
+cp .env.example .env      # lalu isi nilainya (lihat tabel di bawah)
+npm run dev               # http://localhost:5173
+```
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+### Variabel lingkungan
 
-   Then copy `.env.example` to `.env` and fill in `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY`.
+| Variabel | Wajib | Keterangan |
+|---|---|---|
+| `VITE_SUPABASE_URL` | ya | URL project Supabase |
+| `VITE_SUPABASE_ANON_KEY` | ya | anon / publishable key |
+| `VITE_PUBLIC_APP_URL` | tidak | URL yang dienkode di QR label; bawaan `https://masih-berapa.vercel.app`. Atur **sebelum** mencetak label bila domain berbeda |
 
-3. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
-   Open [http://localhost:5173](http://localhost:5173) in your browser.
+Tanpa dua variabel pertama aplikasi tetap terbuka tetapi menampilkan "Database tidak terhubung". Di Vercel, isi variabel untuk lingkungan **Production dan Preview**.
 
-4. **Type-check & build for production** (the build fails on TypeScript errors):
-   ```bash
-   npm run typecheck
-   npm run build
-   ```
+### Perintah
 
----
+| Perintah | Fungsi |
+|---|---|
+| `npm run dev` | server pengembangan |
+| `npm run typecheck` | periksa tipe (`tsc --noEmit`) |
+| `npm run build` | periksa tipe lalu build ke `dist/` (galat tipe menggagalkan build) |
+| `npm run preview` | jalankan hasil build secara lokal |
 
-## 📂 Project Structure
+`node_modules/` dan `dist/` tidak disimpan di git; jalankan `npm install` setelah mengambil kode.
+
+## Struktur proyek
 
 ```
 masih-berapa/
-├── docs/                   # Technical specs & development tickets
 ├── src/
-│   ├── components/         # Reusable UI & Modal components
-│   ├── context/            # InventoryContext & Global State Manager
-│   ├── lib/                # Supabase client (paginated fetch) & analytics helpers
-│   ├── pages/              # Main Application Page Views
-│   ├── types/              # TypeScript Interfaces & Database Schemas
-│   ├── utils/              # Stock, compatibility & shift helpers
-│   ├── App.tsx             # Main Router & Layout
-│   └── main.tsx            # Application Entry Point
-├── package.json
-├── tsconfig.json
-├── vite.config.ts
-└── README.md
+│   ├── pages/        # satu file per rute
+│   ├── components/   # layout/, mutation/ (field Rusak & Serah Terima)
+│   ├── context/      # InventoryContext (semua data + aksi), NotificationContext (toast)
+│   ├── utils/        # stock.ts (aturan stok), compatibility.ts, shiftUtils.ts
+│   ├── lib/          # klien Supabase
+│   └── types/        # tipe domain
+├── docs/             # dokumentasi (lihat di bawah) + migrations/ + skema SQL
+├── AGENTS.md         # panduan untuk agen AI
+├── vercel.json       # rewrite SPA
+└── .env.example
 ```
 
----
+## Dokumentasi
 
-## 🗄️ Database Schema & Supabase
+| Dokumen | Isi |
+|---|---|
+| [docs/PRD.md](docs/PRD.md) | produk: masalah, tujuan, pengguna, kebutuhan, aturan bisnis, roadmap |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | arsitektur: komponen, aliran data, mesin stok, build/deploy, keputusan desain |
+| [docs/DATABASE.md](docs/DATABASE.md) | skema Supabase, model stok, RLS, migrasi, risiko |
+| [AGENTS.md](AGENTS.md) | aturan kerja untuk agen AI di repo ini |
+| [HANDOFF.md](HANDOFF.md) | catatan serah terima sesi (snapshot Juli 2026, sebagian sudah usang) |
+| `docs/specs/`, `docs/tickets/` | spesifikasi dan tiket lama (**historis**, sudah tidak sesuai produk saat ini) |
+| `graphify-out/` | knowledge graph kode (`graphify update .` untuk memperbarui) |
 
-The app reads and writes a Supabase PostgreSQL database (see `docs/schema_relational_supabase.sql`):
-`jenis_peralatan`, `tipe_peralatan`, `lokasi`, `titik_lokasi`, `unit_peralatan`, `penempatan_peralatan`, `unit_kerja`, `personel`, `jadwal_shift`, `master_configs`, `spareparts`, `stock_mutations`, `sparepart_compatibility`.
+## Database
 
-- `spareparts` stores no stock columns. Stock is derived from `stock_mutations`, where every row moves `qty` from `stok_asal` to `stok_tujuan` (buckets `baru` / `bekas` / `rusak`, `NULL` = outside the warehouse):
+Supabase PostgreSQL yang **dipakai bersama aplikasi SSES T2 lain**. Tabel milik aplikasi ini: master peralatan/lokasi/personel (bersama), `spareparts`, `stock_mutations`, `sparepart_compatibility`. Perubahan skema harus lewat migrasi di `docs/migrations/` dan persetujuan pemilik database. Lihat [docs/DATABASE.md](docs/DATABASE.md).
 
-  | Type | From | To |
-  |---|---|---|
-  | `Masuk` | outside | baru |
-  | `Pakai` | baru | outside |
-  | `Bekas` | outside | bekas |
-  | `Rusak` | baru or bekas | rusak |
-  | `Serah Terima` (terima) | outside | baru, bekas or rusak |
-  | `Serah Terima` (serahkan) | baru, bekas or rusak | outside |
+## Batasan yang diketahui
 
-  The same rules are used by the app (`src/utils/stock.ts`) and the `current_stock` view (`docs/migrations/2026-10-02_aliran_stok.sql`). Usable stock is baru + bekas; the annual forecast counts only `Pakai`.
-- Deleting a sparepart also deletes its mutation history (`ON DELETE CASCADE`); the UI asks for confirmation.
-- Credentials come only from `.env` (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`). `VITE_PUBLIC_APP_URL` sets the URL encoded in printed QR labels.
-- ⚠️ The app has no login. RLS policies give the anon key full access to `spareparts`, `stock_mutations` and `sparepart_compatibility`, so anyone with the deployed URL can change stock data.
+- **Belum ada login.** Semua permintaan berjalan sebagai `anon`. Akibatnya: (1) siapa pun yang membuka aplikasi dapat mengubah data stok; (2) form **Jenis, Tipe, Lokasi, Titik, dan Personel** di Pengaturan **gagal** karena database mensyaratkan login untuk tabel tersebut (Unit Peralatan dan Katalog berfungsi).
+- Data pribadi personel (NIK, no. HP) terbaca publik oleh kebijakan database saat ini.
+- Validasi stok minus dilakukan di aplikasi dan tidak atomik terhadap pencatatan yang bersamaan.
+- Bukan PWA (tidak bisa di-install dan tidak bisa offline).
+- Belum ada tes otomatis.
+- Pengaturan data master hanya bisa menambah; belum ada edit/hapus.
+- Margin lembar Tom & Jerry (3 mm, jarak 2 mm) belum dicocokkan dengan lembar fisik.
+
+Daftar lengkap dan rencana penanganannya: [PRD.md bagian 12](docs/PRD.md#12-status-dan-roadmap) dan [ARCHITECTURE.md bagian 12](docs/ARCHITECTURE.md#12-utang-teknis-dan-batasan).
+
+## Alur kontribusi
+
+Kerjakan di branch, buka Pull Request, dan biarkan pemilik me-merge. Vercel membuat link preview per PR (memakai database produksi yang sama). Jalankan `npm run typecheck` dan `npm run build` sebelum membuka PR. Panduan lebih rinci untuk agen AI ada di [AGENTS.md](AGENTS.md).
+
+## Lisensi
+
+Belum ditetapkan.

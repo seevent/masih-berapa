@@ -1,5 +1,7 @@
 # Specification: Dashboard Manajemen Sparepart (Physical Quantity & Stock Health Focus)
 
+> **⚠️ Dokumen historis.** Dibuat pada tahap awal pengembangan (Juli 2026) dan **tidak lagi mencerminkan produk saat ini** (mis. nama tipe transaksi, kolom stok di database, model stok). Acuan terkini: [PRD](../PRD.md), [ARCHITECTURE](../ARCHITECTURE.md), [DATABASE](../DATABASE.md).
+
 ## 1. Problem Statement & Executive Summary
 Pengguna meminta untuk menghapus seluruh elemen bernilai finansial, harga, modal, penghematan, dan valuasi rupiah. Dashboard Manajemen Sparepart kini berfokus murni pada **Analisis Kuantitas Fisik & Kesehatan Stok Sparepart**:
 - Rotasi Fisik & Volume Konsumsi Sparepart (Klasifikasi ABC berbasis Frekuensi/Volume Pemakaian).
