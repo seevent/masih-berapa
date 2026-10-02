@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { NotificationProvider } from './context/NotificationContext';
 import { InventoryProvider } from './context/InventoryContext';
 import { AppLayout } from './components/layout/AppLayout';
@@ -15,7 +15,6 @@ const PrintLabelPage = lazy(() => import('./pages/PrintLabelPage').then((m) => (
 const PredictiveAlertsPage = lazy(() => import('./pages/PredictiveAlertsPage').then((m) => ({ default: m.PredictiveAlertsPage })));
 const PredictiveNeedsPage = lazy(() => import('./pages/PredictiveNeedsPage').then((m) => ({ default: m.PredictiveNeedsPage })));
 const ReportsPage = lazy(() => import('./pages/ReportsPage').then((m) => ({ default: m.ReportsPage })));
-const SettingsPage = lazy(() => import('./pages/SettingsPage').then((m) => ({ default: m.SettingsPage })));
 
 const PageFallback: React.FC = () => (
   <div className="py-20 text-center text-sm text-slate-500">Memuat halaman...</div>
@@ -39,7 +38,8 @@ export const App: React.FC = () => {
               <Route path="alerts" element={page(<PredictiveAlertsPage />)} />
               <Route path="needs" element={page(<PredictiveNeedsPage />)} />
               <Route path="reports" element={page(<ReportsPage />)} />
-              <Route path="settings" element={page(<SettingsPage />)} />
+              {/* Alamat yang tidak dikenal (termasuk /settings lama) kembali ke Dashboard */}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>
         </BrowserRouter>

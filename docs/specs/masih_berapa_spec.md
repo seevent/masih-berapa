@@ -1,5 +1,7 @@
 # Technical Specification: SSES T2 Sparepart Management - "Masih Berapa" (v1.0.0)
 
+> **⚠️ Dokumen historis.** Dibuat pada tahap awal pengembangan (Juli 2026) dan **tidak lagi mencerminkan produk saat ini** (mis. nama tipe transaksi, kolom stok di database, model stok). Acuan terkini: [PRD](../PRD.md), [ARCHITECTURE](../ARCHITECTURE.md), [DATABASE](../DATABASE.md).
+
 ## 1. Overview & Objectives
 **System Name**: SSES T2 Sparepart Management ("Masih Berapa")  
 **Target Platform**: Progressive Web App (PWA) / Desktop & Mobile Web  

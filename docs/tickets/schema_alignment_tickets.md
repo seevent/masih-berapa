@@ -1,5 +1,7 @@
 # Ticket Decomposition: Schema Alignment & Multi-Compatibility Support
 
+> **⚠️ Dokumen historis.** Dibuat pada tahap awal pengembangan (Juli 2026) dan **tidak lagi mencerminkan produk saat ini** (mis. nama tipe transaksi, kolom stok di database, model stok). Acuan terkini: [PRD](../PRD.md), [ARCHITECTURE](../ARCHITECTURE.md), [DATABASE](../DATABASE.md).
+
 ## Dependency Map
 - **TICKET-1**: Data Models, Seed Data & Supabase 13-Table Client Alignment
   └── **TICKET-2**: Inventory Context & State Management Update

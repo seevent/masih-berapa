@@ -4,10 +4,17 @@ import * as XLSX from 'xlsx';
 import { useInventory } from '../context/InventoryContext';
 
 export const PredictiveNeedsPage: React.FC = () => {
-  const { getAnnualNeeds } = useInventory();
-  const needs = getAnnualNeeds();
+  const { predictive } = useInventory();
+  const needs = predictive.annualNeeds;
 
-  const totalOrderUnits = needs.reduce((sum, n) => sum + n.order_needed_qty, 0);
+  // Spareparts use different units (PCS, UNIT, ...): total per unit instead of one mixed sum
+  const orderTotalsByUnit = new Map<string, number>();
+  needs.forEach((n) => {
+    if (n.order_needed_qty <= 0) return;
+    const unit = n.sparepart.unit || 'PCS';
+    orderTotalsByUnit.set(unit, (orderTotalsByUnit.get(unit) || 0) + n.order_needed_qty);
+  });
+  const orderTotals = Array.from(orderTotalsByUnit.entries());
   const itemsNeedingOrderCount = needs.filter((n) => n.order_needed_qty > 0).length;
 
   const handleExportNeedsExcel = () => {
@@ -15,13 +22,14 @@ export const PredictiveNeedsPage: React.FC = () => {
       SKU: n.sparepart.sku,
       'Nama Sparepart': n.sparepart.name,
       Peralatan: n.sparepart.equipment_type_name,
-      'Stok Baru (Unit)': n.sparepart.stok_aktual,
+      'Stok Baru (Unit)': n.stok_baru,
       'Stok Bekas (Unit)': n.sparepart.stok_bekas,
-      'Total Stok Fisik Ada': n.total_available_stock,
-      'Estimasi Kebutuhan Tahunan (Unit)': n.annual_forecast_qty,
-      'Dasar Estimasi': n.forecast_basis === 'HISTORY' ? 'Pemakaian riil 12 bulan' : 'MTBF x unit terpasang',
+      'Total Pakai dalam Jendela (Unit)': n.demand.usage_qty,
+      'Jendela Pengamatan (Hari)': Math.round(n.demand.window_days),
+      'Estimasi Kebutuhan Tahunan (Unit)': n.annual_forecast_qty ?? 'Belum cukup data',
       'Kuantitas Rekomendasi Order (Unit)': n.order_needed_qty,
-      'Status Defisit': n.order_needed_qty > 0 ? 'PERLU PASOKAN' : 'STOK CUKUP'
+      'Status Defisit':
+        n.annual_forecast_qty === null ? 'BELUM CUKUP DATA' : n.order_needed_qty > 0 ? 'PERLU PASOKAN' : 'STOK CUKUP'
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -37,7 +45,7 @@ export const PredictiveNeedsPage: React.FC = () => {
         <div>
           <h1 className="text-2xl md:text-3xl font-extrabold text-white">Perencanaan Kebutuhan (Demand Forecast)</h1>
           <p className="text-sm text-slate-400 mt-1">
-            Modul estimasi kebutuhan kuantitas suku cadang tahunan berdasarkan MTBF, stok fisik, dan perputaran unit.
+            Estimasi kebutuhan sparepart setahun dari pemakaian riil (transaksi Pakai) dan stok baru di gudang.
           </p>
         </div>
 
@@ -56,7 +64,16 @@ export const PredictiveNeedsPage: React.FC = () => {
           <div>
             <span className="text-xs font-semibold text-slate-400 uppercase">TOTAL REKOMENDASI ORDER</span>
             <div className="text-3xl font-bold text-white mt-1">
-              {totalOrderUnits.toLocaleString('id-ID')} <span className="text-xs text-slate-400 font-normal">Unit</span>
+              {orderTotals.length === 0 ? (
+                <>0 <span className="text-xs text-slate-400 font-normal">Unit</span></>
+              ) : (
+                orderTotals.map(([unit, qty], idx) => (
+                  <span key={unit}>
+                    {idx > 0 && <span className="text-slate-600 font-normal"> + </span>}
+                    {qty.toLocaleString('id-ID')} <span className="text-xs text-slate-400 font-normal">{unit}</span>
+                  </span>
+                ))
+              )}
             </div>
           </div>
           <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
@@ -81,9 +98,10 @@ export const PredictiveNeedsPage: React.FC = () => {
       <div className="glass-panel p-4 rounded-xl border border-cyan-500/30 bg-cyan-950/20 text-xs text-cyan-200 flex items-center gap-3">
         <Calculator className="w-5 h-5 text-cyan-400 shrink-0" />
         <div>
-          <span className="font-bold">Formula Perhitungan Otomatis:</span> Kuantitas Rekomendasi Order = Estimasi Kebutuhan Tahunan - (Stok Baru + Stok Bekas Layak Pakai).
-          {' '}Estimasi tahunan memakai total transaksi Pakai 12 bulan terakhir (disetahunkan bila riwayat lebih pendek);
-          bila belum ada pemakaian, dipakai 365 / MTBF x jumlah unit peralatan kompatibel yang operasi/standby.
+          <span className="font-bold">Formula Perhitungan Otomatis:</span> Kebutuhan Tahunan = kebutuhan per hari × 365 (dibulatkan ke atas),
+          {' '}dengan kebutuhan per hari = total Pakai dalam jendela pengamatan ÷ panjang jendela (hari sejak transaksi pertama, 30–365 hari).
+          {' '}Rekomendasi Order = Kebutuhan Tahunan − Stok Baru (Pakai hanya mengambil stok baru).
+          {' '}Sparepart tanpa transaksi Pakai berstatus &quot;belum cukup data&quot;.
         </div>
       </div>
 
@@ -95,14 +113,14 @@ export const PredictiveNeedsPage: React.FC = () => {
               <tr>
                 <th className="py-3.5 px-4 whitespace-nowrap">SKU & Sparepart</th>
                 <th className="py-3.5 px-4 whitespace-nowrap">Peralatan</th>
-                <th className="py-3.5 px-4 text-center whitespace-nowrap">Stok Ada (Baru/Bekas)</th>
+                <th className="py-3.5 px-4 text-center whitespace-nowrap">Stok Baru</th>
                 <th className="py-3.5 px-4 text-center whitespace-nowrap">Kebutuhan Tahunan</th>
                 <th className="py-3.5 px-4 text-center whitespace-nowrap">Rekomendasi Order</th>
                 <th className="py-3.5 px-4 text-center whitespace-nowrap">Status Defisit</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-xs">
-              {needs.map(({ sparepart: sp, total_available_stock, annual_forecast_qty, order_needed_qty, forecast_basis }) => (
+              {needs.map(({ sparepart: sp, stok_baru, demand, annual_forecast_qty, order_needed_qty }) => (
                 <tr key={sp.id} className="hover:bg-slate-800/40 transition-colors">
                   <td className="py-3.5 px-4">
                     <div className="font-mono text-cyan-400 font-bold">{sp.sku}</div>
@@ -112,14 +130,20 @@ export const PredictiveNeedsPage: React.FC = () => {
                     {sp.equipment_type_name}
                   </td>
                   <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                    <span className="font-bold text-white">{total_available_stock} {sp.unit}</span>
-                    <div className="text-[10px] text-slate-400">({sp.stok_aktual} baru / {sp.stok_bekas} bekas)</div>
+                    <span className="font-bold text-white">{stok_baru} {sp.unit}</span>
+                    <div className="text-[10px] text-slate-400">(bekas {sp.stok_bekas}, tidak dihitung)</div>
                   </td>
                   <td className="py-3.5 px-4 text-center font-semibold text-slate-300 whitespace-nowrap">
-                    {annual_forecast_qty} {sp.unit}
-                    <div className="text-[10px] font-normal text-slate-500">
-                      {forecast_basis === 'HISTORY' ? 'dari pemakaian riil' : 'estimasi MTBF'}
-                    </div>
+                    {annual_forecast_qty === null ? (
+                      <span className="text-slate-500 font-normal">Belum cukup data</span>
+                    ) : (
+                      <>
+                        {annual_forecast_qty} {sp.unit}
+                        <div className="text-[10px] font-normal text-slate-500">
+                          dari {demand.usage_qty} Pakai / {Math.round(demand.window_days)} hari
+                        </div>
+                      </>
+                    )}
                   </td>
                   <td className="py-3.5 px-4 text-center whitespace-nowrap">
                     <span
@@ -133,7 +157,11 @@ export const PredictiveNeedsPage: React.FC = () => {
                     </span>
                   </td>
                   <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                    {order_needed_qty > 0 ? (
+                    {annual_forecast_qty === null ? (
+                      <span className="px-3 py-1.5 rounded-lg bg-slate-800 text-slate-400 border border-slate-700 text-[11px] font-semibold inline-flex items-center justify-center whitespace-nowrap">
+                        BELUM CUKUP DATA
+                      </span>
+                    ) : order_needed_qty > 0 ? (
                       <span className="px-3 py-1.5 rounded-lg bg-rose-500/20 text-rose-400 border border-rose-500/30 text-[11px] font-bold inline-flex items-center justify-center whitespace-nowrap shadow-sm">
                         PERLU PASOKAN
                       </span>

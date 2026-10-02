@@ -10,7 +10,6 @@ import {
   AlertTriangle,
   TrendingUp,
   BarChart3,
-  Settings,
   ChevronLeft,
   ChevronRight,
   X
@@ -38,8 +37,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { to: '/print', label: 'Cetak Label', icon: Printer },
     { to: '/alerts', label: 'Predictive Alerts', icon: AlertTriangle },
     { to: '/needs', label: 'Perencanaan Kebutuhan', icon: TrendingUp },
-    { to: '/reports', label: 'Analisis Rotasi Stok', icon: BarChart3 },
-    { to: '/settings', label: 'Pengaturan Sistem', icon: Settings }
+    { to: '/reports', label: 'Analisis Rotasi Stok', icon: BarChart3 }
   ];
 
   return (

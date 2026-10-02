@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { SupabaseClient } from '@supabase/supabase-js';
 import {
   JenisPeralatan,
@@ -15,12 +15,12 @@ import {
   StockMutation,
   SparepartCompatibility,
   MutationType,
-  SupplierType,
-  PredictiveAlert,
-  AnnualNeed
+  SupplierType
 } from '../types';
 import { getSupabaseClient, fetchAllRows } from '../lib/supabase';
 import { computeStockBySparepart, findNegativeStock, StockFlow } from '../utils/stock';
+import { buildPredictiveReport, PredictiveReport } from '../utils/reliability';
+import { requiresEquipmentUnit } from '../utils/compatibility';
 import { useNotification } from './NotificationContext';
 
 /** Fields of a sparepart that are stored in the `spareparts` table. */
@@ -32,8 +32,6 @@ export interface SparepartFormInput {
   minimum_stok: number;
   lokasi?: string;
   rack?: string;
-  mtbf_days?: number;
-  last_replaced_at?: string | null;
   /** Selected tipe peralatan; the first one becomes the primary `id_tipe`. */
   tipeIds: string[];
 }
@@ -49,6 +47,8 @@ export interface MutationUpdateInput {
   sumber?: SupplierType | null;
   qty: number;
   personel_id?: string | null;
+  /** Required for 'Pakai' */
+  unit_id: string | null;
   penerima?: string | null;
   unit_penerima?: string | null;
   notes?: string | null;
@@ -105,15 +105,12 @@ interface InventoryContextType {
   updateMutation: (id: string, data: MutationUpdateInput) => Promise<boolean>;
   deleteMutation: (id: string) => Promise<boolean>;
 
-  // Calculations
-  getPredictiveAlerts: () => PredictiveAlert[];
-  getAnnualNeeds: () => AnnualNeed[];
+  // Calculations (predictive maintenance, see utils/reliability.ts)
+  predictive: PredictiveReport;
   refreshData: () => Promise<void>;
 }
 
 const InventoryContext = createContext<InventoryContextType | undefined>(undefined);
-
-const DAY_MS = 1000 * 60 * 60 * 24;
 
 interface StockRow {
   id: string;
@@ -273,25 +270,14 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       // Stock per sparepart is the sum of its stock_mutations history
       const stockMap = computeStockBySparepart(mutsData);
 
-      // The latest 'Pakai' is the latest replacement of the part (used by MTBF prediction)
-      const lastPakaiMap: Record<string, string> = {};
-      mutsData.forEach((m: any) => {
-        if (m.mutation_type !== 'Pakai' || !m.created_at) return;
-        const prev = lastPakaiMap[m.sparepart_id];
-        if (!prev || new Date(m.created_at) > new Date(prev)) lastPakaiMap[m.sparepart_id] = m.created_at;
-      });
-
       const formattedParts: Sparepart[] = spRes.data.map((sp: any) => {
         const tipe = sp.id_tipe ? tpMap.get(sp.id_tipe) : undefined;
         const stock = stockMap[sp.id] || { baru: 0, bekas: 0, rusak: 0 };
-        const lastPakai = lastPakaiMap[sp.id];
-        const lastReplaced =
-          lastPakai && (!sp.last_replaced_at || new Date(lastPakai) > new Date(sp.last_replaced_at))
-            ? lastPakai
-            : sp.last_replaced_at || undefined;
+        // Legacy manual columns: MTBF is now derived from stock_mutations (utils/reliability.ts)
+        const { mtbf_days, last_replaced_at, ...row } = sp;
 
         return {
-          ...sp,
+          ...row,
           id_jenis: tipe?.id_jenis || '',
           equipment_type_name: tipe?.nama || 'Umum',
           lokasi: sp.lokasi || '',
@@ -299,8 +285,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           minimum_stok: Number(sp.minimum_stok) || 0,
           stok_aktual: Math.max(0, stock.baru),
           stok_bekas: Math.max(0, stock.bekas),
-          stok_rusak: Math.max(0, stock.rusak),
-          last_replaced_at: lastReplaced
+          stok_rusak: Math.max(0, stock.rusak)
         };
       });
 
@@ -433,9 +418,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     unit: input.unit?.trim().toUpperCase() || 'PCS',
     minimum_stok: Math.max(0, Number(input.minimum_stok) || 0),
     lokasi: input.lokasi?.trim() || null,
-    rack: input.rack?.trim() || null,
-    mtbf_days: Math.max(1, Number(input.mtbf_days) || 180),
-    last_replaced_at: input.last_replaced_at || null
+    rack: input.rack?.trim() || null
   });
 
   /** Makes sparepart_compatibility match the selected tipe list exactly. */
@@ -583,6 +566,11 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return false;
     }
 
+    if (requiresEquipmentUnit(mutationData.mutation_type) && !mutationData.unit_id) {
+      showToast('Unit Wajib Dipilih', 'Transaksi Pakai harus mencatat unit peralatan tempat sparepart dipasang.', 'error');
+      return false;
+    }
+
     // Validate against the latest stock in the database (another user may have changed it)
     const { data: currentMuts, error: readErr } = await fetchSparepartMutations(supabase, targetPart.id);
     if (readErr) {
@@ -654,6 +642,11 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return false;
     }
 
+    if (requiresEquipmentUnit(data.mutation_type) && !data.unit_id) {
+      showToast('Unit Wajib Dipilih', 'Transaksi Pakai harus mencatat unit peralatan tempat sparepart dipasang.', 'error');
+      return false;
+    }
+
     const { data: currentMuts, error: readErr } = await fetchSparepartMutations(supabase, original.sparepart_id);
     if (readErr) {
       showToast('Gagal Membaca Stok', readErr.message, 'error');
@@ -680,6 +673,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         sumber: data.mutation_type === 'Masuk' ? data.sumber || 'VENDOR' : null,
         qty,
         personel_id: data.personel_id || null,
+        unit_id: data.unit_id || null,
         notes: data.notes || null
       })
       .eq('id', id);
@@ -729,81 +723,11 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // --- Calculations ---
 
-  const getPredictiveAlerts = (): PredictiveAlert[] => {
-    const now = Date.now();
-    const urgencyOrder = { CRITICAL: 0, WARNING: 1, NORMAL: 2 };
-
-    return spareparts
-      .map((sp) => {
-        const mtbf = sp.mtbf_days || 180;
-        const lastReplacedStr = sp.last_replaced_at || sp.created_at;
-        const lastReplaced = lastReplacedStr ? new Date(lastReplacedStr).getTime() : now;
-        const daysUsed = Math.max(0, Math.floor((now - lastReplaced) / DAY_MS));
-        const remainingDays = Math.max(0, mtbf - daysUsed);
-        const isStockEmpty = sp.stok_aktual + sp.stok_bekas <= 0;
-
-        let urgency: PredictiveAlert['urgency'] = 'NORMAL';
-        if (isStockEmpty || remainingDays <= 7 || sp.stok_aktual <= sp.minimum_stok) {
-          urgency = 'CRITICAL';
-        } else if (remainingDays <= 21 || sp.stok_aktual <= sp.minimum_stok * 1.5) {
-          urgency = 'WARNING';
-        }
-
-        return {
-          sparepart: sp,
-          days_used: daysUsed,
-          remaining_days: remainingDays,
-          urgency,
-          is_stock_empty: isStockEmpty
-        };
-      })
-      .sort((a, b) => urgencyOrder[a.urgency] - urgencyOrder[b.urgency] || a.remaining_days - b.remaining_days);
-  };
-
-  const getAnnualNeeds = (): AnnualNeed[] => {
-    const now = Date.now();
-    const yearAgo = now - 365 * DAY_MS;
-
-    return spareparts.map((sp) => {
-      const partMuts = mutations.filter((m) => m.sparepart_id === sp.id);
-      const usageLastYear = partMuts
-        .filter((m) => m.mutation_type === 'Pakai' && new Date(m.created_at).getTime() >= yearAgo)
-        .reduce((sum, m) => sum + m.qty, 0);
-
-      let annualForecast: number;
-      let basis: AnnualNeed['forecast_basis'];
-
-      if (usageLastYear > 0) {
-        // Annualize when the part has less than a year of history (min. 30 days to avoid spikes)
-        const firstMutationTime = Math.min(...partMuts.map((m) => new Date(m.created_at).getTime()));
-        const historyDays = Math.min(365, Math.max(30, (now - Math.max(firstMutationTime, yearAgo)) / DAY_MS));
-        annualForecast = Math.ceil((usageLastYear / historyDays) * 365);
-        basis = 'HISTORY';
-      } else {
-        // No usage history yet: one replacement per MTBF cycle for every installed compatible unit
-        const compatTipeIds = new Set([
-          sp.id_tipe,
-          ...sparepartCompatibility.filter((c) => c.sparepart_id === sp.id).map((c) => c.id_tipe)
-        ]);
-        const installedUnits = unitPeralatanList.filter(
-          (u) => compatTipeIds.has(u.id_tipe) && (u.status === 'operasi' || u.status === 'standby')
-        ).length;
-        const mtbf = Math.max(sp.mtbf_days || 180, 1);
-        annualForecast = Math.ceil(365 / mtbf) * Math.max(installedUnits, 1);
-        basis = 'MTBF';
-      }
-
-      const totalAvailable = sp.stok_aktual + sp.stok_bekas;
-
-      return {
-        sparepart: sp,
-        annual_forecast_qty: annualForecast,
-        total_available_stock: totalAvailable,
-        order_needed_qty: Math.max(0, annualForecast - totalAvailable),
-        forecast_basis: basis
-      };
-    });
-  };
+  // Recomputed when data changes; "now" is taken at that moment (refreshData updates it)
+  const predictive = useMemo(
+    () => buildPredictiveReport(spareparts, mutations, unitPeralatanList, Date.now()),
+    [spareparts, mutations, unitPeralatanList]
+  );
 
   return (
     <InventoryContext.Provider
@@ -837,8 +761,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         addMutation,
         updateMutation,
         deleteMutation,
-        getPredictiveAlerts,
-        getAnnualNeeds,
+        predictive,
         refreshData
       }}
     >

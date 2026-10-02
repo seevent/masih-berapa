@@ -26,6 +26,8 @@ import {
   initialStockFlowForm,
   isStockFlowFormComplete
 } from '../components/mutation/StockFlowFields';
+import { EquipmentUnitSelect } from '../components/mutation/EquipmentUnitSelect';
+import { getCompatibleEquipment, requiresEquipmentUnit, usesEquipmentUnit } from '../utils/compatibility';
 
 export const HistoryPage: React.FC = () => {
   const {
@@ -37,6 +39,7 @@ export const HistoryPage: React.FC = () => {
     lokasiList,
     titikLokasiList,
     personelList,
+    sparepartCompatibility,
     updateMutation,
     deleteMutation
   } = useInventory();
@@ -51,6 +54,7 @@ export const HistoryPage: React.FC = () => {
   const [editSumber, setEditSumber] = useState<SupplierType>('VENDOR');
   const [editQty, setEditQty] = useState<number>(1);
   const [editPersonelId, setEditPersonelId] = useState<string>('');
+  const [editUnitId, setEditUnitId] = useState<string>('');
   const [editNotes, setEditNotes] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -141,11 +145,25 @@ export const HistoryPage: React.FC = () => {
     setEditSumber(m.sumber || 'VENDOR');
     setEditQty(m.qty);
     setEditPersonelId(m.personel_id || '');
+    setEditUnitId(m.unit_id || '');
     setEditNotes(m.notes || '');
   };
 
+  const editPart = editingMutation ? spareparts.find((s) => s.id === editingMutation.sparepart_id) : undefined;
+  const { availableUnits: editCompatibleUnits, otherUnits: editOtherUnits } = getCompatibleEquipment({
+    part: editPart,
+    sparepartCompatibility,
+    lokasiList,
+    titikLokasiList,
+    unitPeralatanList,
+    penempatanList,
+    selectedLokasiId: '',
+    selectedTitikId: ''
+  });
+  const editUnitMissing = requiresEquipmentUnit(editType) && !editUnitId;
+
   const handleSaveEdit = async () => {
-    if (!editingMutation || !isStockFlowFormComplete(editType, editFlow)) return;
+    if (!editingMutation || !isStockFlowFormComplete(editType, editFlow) || editUnitMissing) return;
     setIsSubmitting(true);
     try {
       const success = await updateMutation(editingMutation.id, {
@@ -156,6 +174,8 @@ export const HistoryPage: React.FC = () => {
         sumber: editType === 'Masuk' ? editSumber : null,
         qty: editQty,
         personel_id: editPersonelId || null,
+        // Types without a unit field keep whatever unit the row already had
+        unit_id: usesEquipmentUnit(editType) ? editUnitId || null : editingMutation.unit_id || null,
         notes: editNotes || null
       });
       // Keep the modal open when the change was rejected so the user can correct it
@@ -415,8 +435,30 @@ export const HistoryPage: React.FC = () => {
                 mutationType={editType}
                 value={editFlow}
                 onChange={setEditFlow}
-                part={spareparts.find((s) => s.id === editingMutation.sparepart_id)}
+                part={editPart}
               />
+
+              {usesEquipmentUnit(editType) && (
+                <div>
+                  <label className="block text-xs font-semibold text-slate-300 mb-1">
+                    Unit Peralatan{requiresEquipmentUnit(editType) && <span className="text-amber-400"> *</span>}
+                  </label>
+                  <EquipmentUnitSelect
+                    value={editUnitId}
+                    onChange={setEditUnitId}
+                    compatibleUnits={editCompatibleUnits}
+                    otherUnits={editOtherUnits}
+                    tipePeralatan={tipePeralatan}
+                    required={requiresEquipmentUnit(editType)}
+                    className={`w-full bg-slate-950 border rounded-xl px-3.5 py-2.5 text-xs text-white ${
+                      editUnitMissing ? 'border-amber-500/60' : 'border-slate-700'
+                    }`}
+                  />
+                  {editUnitMissing && (
+                    <p className="text-[10px] text-amber-400 mt-1">Pakai wajib memilih unit tempat sparepart dipasang.</p>
+                  )}
+                </div>
+              )}
 
               {editType === 'Masuk' && (
                 <div>
@@ -428,7 +470,7 @@ export const HistoryPage: React.FC = () => {
                   >
                     <option value="SUP API">SUP API</option>
                     <option value="SISA PEKERJAAN">SISA PEKERJAAN</option>
-                    <option value="IAS">IAS</option>
+                    <option value="IASS">IASS</option>
                     <option value="MANDIRI">MANDIRI</option>
                     <option value="DARI UNIT LAIN">DARI UNIT LAIN</option>
                     <option value="VENDOR">VENDOR</option>
@@ -487,7 +529,7 @@ export const HistoryPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleSaveEdit}
-                disabled={isSubmitting || !isStockFlowFormComplete(editType, editFlow)}
+                disabled={isSubmitting || !isStockFlowFormComplete(editType, editFlow) || editUnitMissing}
                 className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-cyan-600/25 disabled:opacity-50"
               >
                 <Check className="w-4 h-4" />

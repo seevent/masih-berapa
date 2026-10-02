@@ -1,31 +1,29 @@
 import React from 'react';
 import { BarChart3, TrendingUp, RotateCcw, Zap, Boxes, ShieldCheck } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
+import { DEMAND_WINDOW_MIN_DAYS, MOVEMENT_FAST_PER_MONTH, MovementClass } from '../utils/reliability';
+
+const CATEGORY_STYLE: Record<MovementClass, { label: string; className: string }> = {
+  FAST_MOVING: { label: 'Fast Moving', className: 'font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40' },
+  MEDIUM_MOVING: { label: 'Medium Moving', className: 'font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/30' },
+  SLOW_MOVING: { label: 'Slow Moving', className: 'font-semibold bg-slate-800 text-slate-400 border border-slate-700' },
+  BELUM_CUKUP_DATA: { label: 'Belum cukup data', className: 'font-semibold bg-slate-900 text-slate-500 border border-slate-800' }
+};
+
+const formatPerMonth = (n: number) => n.toLocaleString('id-ID', { maximumFractionDigits: 2 });
 
 export const ReportsPage: React.FC = () => {
-  const { spareparts, mutations } = useInventory();
+  const { spareparts, predictive } = useInventory();
+  const movements = predictive.movements;
 
-  // Calculate Fast Moving vs Slow Moving based on mutation frequency
-  const mutationCountMap: Record<string, number> = {};
-  mutations.forEach((m) => {
-    mutationCountMap[m.sparepart_id] = (mutationCountMap[m.sparepart_id] || 0) + 1;
-  });
-
-  const categorizedParts = spareparts.map((sp) => {
-    const freq = mutationCountMap[sp.id] || 0;
-    const category = freq >= 2 ? 'FAST_MOVING' : freq === 1 ? 'MEDIUM_MOVING' : 'SLOW_MOVING';
-    const totalPhysical = sp.stok_aktual + sp.stok_bekas;
-
-    return {
-      sparepart: sp,
-      frequency: freq,
-      category,
-      totalPhysical
-    };
-  });
-
-  const fastMovingCount = categorizedParts.filter((p) => p.category === 'FAST_MOVING').length;
-  const slowMovingCount = categorizedParts.filter((p) => p.category === 'SLOW_MOVING').length;
+  const countOf = (c: MovementClass) => movements.filter((m) => m.category === c).length;
+  const fastMovingCount = countOf('FAST_MOVING');
+  const mediumMovingCount = countOf('MEDIUM_MOVING');
+  const slowMovingCount = countOf('SLOW_MOVING');
+  // Slow movers that still hold stock are the ones that pile up in the warehouse
+  const slowWithStockCount = movements.filter(
+    (m) => m.category === 'SLOW_MOVING' && m.sparepart.stok_aktual + m.sparepart.stok_bekas > 0
+  ).length;
   const totalRotableUnits = spareparts.reduce((sum, sp) => sum + sp.stok_bekas, 0);
   const grandTotalPhysicalUnits = spareparts.reduce((sum, sp) => sum + sp.stok_aktual + sp.stok_bekas, 0);
 
@@ -34,8 +32,16 @@ export const ReportsPage: React.FC = () => {
       <div>
         <h1 className="text-2xl md:text-3xl font-extrabold text-white">Laporan Analisis Rotasi & Kuantitas Stok</h1>
         <p className="text-sm text-slate-400 mt-1">
-          Evaluasi perputaran barang (Fast/Medium/Slow Moving) dan distribusi kuantitas unit stok fisik di gudang.
+          Evaluasi perputaran barang (Fast/Medium/Slow Moving) dari pemakaian riil dan distribusi kuantitas unit stok fisik di gudang.
         </p>
+      </div>
+
+      <div className="glass-panel p-4 rounded-xl border border-cyan-500/30 bg-cyan-950/20 text-xs text-cyan-200">
+        <span className="font-bold">Cara klasifikasi:</span> dihitung dari jumlah barang pada transaksi <b>Pakai</b> dalam 12 bulan terakhir
+        (atau sejak transaksi pertama bila lebih singkat, minimal 30 hari). <b>Fast</b>: rata-rata ≥ {MOVEMENT_FAST_PER_MONTH} per bulan.
+        {' '}<b>Medium</b>: ada pemakaian, kurang dari itu. <b>Slow</b>: tidak ada pemakaian sama sekali.
+        {' '}<b>Belum cukup data</b>: belum ada pemakaian dan sparepart baru tercatat kurang dari {DEMAND_WINDOW_MIN_DAYS} hari.
+        Masuk, Bekas, Rusak, dan Serah Terima bukan pemakaian.
       </div>
 
       {/* KPI Highlights */}
@@ -47,8 +53,12 @@ export const ReportsPage: React.FC = () => {
           </div>
           <div className="mt-3">
             <span className="text-3xl font-bold text-white">{fastMovingCount}</span>
-            <span className="text-xs text-slate-400 ml-2">SKU Tinggi Mutasi</span>
+            <span className="text-xs text-slate-400 ml-2">SKU pemakaian ≥ {MOVEMENT_FAST_PER_MONTH} / bulan</span>
           </div>
+          <p className="text-[10px] text-slate-400 mt-1">
+            {mediumMovingCount} medium · {slowMovingCount} slow
+            {slowWithStockCount > 0 && ` (${slowWithStockCount} slow masih menyimpan stok)`}
+          </p>
         </div>
 
         <div className="glass-panel p-5 rounded-2xl border border-slate-800">
@@ -88,29 +98,26 @@ export const ReportsPage: React.FC = () => {
               <tr>
                 <th className="py-3.5 px-4">Klasifikasi Movement</th>
                 <th className="py-3.5 px-4">SKU & Sparepart</th>
-                <th className="py-3.5 px-4 text-center">Frekuensi Mutasi</th>
+                <th className="py-3.5 px-4 text-center">Pemakaian (Pakai)</th>
                 <th className="py-3.5 px-4 text-center">Stok Baru</th>
                 <th className="py-3.5 px-4 text-center">Stok Bekas (Rotable)</th>
                 <th className="py-3.5 px-4 text-right">Total Unit Fisik</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-800/60 text-xs">
-              {categorizedParts.map(({ sparepart: sp, frequency, category, totalPhysical }) => (
+              {movements.length === 0 && (
+                <tr>
+                  <td colSpan={6} className="py-8 text-center text-slate-500">
+                    Belum ada sparepart terdaftar.
+                  </td>
+                </tr>
+              )}
+              {movements.map(({ sparepart: sp, demand, category, per_month }) => (
                 <tr key={sp.id} className="hover:bg-slate-800/40 transition-colors">
                   <td className="py-3.5 px-4 whitespace-nowrap">
-                    {category === 'FAST_MOVING' ? (
-                      <span className="px-2.5 py-1 rounded-lg font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40">
-                        Fast Moving
-                      </span>
-                    ) : category === 'MEDIUM_MOVING' ? (
-                      <span className="px-2.5 py-1 rounded-lg font-semibold bg-blue-500/15 text-blue-300 border border-blue-500/30">
-                        Medium Moving
-                      </span>
-                    ) : (
-                      <span className="px-2.5 py-1 rounded-lg font-semibold bg-slate-800 text-slate-400 border border-slate-700">
-                        Slow Moving
-                      </span>
-                    )}
+                    <span className={`px-2.5 py-1 rounded-lg ${CATEGORY_STYLE[category].className}`}>
+                      {CATEGORY_STYLE[category].label}
+                    </span>
                   </td>
 
                   <td className="py-3.5 px-4">
@@ -118,8 +125,11 @@ export const ReportsPage: React.FC = () => {
                     <div className="text-white font-medium">{sp.name}</div>
                   </td>
 
-                  <td className="py-3.5 px-4 text-center font-bold text-slate-200">
-                    {frequency} Transaksi
+                  <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                    <div className="font-bold text-slate-200">
+                      {demand.usage_qty} {sp.unit} / {Math.round(demand.window_days)} hari
+                    </div>
+                    <div className="text-[10px] text-slate-500">rata-rata {formatPerMonth(per_month)} per bulan</div>
                   </td>
 
                   <td className="py-3.5 px-4 text-center text-emerald-400 font-semibold">
@@ -131,7 +141,7 @@ export const ReportsPage: React.FC = () => {
                   </td>
 
                   <td className="py-3.5 px-4 text-right font-mono font-bold text-white">
-                    {totalPhysical} {sp.unit}
+                    {sp.stok_aktual + sp.stok_bekas} {sp.unit}
                   </td>
                 </tr>
               ))}

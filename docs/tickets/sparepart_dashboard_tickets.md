@@ -1,5 +1,7 @@
 # Implementation Tickets: Dashboard Manajemen Sparepart (Non-Finansial & Physical Focus)
 
+> **⚠️ Dokumen historis.** Dibuat pada tahap awal pengembangan (Juli 2026) dan **tidak lagi mencerminkan produk saat ini** (mis. nama tipe transaksi, kolom stok di database, model stok). Acuan terkini: [PRD](../PRD.md), [ARCHITECTURE](../ARCHITECTURE.md), [DATABASE](../DATABASE.md).
+
 ## Ticket 1: Physical Sparepart Analytics Engine Refactoring
 - **Goal**: Perbarui `src/lib/sparepartAnalytics.ts` untuk menghapus seluruh formula bernilai Rupiah/harga (`unit_price`, `totalValuation`, `estimatedCost`). Ubah kalkulasi ABC Analysis menjadi berbasis **Volume Pemakaian Fisik (Unit)**. Ubah tren bulanan menjadi **Volume Unit Inflow vs Outflow**.
 - **Files**: `src/lib/sparepartAnalytics.ts`

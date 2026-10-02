@@ -1,17 +1,18 @@
 import React from 'react';
 import { Menu, Database, ShieldAlert, Package, RefreshCw, AlertTriangle } from 'lucide-react';
-import { useInventory } from '../../context/InventoryContext';
 import { Link } from 'react-router-dom';
+import { useInventory } from '../../context/InventoryContext';
 
 interface HeaderStatsProps {
   setMobileOpen: (open: boolean) => void;
 }
 
 export const HeaderStats: React.FC<HeaderStatsProps> = ({ setMobileOpen }) => {
-  const { spareparts, isSupabaseConnected, getPredictiveAlerts, refreshData, isLoading } = useInventory();
+  const { spareparts, isSupabaseConnected, predictive, refreshData, isLoading } = useInventory();
 
   const totalSKU = spareparts.length;
-  const criticalCount = getPredictiveAlerts().filter((a) => a.urgency === 'CRITICAL').length;
+  // Installed positions KRITIS/LEWAT + spareparts that need an order (utils/reliability.ts)
+  const criticalCount = predictive.urgentCount;
   const totalPhysicalStock = spareparts.reduce((acc, p) => acc + p.stok_aktual + p.stok_bekas, 0);
 
   return (
@@ -44,19 +45,22 @@ export const HeaderStats: React.FC<HeaderStatsProps> = ({ setMobileOpen }) => {
         </div>
 
         {criticalCount > 0 && (
-          <div className="flex items-center gap-2 bg-rose-500/15 border border-rose-500/30 px-3 py-1.5 rounded-xl text-rose-300 animate-pulse">
+          <Link
+            to="/alerts"
+            title="Posisi terpasang KRITIS/LEWAT umur + sparepart yang perlu dipesan"
+            className="flex items-center gap-2 bg-rose-500/15 border border-rose-500/30 px-3 py-1.5 rounded-xl text-rose-300 animate-pulse"
+          >
             <ShieldAlert className="w-4 h-4 text-rose-400" />
-            <span className="text-xs font-semibold">{criticalCount} SKU Kritis</span>
-          </div>
+            <span className="text-xs font-semibold">{criticalCount} Perlu Tindakan</span>
+          </Link>
         )}
 
         {/* Database Status Indicator (Full Supabase PostgreSQL) */}
-        <Link
-          to="/settings"
-          className={`flex items-center gap-2 text-xs px-3 py-1.5 rounded-xl border transition-all ${
+        <div
+          className={`flex items-center gap-2 text-xs px-3 py-1.5 rounded-xl border ${
             isSupabaseConnected
-              ? 'bg-emerald-950/60 border-emerald-500/30 text-emerald-300 hover:bg-emerald-900/60'
-              : 'bg-rose-950/60 border-rose-500/30 text-rose-300 hover:bg-rose-900/60 animate-pulse'
+              ? 'bg-emerald-950/60 border-emerald-500/30 text-emerald-300'
+              : 'bg-rose-950/60 border-rose-500/30 text-rose-300 animate-pulse'
           }`}
           title={
             isSupabaseConnected
@@ -68,7 +72,7 @@ export const HeaderStats: React.FC<HeaderStatsProps> = ({ setMobileOpen }) => {
           <span className="hidden sm:inline font-medium">
             {isSupabaseConnected ? 'Supabase Direct' : 'Supabase Disconnected'}
           </span>
-        </Link>
+        </div>
 
         <button
           onClick={() => refreshData()}

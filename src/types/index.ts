@@ -1,7 +1,7 @@
 // How each type moves stock between the baru / bekas / rusak buckets: see src/utils/stock.ts
 export type MutationType = 'Masuk' | 'Pakai' | 'Bekas' | 'Rusak' | 'Serah Terima';
 export type StockBucketValue = 'baru' | 'bekas' | 'rusak';
-export type SupplierType = 'SUP API' | 'SISA PEKERJAAN' | 'IAS' | 'MANDIRI' | 'DARI UNIT LAIN' | 'VENDOR';
+export type SupplierType = 'SUP API' | 'SISA PEKERJAAN' | 'IASS' | 'MANDIRI' | 'DARI UNIT LAIN' | 'VENDOR';
 export type UnitStatus = 'operasi' | 'standby' | 'gudang' | 'rusak';
 
 // --- Database Table Types matching exact Supabase Schema ---
@@ -109,8 +109,6 @@ export interface Sparepart {
   minimum_stok: number;
   lokasi?: string;
   rack?: string;
-  mtbf_days?: number;
-  last_replaced_at?: string;
   created_at?: string;
   updated_at?: string;
   // Computed client-side (not database columns)
@@ -165,19 +163,3 @@ export interface PurchaseRequisition {
   updated_at?: string;
 }
 
-export interface PredictiveAlert {
-  sparepart: Sparepart;
-  days_used: number;
-  remaining_days: number;
-  urgency: 'CRITICAL' | 'WARNING' | 'NORMAL';
-  is_stock_empty: boolean;
-}
-
-export interface AnnualNeed {
-  sparepart: Sparepart;
-  annual_forecast_qty: number;
-  total_available_stock: number;
-  order_needed_qty: number;
-  // HISTORY: dari pemakaian riil 12 bulan terakhir; MTBF: estimasi dari MTBF x jumlah unit terpasang
-  forecast_basis: 'HISTORY' | 'MTBF';
-}

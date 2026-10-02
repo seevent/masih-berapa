@@ -27,7 +27,8 @@ import {
   initialStockFlowForm,
   isStockFlowFormComplete
 } from '../components/mutation/StockFlowFields';
-import { getCompatibleEquipment } from '../utils/compatibility';
+import { getCompatibleEquipment, requiresEquipmentUnit, usesEquipmentUnit } from '../utils/compatibility';
+import { EquipmentUnitSelect } from '../components/mutation/EquipmentUnitSelect';
 import { getActiveDutyPersonel } from '../utils/shiftUtils';
 
 export const MutationPage: React.FC = () => {
@@ -66,7 +67,7 @@ export const MutationPage: React.FC = () => {
   const [selectedUnitId, setSelectedUnitId] = useState('');
 
   // 5. Quantity, Sumber & Notes
-  const [sumber, setSumber] = useState<SupplierType>('IAS');
+  const [sumber, setSumber] = useState<SupplierType>('IASS');
   const [flowForm, setFlowForm] = useState<StockFlowFormState>(initialStockFlowForm);
   const [qty, setQty] = useState<number>(1);
   const [notes, setNotes] = useState('');
@@ -109,7 +110,7 @@ export const MutationPage: React.FC = () => {
   const selectedPart = spareparts.find((p) => p.id === selectedSparepartId);
 
   // --- Compatible Locations & Equipment Units for Selected Sparepart ---
-  const { compatibleLokasiList, otherLokasiList, availableTitikList, availableUnits: availableUnitsForLocation } =
+  const { compatibleLokasiList, otherLokasiList, availableTitikList, availableUnits: availableUnitsForLocation, otherUnits } =
     getCompatibleEquipment({
       part: selectedPart,
       sparepartCompatibility,
@@ -123,19 +124,20 @@ export const MutationPage: React.FC = () => {
 
   const selectedPersonelObj = personelOptions.find((p) => p.id === selectedPersonelId);
 
-  // Equipment unit / location applies when a part goes into or comes out of a machine
-  const usesEquipmentUnit = mutationType === 'Pakai' || mutationType === 'Bekas' || mutationType === 'Rusak';
+  // Equipment unit / location applies when a part goes into or comes out of a machine; 'Pakai' requires it
+  const showsEquipmentUnit = usesEquipmentUnit(mutationType);
+  const unitMissing = requiresEquipmentUnit(mutationType) && !selectedUnitId;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedSparepartId || qty <= 0 || !selectedPersonelObj) return;
-    if (!isStockFlowFormComplete(mutationType, flowForm)) return;
+    if (!isStockFlowFormComplete(mutationType, flowForm) || unitMissing) return;
 
     setIsSubmitting(true);
 
     const success = await addMutation({
       sparepart_id: selectedSparepartId,
-      unit_id: usesEquipmentUnit ? selectedUnitId || undefined : undefined,
+      unit_id: showsEquipmentUnit ? selectedUnitId || undefined : undefined,
       personel_id: selectedPersonelObj.id,
       mutation_type: mutationType,
       flow: resolveStockFlow(mutationType, flowForm),
@@ -337,7 +339,7 @@ export const MutationPage: React.FC = () => {
           <StockFlowFields mutationType={mutationType} value={flowForm} onChange={setFlowForm} part={selectedPart} />
 
           {/* 3. Dynamic Location & Compatible Equipment Dropdowns (Pakai, Bekas & Rusak) */}
-          {usesEquipmentUnit && (
+          {showsEquipmentUnit && (
             <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
               <div className="flex items-center justify-between">
                 <label className="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-2">
@@ -407,22 +409,20 @@ export const MutationPage: React.FC = () => {
 
                 {/* Select Unit Peralatan */}
                 <div>
-                  <label className="block font-semibold text-slate-300 mb-1">Unit Peralatan Kompatibel</label>
-                  <select
+                  <label className="block font-semibold text-slate-300 mb-1">
+                    Unit Peralatan{requiresEquipmentUnit(mutationType) && <span className="text-amber-400"> *</span>}
+                  </label>
+                  <EquipmentUnitSelect
                     value={selectedUnitId}
-                    onChange={(e) => setSelectedUnitId(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white cursor-pointer"
-                  >
-                    <option value="">-- Tanpa Unit Spesifik --</option>
-                    {availableUnitsForLocation.map((u) => {
-                      const tp = tipePeralatan.find((t) => t.id === u.id_tipe);
-                      return (
-                        <option key={u.id} value={u.id}>
-                          [{tp?.nama || 'Unit'}] {u.serial_number || u.id} ({u.status})
-                        </option>
-                      );
-                    })}
-                  </select>
+                    onChange={setSelectedUnitId}
+                    compatibleUnits={availableUnitsForLocation}
+                    otherUnits={otherUnits}
+                    tipePeralatan={tipePeralatan}
+                    required={requiresEquipmentUnit(mutationType)}
+                  />
+                  {unitMissing && (
+                    <p className="text-[10px] text-amber-400 mt-1">Pakai wajib memilih unit tempat sparepart dipasang.</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -482,7 +482,7 @@ export const MutationPage: React.FC = () => {
                     onChange={(e) => setSumber(e.target.value as SupplierType)}
                     className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white font-semibold focus:border-cyan-500 cursor-pointer"
                   >
-                    <option value="IAS">IAS</option>
+                    <option value="IASS">IASS</option>
                     <option value="SUP API">SUP API</option>
                     <option value="SISA PEKERJAAN">SISA PEKERJAAN</option>
                     <option value="MANDIRI">MANDIRI</option>
@@ -527,7 +527,7 @@ export const MutationPage: React.FC = () => {
           <div className="pt-4 border-t border-slate-800 flex justify-end">
             <button
               type="submit"
-              disabled={isSubmitting || !selectedSparepartId || !selectedPersonelId || !isStockFlowFormComplete(mutationType, flowForm)}
+              disabled={isSubmitting || !selectedSparepartId || !selectedPersonelId || !isStockFlowFormComplete(mutationType, flowForm) || unitMissing}
               className="flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-xl shadow-cyan-500/25 transition-all cursor-pointer disabled:opacity-50"
             >
               <CheckCircle2 className="w-5 h-5" />
