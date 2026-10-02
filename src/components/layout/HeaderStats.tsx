@@ -1,7 +1,6 @@
 import React from 'react';
 import { Menu, Database, ShieldAlert, Package, RefreshCw, AlertTriangle } from 'lucide-react';
 import { useInventory } from '../../context/InventoryContext';
-import { Link } from 'react-router-dom';
 
 interface HeaderStatsProps {
   setMobileOpen: (open: boolean) => void;
@@ -51,12 +50,11 @@ export const HeaderStats: React.FC<HeaderStatsProps> = ({ setMobileOpen }) => {
         )}
 
         {/* Database Status Indicator (Full Supabase PostgreSQL) */}
-        <Link
-          to="/settings"
-          className={`flex items-center gap-2 text-xs px-3 py-1.5 rounded-xl border transition-all ${
+        <div
+          className={`flex items-center gap-2 text-xs px-3 py-1.5 rounded-xl border ${
             isSupabaseConnected
-              ? 'bg-emerald-950/60 border-emerald-500/30 text-emerald-300 hover:bg-emerald-900/60'
-              : 'bg-rose-950/60 border-rose-500/30 text-rose-300 hover:bg-rose-900/60 animate-pulse'
+              ? 'bg-emerald-950/60 border-emerald-500/30 text-emerald-300'
+              : 'bg-rose-950/60 border-rose-500/30 text-rose-300 animate-pulse'
           }`}
           title={
             isSupabaseConnected
@@ -68,7 +66,7 @@ export const HeaderStats: React.FC<HeaderStatsProps> = ({ setMobileOpen }) => {
           <span className="hidden sm:inline font-medium">
             {isSupabaseConnected ? 'Supabase Direct' : 'Supabase Disconnected'}
           </span>
-        </Link>
+        </div>
 
         <button
           onClick={() => refreshData()}

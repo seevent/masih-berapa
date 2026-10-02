@@ -1,15 +1,16 @@
 # Graph Report - masih-berapa  (2026-10-02)
 
 ## Corpus Check
-- cluster-only mode — file stats not available
+- 189 files · ~163,271 words
+- Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 2888 nodes · 3407 edges · 246 communities (182 shown, 64 thin omitted)
+- 2885 nodes · 3402 edges · 247 communities (183 shown, 64 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 92 edges (avg confidence: 0.72)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `ad07e410`
+- Built from commit: `a119ac86`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -242,6 +243,7 @@
 - Path
 - Path
 - Path
+- md
 - foreground
 - destructive-foreground
 - primary
@@ -261,7 +263,7 @@
 2. `TestTailwindConfigGenerator` - 35 edges
 3. `ShadcnInstaller` - 33 edges
 4. `TestShadcnInstaller` - 26 edges
-5. `useInventory()` - 25 edges
+5. `useInventory()` - 23 edges
 6. `Writing Skills` - 23 edges
 7. `InventoryContextType` - 19 edges
 8. `compilerOptions` - 17 edges
@@ -283,7 +285,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (246 total, 64 thin omitted)
+## Communities (247 total, 64 thin omitted)
 
 ### Community 0 - "dependencies"
 Cohesion: 0.12
@@ -311,11 +313,11 @@ Nodes (42): BM25, detect_domain(), get_cip_brief(), _load_csv(), Load CSV and re
 
 ### Community 6 - "color"
 Cohesion: 0.11
-Nodes (19): $type, $value, background, destructive, muted-foreground, primary-hover, ring, secondary-foreground (+11 more)
+Nodes (19): $type, $value, background, destructive-foreground, primary, ring, secondary, secondary-foreground (+11 more)
 
 ### Community 8 - "card"
-Cohesion: 0.20
-Nodes (12): $type, $value, bg, bg, padding, shadow, card, bg (+4 more)
+Cohesion: 0.29
+Nodes (7): padding, shadow, card, $type, $value, $type, $value
 
 ### Community 9 - "Tailwind CSS Utility Reference"
 Cohesion: 0.05
@@ -346,8 +348,8 @@ Cohesion: 0.05
 Nodes (37): 1. Color Palette, 2. Typography, 3. Logo Usage, 4. Voice & Tone, 5. Imagery Guidelines, 6. Design Components, Accessibility, AI Image Generation (+29 more)
 
 ### Community 22 - "useInventory"
-Cohesion: 0.16
-Nodes (12): xlsx, AppLayout(), HeaderStats(), HeaderStatsProps, Sidebar(), SidebarProps, useInventory(), PredictiveAlertsPage() (+4 more)
+Cohesion: 0.18
+Nodes (11): xlsx, AppLayout(), HeaderStats(), HeaderStatsProps, Sidebar(), SidebarProps, useInventory(), PredictiveAlertsPage() (+3 more)
 
 ### Community 25 - "Design"
 Cohesion: 0.06
@@ -498,8 +500,8 @@ Cohesion: 0.14
 Nodes (11): DesignSystemGenerator, Find matching reasoning rule for a category., Apply reasoning rules to search results., Select best matching result based on priority keywords., Extract results list from search result dict., Generate complete design system recommendation.          variance/motion/density, Bucket a 1-10 dial value into its tier config. Returns None if value is None., Generates design system recommendations from aggregated searches. (+3 more)
 
 ### Community 62 - "stock.ts"
-Cohesion: 0.20
-Nodes (18): validateStock(), getReorderPriorityListPhysical(), CatalogPage(), DashboardPage(), HistoryPage(), BUCKETS, computeStockBySparepart(), describeFlow() (+10 more)
+Cohesion: 0.17
+Nodes (20): validateStock(), getReorderPriorityListPhysical(), CatalogPage(), DashboardPage(), HistoryPage(), BUCKETS, computeStockBySparepart(), describeFlow() (+12 more)
 
 ### Community 63 - "Brand Consistency Checklist"
 Cohesion: 0.11
@@ -638,8 +640,8 @@ Cohesion: 0.14
 Nodes (14): Development Tickets: SSES T2 Sparepart Management - "Masih Berapa", Task Dependency Hierarchy, [TICKET-10]: Predictive Alerts (MTBF) & Demand Planning (`/alerts`, `/needs`), [TICKET-11]: Inventory Analytics & Cost Valuation (`/reports`), [TICKET-12]: System Settings, Supabase Config & Database Seed (`/settings`), [TICKET-1]: Project Scaffold & Tech Stack Setup, [TICKET-2]: Data Types & Supabase Database Layer, [TICKET-3]: App Layout, Sidebar & Toast Notification Context (+6 more)
 
 ### Community 97 - "ScannerPage.tsx"
-Cohesion: 0.21
-Nodes (19): initialStockFlowForm, isStockFlowFormComplete(), optionClass(), StockFlowFields(), StockFlowFieldsProps, StockFlowFormState, stockOf(), StockRow (+11 more)
+Cohesion: 0.25
+Nodes (17): initialStockFlowForm, isStockFlowFormComplete(), optionClass(), StockFlowFields(), StockFlowFieldsProps, StockFlowFormState, stockOf(), StockRow (+9 more)
 
 ### Community 98 - "update.md"
 Cohesion: 0.15
@@ -771,7 +773,7 @@ Nodes (7): connect(), nextReconnectDelay(), reloadAfterRecovery(), sessionKey(),
 
 ### Community 130 - "radius"
 Cohesion: 0.29
-Nodes (8): $type, $value, $type, $value, radius, full, md, md
+Nodes (8): $type, $value, $type, $value, radius, default, full, default
 
 ### Community 131 - "sync-brand-to-tokens.cjs"
 Cohesion: 0.33
@@ -899,7 +901,7 @@ Nodes (3): Codex App Finishing, Environment Detection, Subagent dispatch require
 
 ### Community 162 - "App.tsx"
 Cohesion: 0.08
-Nodes (24): jspdf, jspdf, App(), CatalogPage, DashboardPage, HistoryPage, MutationPage, page() (+16 more)
+Nodes (23): jspdf, jspdf, App(), CatalogPage, DashboardPage, HistoryPage, MutationPage, page() (+15 more)
 
 ### Community 163 - "schema_relational_supabase.sql"
 Cohesion: 0.30
@@ -934,8 +936,8 @@ Cohesion: 0.50
 Nodes (4): Implementation Tickets: Dashboard Manajemen Sparepart (Non-Finansial & Physical Focus), Ticket 1: Physical Sparepart Analytics Engine Refactoring, Ticket 2: Non-Financial Dashboard Components Update, Ticket 3: Export Report Clean-up & Build Verification
 
 ### Community 175 - "design-tokens-starter.json"
-Cohesion: 0.15
-Nodes (12): component, $type, $value, dark, semantic, $schema, $type, $value (+4 more)
+Cohesion: 0.17
+Nodes (11): $type, $value, dark, semantic, $schema, $type, $value, semantic (+3 more)
 
 ### Community 176 - "schema_relational_supabase_v2.sql"
 Cohesion: 0.32
@@ -962,12 +964,16 @@ Cohesion: 0.60
 Nodes (5): radius, radius, radius, $type, $value
 
 ### Community 224 - "input"
-Cohesion: 0.29
-Nodes (8): padding-x, input, $type, $value, focus-ring, padding-x, $type, $value
+Cohesion: 0.24
+Nodes (10): $type, $value, bg, bg, component, input, $type, $value (+2 more)
 
 ### Community 225 - "default"
 Cohesion: 0.67
-Nodes (4): $type, $value, default, default
+Nodes (4): padding-x, padding-x, $type, $value
+
+### Community 232 - "md"
+Cohesion: 0.67
+Nodes (4): $type, $value, md, md
 
 ### Community 233 - "foreground"
 Cohesion: 0.67
@@ -975,11 +981,11 @@ Nodes (3): foreground, $type, $value
 
 ### Community 234 - "destructive-foreground"
 Cohesion: 0.67
-Nodes (3): destructive-foreground, $type, $value
+Nodes (3): destructive, $type, $value
 
 ### Community 235 - "primary"
 Cohesion: 0.67
-Nodes (3): primary, $type, $value
+Nodes (3): muted-foreground, $type, $value
 
 ### Community 236 - "muted"
 Cohesion: 0.67
@@ -987,14 +993,14 @@ Nodes (3): muted, $type, $value
 
 ### Community 237 - "secondary"
 Cohesion: 0.67
-Nodes (3): secondary, $type, $value
+Nodes (3): primary-hover, $type, $value
 
 ### Community 239 - "primary-foreground"
 Cohesion: 0.67
 Nodes (3): primary-foreground, $type, $value
 
 ## Knowledge Gaps
-- **1510 isolated node(s):** `crypto`, `http`, `fs`, `path`, `OPCODES` (+1505 more)
+- **1509 isolated node(s):** `crypto`, `http`, `fs`, `path`, `OPCODES` (+1504 more)
   These have ≤1 connection - possible missing edges or undocumented components.
 - **64 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
@@ -1012,6 +1018,6 @@ _Questions this graph is uniquely positioned to answer:_
 - **Are the 23 inferred relationships involving `ShadcnInstaller` (e.g. with `TestShadcnInstaller` and `.test_add_all_components_dry_run()`) actually correct?**
   _`ShadcnInstaller` has 23 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `crypto`, `http`, `fs` to the rest of the system?**
-  _1510 weakly-connected nodes found - possible documentation gaps or missing edges._
+  _1509 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `dependencies` be split into smaller, more focused modules?**
   _Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected._

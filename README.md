@@ -17,7 +17,6 @@ Produksi: **https://masih-berapa.vercel.app** · Repo: `seevent/masih-berapa`
 | Peringatan | `/alerts` | status KRITIS / PERINGATAN / AMAN dari MTBF dan stok |
 | Kebutuhan | `/needs` | estimasi kebutuhan tahunan dan rekomendasi order, ekspor Excel |
 | Laporan | `/reports` | klasifikasi fast / medium / slow moving |
-| Pengaturan | `/settings` | status koneksi dan data master (lihat [batasan](#batasan-yang-diketahui)) |
 
 ## Cara kerja stok
 
@@ -104,16 +103,16 @@ masih-berapa/
 
 ## Database
 
-Supabase PostgreSQL yang **dipakai bersama aplikasi SSES T2 lain**. Tabel milik aplikasi ini: master peralatan/lokasi/personel (bersama), `spareparts`, `stock_mutations`, `sparepart_compatibility`. Perubahan skema harus lewat migrasi di `docs/migrations/` dan persetujuan pemilik database. Lihat [docs/DATABASE.md](docs/DATABASE.md).
+Supabase PostgreSQL yang **dipakai bersama aplikasi SSES T2 lain**. Tabel yang ditulis aplikasi ini: `spareparts`, `stock_mutations`, `sparepart_compatibility`. Master peralatan/lokasi/personel (bersama) hanya dibaca. Perubahan skema harus lewat migrasi di `docs/migrations/` dan persetujuan pemilik database. Lihat [docs/DATABASE.md](docs/DATABASE.md).
 
 ## Batasan yang diketahui
 
-- **Belum ada login.** Semua permintaan berjalan sebagai `anon`. Akibatnya: (1) siapa pun yang membuka aplikasi dapat mengubah data stok; (2) form **Jenis, Tipe, Lokasi, Titik, dan Personel** di Pengaturan **gagal** karena database mensyaratkan login untuk tabel tersebut (Unit Peralatan dan Katalog berfungsi).
+- **Belum ada login.** Semua permintaan berjalan sebagai `anon`, sehingga siapa pun yang membuka aplikasi dapat mengubah data stok.
 - Data pribadi personel (NIK, no. HP) terbaca publik oleh kebijakan database saat ini.
 - Validasi stok minus dilakukan di aplikasi dan tidak atomik terhadap pencatatan yang bersamaan.
 - Bukan PWA (tidak bisa di-install dan tidak bisa offline).
 - Belum ada tes otomatis.
-- Pengaturan data master hanya bisa menambah; belum ada edit/hapus.
+- Aplikasi **hanya membaca** data master (peralatan, lokasi, personel, shift); menu Pengaturan sudah dihapus. Database menolak penulisan sebagian tabel master tanpa login.
 - Margin lembar Tom & Jerry (3 mm, jarak 2 mm) belum dicocokkan dengan lembar fisik.
 
 Daftar lengkap dan rencana penanganannya: [PRD.md bagian 12](docs/PRD.md#12-status-dan-roadmap) dan [ARCHITECTURE.md bagian 12](docs/ARCHITECTURE.md#12-utang-teknis-dan-batasan).

@@ -2286,10 +2286,14 @@
     "101": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_avoid_time_sensitive_information",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_common_patterns",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_concise_is_key",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_content_guidelines",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_core_principles",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_implement_feedback_loops",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_set_appropriate_degrees_of_freedom",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_skill_authoring_best_practices",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_template_pattern",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_test_with_all_models_you_plan_to_use",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_use_consistent_terminology",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_use_workflows_for_complex_tasks",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_workflows_and_feedback_loops"
@@ -2645,14 +2649,14 @@
       "agents_skills_brainstorming_scripts_helper_websocketurl"
     ],
     "130": [
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_default_type",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_default_value",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_full_type",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_full_value",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_md_type",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_md_value",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_primitive_radius",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_default",
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_full",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_shadow_default"
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_md",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_shadow_md"
     ],
     "131": [
       "agents_skills_brand_scripts_sync_brand_to_tokens",
@@ -3289,10 +3293,10 @@
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_padding_x_value"
     ],
     "225": [
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_md_type",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_md_value",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_md",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_shadow_md"
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_default_type",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_default_value",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_default",
+      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_shadow_default"
     ],
     "226": [
       "src_components_layout_floatingdock",
@@ -3313,12 +3317,6 @@
     ],
     "231": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_ui_styling_scripts_tailwind_config_gen_py_path"
-    ],
-    "232": [
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_concise_is_key",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_core_principles",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_set_appropriate_degrees_of_freedom",
-      "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_test_with_all_models_you_plan_to_use"
     ],
     "233": [
       "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_color_foreground",
@@ -3485,7 +3483,7 @@
     "98": 0.15384615384615385,
     "99": 0.15384615384615385,
     "100": 0.15384615384615385,
-    "101": 0.2222222222222222,
+    "101": 0.15384615384615385,
     "102": 0.15384615384615385,
     "103": 0.16666666666666666,
     "104": 0.24242424242424243,
@@ -3616,7 +3614,6 @@
     "229": 1.0,
     "230": 1.0,
     "231": 1.0,
-    "232": 0.5,
     "233": 0.6666666666666666,
     "234": 0.6666666666666666,
     "235": 0.6666666666666666,
@@ -3749,7 +3746,7 @@
     },
     {
       "type": "bridge_node",
-      "question": "Why does `dependencies` connect `placeholder` to `App.tsx`, `react-router-dom`, `recharts`, `@supabase/supabase-js`, `tailwind-merge`, `html5-qrcode`, `useInventory`, `package.json`?",
+      "question": "Why does `dependencies` connect `dependencies` to `App.tsx`, `react-router-dom`, `recharts`, `@supabase/supabase-js`, `tailwind-merge`, `html5-qrcode`, `useInventory`, `package.json`?",
       "why": "High betweenness centrality (0.004) - this node is a cross-community bridge."
     },
     {
@@ -3774,7 +3771,7 @@
     },
     {
       "type": "low_cohesion",
-      "question": "Should `placeholder` be split into smaller, more focused modules?",
+      "question": "Should `dependencies` be split into smaller, more focused modules?",
       "why": "Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected."
     }
   ]

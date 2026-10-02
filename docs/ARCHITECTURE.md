@@ -99,7 +99,6 @@ src/
 | `/alerts` | `PredictiveAlertsPage` | peringatan berdasarkan MTBF dan stok |
 | `/needs` | `PredictiveNeedsPage` | perencanaan kebutuhan tahunan, ekspor Excel |
 | `/reports` | `ReportsPage` | klasifikasi fast/medium/slow moving |
-| `/settings` | `SettingsPage` | status koneksi dan form master data |
 
 `AppLayout` membungkus semua rute: sidebar, `HeaderStats` (total stok, jumlah SKU kritis, status koneksi, tombol muat ulang), banner bila database tidak terhubung, dan pengalihan `?sku=` / `?scan=` ke `/scanner`.
 
@@ -157,7 +156,7 @@ Semua aksi menampilkan toast dan mengembalikan `boolean`; halaman hanya menutup 
 | Status | `isLoading`, `isSupabaseConnected`, `refreshData()` |
 | Sparepart | `addSparepart`, `updateSparepart`, `deleteSparepart` |
 | Mutasi | `addMutation`, `updateMutation`, `deleteMutation` |
-| Master | `addJenisPeralatan`, `addTipePeralatan`, `addLokasi`, `addTitikLokasi`, `addUnitPeralatan`, `updateUnitStatus`, `addPersonel`, `addJadwalShift` (belum ada UI) |
+| Master (**tidak dipakai UI** sejak menu Pengaturan dihapus) | `addJenisPeralatan`, `addTipePeralatan`, `addLokasi`, `addTitikLokasi`, `addUnitPeralatan`, `updateUnitStatus`, `addPersonel`, `addJadwalShift` |
 | Perhitungan | `getPredictiveAlerts()`, `getAnnualNeeds()` |
 
 ## 5. Mesin stok
@@ -284,13 +283,13 @@ Kandidat tes otomatis yang bernilai tinggi: unit test `utils/stock.ts`, `utils/s
 
 | # | Hal | Dampak / saran |
 |---|---|---|
-| T1 | Belum ada login; form master di Pengaturan (Jenis, Tipe, Lokasi, Titik, Personel) **gagal** bagi `anon` karena RLS | tambah Supabase Auth, atau jadikan tab itu hanya-baca |
+| T1 | Belum ada login; penulisan ke sebagian tabel master ditolak RLS bagi `anon`. Menu Pengaturan dihapus (2 Okt 2026), jadi tidak ada lagi form yang gagal | tambah Supabase Auth bila pengelolaan master dibutuhkan lagi |
 | T2 | Validasi stok minus tidak atomik (dua pengguna bersamaan bisa sama-sama lolos) | trigger/constraint di database |
 | T3 | Kode mati: `components/dashboard/*` (4 komponen), `lib/sparepartAnalytics.ts`, `components/layout/FloatingDock.tsx`, tipe `PurchaseRequisition` | hapus, atau hubungkan bila fiturnya akan dipakai |
 | T4 | Dependensi terpasang tetapi tidak dipakai: `motion`, `clsx`, `tailwind-merge`, `core-js` | hapus dari `package.json` |
 | T5 | Seluruh `stock_mutations` dimuat ke browser | agregasi/pagination di database bila data bertambah besar |
 | T6 | Tidak ada tes otomatis | tambah `vitest` untuk `utils/*` |
-| T7 | Tab "Pengaturan" hanya bisa **menambah**, tidak mengedit/menghapus | sesuai kebutuhan, lengkapi CRUD (butuh T1) |
-| T8 | `master_configs` dibaca tetapi tidak dipakai; `addJadwalShift` tanpa UI | bersihkan atau gunakan |
+| T7 | Fungsi `add*` / `updateUnitStatus` untuk master di `InventoryContext` tidak dipakai UI setelah menu Pengaturan dihapus | hapus bila memang tidak akan dikembalikan |
+| T8 | `master_configs` dibaca tetapi tidak dipakai | bersihkan atau gunakan |
 | T9 | Ukuran lembar Tom & Jerry diasumsikan (margin 3 mm, jarak 2 mm) | cocokkan dengan lembar fisik |
 | T10 | Ekspor Excel/PDF terjadi di browser | untuk data besar bisa lambat |

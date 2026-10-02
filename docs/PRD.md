@@ -68,15 +68,14 @@ Aplikasi belum punya login, jadi peran di bawah **belum dibedakan oleh sistem** 
 | **Teknisi / petugas shift** | mengambil dan mengembalikan sparepart dengan cepat di lapangan, dari HP | Scanner, Input Transaksi |
 | **Petugas gudang** | mencatat barang masuk, merapikan katalog, mencetak label | Katalog, Input Transaksi, Cetak Label |
 | **Koordinator / supervisor** | melihat kondisi stok, memeriksa riwayat, merencanakan pengadaan | Dashboard, History, Peringatan, Kebutuhan, Laporan |
-| **Admin data master** | menjaga data peralatan, lokasi, personel | Pengaturan (butuh login, lihat F-10) |
 
 Konteks pemakaian: bekerja dua shift (PS 08.00–20.00 dan M 20.00–08.00), sebagian besar dari HP/tablet di area kerja.
 
 ## 5. Ruang lingkup
 
-**Dalam lingkup (sudah ada):** katalog sparepart; pencatatan lima tipe transaksi; riwayat, edit, hapus, dan ekspor; scan QR; cetak label; dashboard; peringatan MTBF; perencanaan kebutuhan; laporan rotasi; pengaturan data master (sebagian).
+**Dalam lingkup (sudah ada):** katalog sparepart; pencatatan lima tipe transaksi; riwayat, edit, hapus, dan ekspor; scan QR; cetak label; dashboard; peringatan MTBF; perencanaan kebutuhan; laporan rotasi.
 
-**Di luar lingkup v1:** harga/anggaran, proses pengadaan, banyak gudang, offline, notifikasi push, login/peran (direncanakan, lihat [bagian 12](#12-status-dan-roadmap)).
+**Di luar lingkup v1:** harga/anggaran, proses pengadaan, banyak gudang, offline, notifikasi push, **pengelolaan data master dari aplikasi ini** (menu Pengaturan dihapus pada 2 Oktober 2026; data master hanya dibaca), login/peran (direncanakan, lihat [bagian 12](#12-status-dan-roadmap)).
 
 ## 6. Kebutuhan fungsional
 
@@ -135,13 +134,14 @@ Estimasi kebutuhan tahunan, stok tersedia, dan rekomendasi order per sparepart (
 ### F-09 Laporan rotasi — ✅
 Klasifikasi *fast / medium / slow moving* menurut jumlah transaksi (≥ 2, 1, 0), total stok bekas, total stok fisik.
 
-### F-10 Data master (Pengaturan) — ⚠ sebagian
-- Melihat daftar unit peralatan, jenis, tipe, lokasi/titik, personel; status koneksi database.
-- Menambah: Unit Peralatan ✅; **Jenis, Tipe, Lokasi, Titik, Personel ❌ gagal tanpa login** karena kebijakan database ([DATABASE.md bagian 6](DATABASE.md#6-keamanan-rls-dan-hak-akses)).
-- Belum ada edit atau hapus.
+### F-10 Data master (Pengaturan) — ❌ dihapus
+Menu **Pengaturan Sistem** (halaman `/settings`) **dihapus pada 2 Oktober 2026** atas permintaan pemilik (alasan tidak dicatat). Catatan teknis: sebelum dihapus, sebagian form di dalamnya tidak dapat berfungsi tanpa login karena kebijakan database ([DATABASE.md bagian 6](DATABASE.md#6-keamanan-rls-dan-hak-akses)).
+- Aplikasi sekarang **hanya membaca** data master (peralatan, tipe, lokasi, titik, penempatan, personel, jadwal shift) untuk filter, pilihan lokasi/unit, dan petugas berdinas.
+- Indikator status koneksi database tetap ada di header; bila terputus, banner di bagian atas halaman menjelaskan cara memperbaikinya.
+- Alamat `/settings` lama dan alamat yang tidak dikenal diarahkan ke Dashboard.
 
 ### F-11 Login dan peran — ❌
-Belum ada. Prasyarat untuk F-10 dan untuk mengamankan data ([bagian 12](#12-status-dan-roadmap)).
+Belum ada. Prasyarat untuk mengamankan data, dan untuk mengembalikan pengelolaan data master di aplikasi ini bila kelak dibutuhkan ([bagian 12](#12-status-dan-roadmap)).
 
 ## 7. Aturan bisnis
 
@@ -243,16 +243,16 @@ Supabase (database dan REST), Vercel (hosting dan deploy), GitHub (kode), kamera
 ## 12. Status dan roadmap
 
 ### Sudah selesai (v1.0.0)
-F-01 sampai F-09, dan sebagian F-10. Pada Oktober 2026: perbaikan menyeluruh (bug, data nyata di dashboard, validasi stok), aliran stok per transaksi (Rusak dari baru/bekas, Serah Terima dua arah), dan pengamanan view `current_stock`.
+F-01 sampai F-09. Pada Oktober 2026 menu Pengaturan (F-10) dihapus, lalu: perbaikan menyeluruh (bug, data nyata di dashboard, validasi stok), aliran stok per transaksi (Rusak dari baru/bekas, Serah Terima dua arah), dan pengamanan view `current_stock`.
 
 ### Backlog **[Usulan]**
 
 | Prioritas | Item | Alasan |
 |---|---|---|
-| **P0** | Login (Supabase Auth) dan RLS ketat: tulis hanya `authenticated`; batasi baca `personel`; perbaiki policy `master_configs` | K1, K3; membuka F-10 |
+| **P0** | Login (Supabase Auth) dan RLS ketat: tulis hanya `authenticated`; batasi baca `personel`; perbaiki policy `master_configs` | K1, K3 |
 | **P0** | Guard stok minus di database (trigger/constraint) | K2 |
 | **P1** | Tes otomatis (`vitest`) untuk `utils/stock.ts`, `shiftUtils.ts`, `compatibility.ts` | K6 |
-| **P1** | Lengkapi CRUD data master (edit, hapus, nonaktifkan) | F-10 |
+| **P1** | Bila pengelolaan data master dibutuhkan lagi di aplikasi ini: bangun kembali dengan login (CRUD lengkap, nonaktifkan) | F-10 dihapus |
 | **P1** | Modul pengajuan pembelian (PR) dari rekomendasi order | dashboard sudah menyebut "perlu pengajuan ulang (PR)" |
 | **P1** | Soft-delete sparepart (arsip) agar riwayat tidak hilang | BR-12 |
 | **P2** | Cocokkan ukuran lembar Tom & Jerry dengan lembar fisik | F-05 |

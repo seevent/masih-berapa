@@ -39,7 +39,7 @@ Vite **tidak** memeriksa tipe saat `dev`; galat tipe baru muncul di `typecheck`/
 8. **Jangan mengubah, menghapus, atau menulis** `jadwal_pm`, `laporan_operasional`, `laporan_checklist`, atau `master_configs` (milik aplikasi lain).
 9. **Perubahan skema = migrasi** mengikuti [DATABASE.md bagian 8](docs/DATABASE.md#8-prosedur-mengubah-database): file di `docs/migrations/`, uji dalam transaksi yang dibatalkan, **terapkan hanya setelah pemilik menyetujui**, terapkan **sebelum** deploy kode yang membutuhkannya, lalu perbarui dokumen.
 10. Jangan menjalankan `docs/schema_relational_supabase_v2.sql` (usang). `docs/schema_relational_supabase.sql` hanya acuan baca.
-11. RLS: tanpa login, aplikasi berjalan sebagai `anon`. Penulisan ke `jenis_peralatan`, `tipe_peralatan`, `lokasi`, `titik_lokasi`, `penempatan_peralatan`, `unit_kerja`, `personel` **ditolak** (butuh login). Jangan menganggap sebuah penulisan "pasti berhasil" tanpa memeriksa policy-nya.
+11. RLS: tanpa login, aplikasi berjalan sebagai `anon`. Penulisan ke `jenis_peralatan`, `tipe_peralatan`, `lokasi`, `titik_lokasi`, `penempatan_peralatan`, `unit_kerja`, `personel` **ditolak** (butuh login). Aplikasi ini **hanya membaca tabel master**: menu Pengaturan dihapus pada 2 Okt 2026, jadi jangan menambahkan penulisan ke tabel master tanpa login. Jangan menganggap sebuah penulisan "pasti berhasil" tanpa memeriksa policy-nya.
 12. PostgREST membatasi 1.000 baris per permintaan: pakai `fetchAllRows` untuk tabel yang bisa lebih besar.
 13. Jangan menaruh service-role key atau rahasia lain di `VITE_*` atau di repo.
 

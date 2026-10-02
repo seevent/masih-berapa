@@ -4460,8 +4460,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L65",
       "_origin": "ast",
-      "community": 130,
-      "community_name": "radius",
+      "community": 225,
+      "community_name": "default",
       "norm_label": "default",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_default"
     },
@@ -4471,8 +4471,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L65",
       "_origin": "ast",
-      "community": 130,
-      "community_name": "radius",
+      "community": 225,
+      "community_name": "default",
       "norm_label": "$value",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_default_value"
     },
@@ -4482,8 +4482,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L65",
       "_origin": "ast",
-      "community": 130,
-      "community_name": "radius",
+      "community": 225,
+      "community_name": "default",
       "norm_label": "$type",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_default_type"
     },
@@ -4493,8 +4493,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L66",
       "_origin": "ast",
-      "community": 225,
-      "community_name": "md",
+      "community": 130,
+      "community_name": "radius",
       "norm_label": "md",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_radius_md"
     },
@@ -4504,8 +4504,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L66",
       "_origin": "ast",
-      "community": 225,
-      "community_name": "md",
+      "community": 130,
+      "community_name": "radius",
       "norm_label": "$value",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_md_value"
     },
@@ -4515,8 +4515,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L66",
       "_origin": "ast",
-      "community": 225,
-      "community_name": "md",
+      "community": 130,
+      "community_name": "radius",
       "norm_label": "$type",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_md_type"
     },
@@ -4614,8 +4614,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L74",
       "_origin": "ast",
-      "community": 130,
-      "community_name": "radius",
+      "community": 225,
+      "community_name": "default",
       "norm_label": "default",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_shadow_default"
     },
@@ -4625,8 +4625,8 @@
       "source_file": ".agents/skills/design-system/templates/design-tokens-starter.json",
       "source_location": "L75",
       "_origin": "ast",
-      "community": 225,
-      "community_name": "md",
+      "community": 130,
+      "community_name": "radius",
       "norm_label": "md",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_design_system_templates_design_tokens_starter_shadow_md"
     },
@@ -10367,7 +10367,7 @@
       "source_location": "L12",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "dependencies",
       "id": "package_dependencies"
     },
@@ -10400,7 +10400,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "clsx",
       "id": "package_dependencies_clsx"
     },
@@ -10411,7 +10411,7 @@
       "source_location": "L14",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "clsx",
       "id": "clsx"
     },
@@ -10422,7 +10422,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "core-js",
       "id": "package_dependencies_core_js"
     },
@@ -10433,7 +10433,7 @@
       "source_location": "L15",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "core-js",
       "id": "core_js"
     },
@@ -10444,7 +10444,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "html2canvas-pro",
       "id": "package_dependencies_html2canvas_pro"
     },
@@ -10455,7 +10455,7 @@
       "source_location": "L16",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "html2canvas-pro",
       "id": "html2canvas_pro"
     },
@@ -10510,7 +10510,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "lucide-react",
       "id": "package_dependencies_lucide_react"
     },
@@ -10521,7 +10521,7 @@
       "source_location": "L19",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "lucide-react",
       "id": "lucide_react"
     },
@@ -10532,7 +10532,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "motion",
       "id": "package_dependencies_motion"
     },
@@ -10543,7 +10543,7 @@
       "source_location": "L20",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "motion",
       "id": "motion"
     },
@@ -10554,7 +10554,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "qrcode.react",
       "id": "package_dependencies_qrcode_react"
     },
@@ -10565,7 +10565,7 @@
       "source_location": "L21",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "qrcode.react",
       "id": "qrcode_react"
     },
@@ -10576,7 +10576,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "react",
       "id": "package_dependencies_react"
     },
@@ -10587,7 +10587,7 @@
       "source_location": "L22",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "react",
       "id": "react"
     },
@@ -10598,7 +10598,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "react-dom",
       "id": "package_dependencies_react_dom"
     },
@@ -10609,7 +10609,7 @@
       "source_location": "L23",
       "_origin": "ast",
       "community": 0,
-      "community_name": "placeholder",
+      "community_name": "dependencies",
       "norm_label": "react-dom",
       "id": "react_dom"
     },
@@ -28307,8 +28307,8 @@
       "source_file": ".agents/skills/writing-skills/anthropic-best-practices.md",
       "source_location": "L9",
       "_origin": "ast",
-      "community": 232,
-      "community_name": "Core principles",
+      "community": 101,
+      "community_name": "Skill authoring best practices",
       "norm_label": "core principles",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_core_principles"
     },
@@ -28318,8 +28318,8 @@
       "source_file": ".agents/skills/writing-skills/anthropic-best-practices.md",
       "source_location": "L11",
       "_origin": "ast",
-      "community": 232,
-      "community_name": "Core principles",
+      "community": 101,
+      "community_name": "Skill authoring best practices",
       "norm_label": "concise is key",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_concise_is_key"
     },
@@ -28329,8 +28329,8 @@
       "source_file": ".agents/skills/writing-skills/anthropic-best-practices.md",
       "source_location": "L59",
       "_origin": "ast",
-      "community": 232,
-      "community_name": "Core principles",
+      "community": 101,
+      "community_name": "Skill authoring best practices",
       "norm_label": "set appropriate degrees of freedom",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_set_appropriate_degrees_of_freedom"
     },
@@ -28340,8 +28340,8 @@
       "source_file": ".agents/skills/writing-skills/anthropic-best-practices.md",
       "source_location": "L132",
       "_origin": "ast",
-      "community": 232,
-      "community_name": "Core principles",
+      "community": 101,
+      "community_name": "Skill authoring best practices",
       "norm_label": "test with all models you plan to use",
       "id": "c_users_yuli_syarif_antigravity_masih_berapa_agents_skills_writing_skills_anthropic_best_practices_test_with_all_models_you_plan_to_use"
     },

@@ -32,9 +32,9 @@ Isi dokumen ini diambil dari **database live** (project "SSES T2 Project", regio
 
 | Kelompok | Tabel |
 |---|---|
-| Master peralatan | `jenis_peralatan`, `tipe_peralatan`, `unit_peralatan`, `penempatan_peralatan` |
-| Master lokasi | `lokasi`, `titik_lokasi` |
-| Master personel | `unit_kerja`, `personel`, `jadwal_shift` |
+| Master peralatan (**hanya dibaca**) | `jenis_peralatan`, `tipe_peralatan`, `unit_peralatan`, `penempatan_peralatan` |
+| Master lokasi (**hanya dibaca**) | `lokasi`, `titik_lokasi` |
+| Master personel (**hanya dibaca**) | `unit_kerja`, `personel`, `jadwal_shift` |
 | Inti sparepart | `spareparts`, `stock_mutations`, `sparepart_compatibility` |
 | Rekap (view) | `current_stock` (tidak dibaca aplikasi, lihat [5.1](#51-view-current_stock)) |
 | Dibaca aplikasi tetapi tidak dipakai UI | `master_configs` |
@@ -294,7 +294,7 @@ RLS **aktif** di semua tabel. Aplikasi tidak punya login, jadi semua permintaan 
 
 **Bukti uji (2 Okt 2026).** Sebagai role `anon`, dalam transaksi yang dibatalkan: INSERT ke `unit_peralatan` dan `spareparts` **berhasil**; INSERT ke `jenis_peralatan`, `lokasi`, `personel`, `unit_kerja` **ditolak** (SQLSTATE `42501`). Untuk `tipe_peralatan`, `titik_lokasi`, `penempatan_peralatan`, kesimpulan berasal dari definisi policy (sama dengan `jenis_peralatan`), belum diuji satu per satu.
 
-**Dampak pada aplikasi:** form di halaman **Pengaturan** untuk menambah Jenis, Tipe, Lokasi, Titik, dan Personel akan gagal (pesan RLS) selama pengguna tidak login. Form Unit Peralatan, Katalog, dan transaksi stok berfungsi.
+**Dampak pada aplikasi:** aplikasi ini hanya menulis `spareparts`, `stock_mutations`, dan `sparepart_compatibility` (semuanya terbuka bagi `anon`). Menu Pengaturan, yang dulu mencoba menulis tabel master (dan gagal untuk sebagian tabel tanpa login), **dihapus pada 2 Oktober 2026**. Penulisan data master dilakukan di luar aplikasi ini.
 
 ## 7. Riwayat migrasi
 
@@ -347,11 +347,10 @@ Sparepart sudah terdaftar tetapi belum ada satu pun transaksi stok, jadi semua s
 | R2 | `master_configs` dapat **ditulis** oleh `anon` (policy bernama "read" tetapi `ALL`) | konfigurasi aplikasi lain bisa diubah | ubah policy menjadi `SELECT` untuk publik; tulis hanya untuk `authenticated` |
 | R3 | Validasi stok minus hanya di aplikasi dan tidak atomik: dua pengguna yang mencatat bersamaan bisa sama-sama lolos | stok bisa minus (tampil 0 karena dipotong di UI) | trigger/constraint di database yang menolak stok minus |
 | R4 | `personel` (termasuk `nik` dan `no_hp`) bisa dibaca publik | data pribadi terpapar | batasi `SELECT` ke `authenticated` atau sembunyikan kolom |
-| R5 | Form master di Pengaturan gagal tanpa login ([bagian 6](#6-keamanan-rls-dan-hak-akses)) | fitur terlihat tersedia tetapi gagal | login, atau jadikan tab tersebut hanya-baca |
-| R6 | Menghapus sparepart menghapus seluruh riwayat mutasinya (CASCADE) | riwayat audit hilang | UI sudah meminta konfirmasi; pertimbangkan soft-delete |
-| R7 | `sumber` tidak punya CHECK; aplikasi lain bisa menulis nilai bebas | filter/laporan tidak konsisten | tambahkan CHECK atau tabel referensi |
-| R8 | View `current_stock` dan `src/utils/stock.ts` bisa menyimpang bila hanya salah satu diubah | angka berbeda antar aplikasi | selalu ubah keduanya; jalankan vektor uji |
-| R9 | `function_search_path_mutable` pada `update_updated_at_column`; perlindungan password bocor Auth belum aktif | peringatan keamanan (WARN) | `SET search_path = ''` pada fungsi; aktifkan di dashboard Auth |
+| R5 | Menghapus sparepart menghapus seluruh riwayat mutasinya (CASCADE) | riwayat audit hilang | UI sudah meminta konfirmasi; pertimbangkan soft-delete |
+| R6 | `sumber` tidak punya CHECK; aplikasi lain bisa menulis nilai bebas | filter/laporan tidak konsisten | tambahkan CHECK atau tabel referensi |
+| R7 | View `current_stock` dan `src/utils/stock.ts` bisa menyimpang bila hanya salah satu diubah | angka berbeda antar aplikasi | selalu ubah keduanya; jalankan vektor uji |
+| R8 | `function_search_path_mutable` pada `update_updated_at_column`; perlindungan password bocor Auth belum aktif | peringatan keamanan (WARN) | `SET search_path = ''` pada fungsi; aktifkan di dashboard Auth |
 
 ## 11. File SQL di repo
 
