@@ -98,7 +98,8 @@ masih-berapa/
 | [docs/DATABASE.md](docs/DATABASE.md) | skema Supabase, model stok, RLS, migrasi, risiko |
 | [AGENTS.md](AGENTS.md) | aturan kerja untuk agen AI di repo ini |
 | [HANDOFF.md](HANDOFF.md) | catatan serah terima sesi (snapshot Juli 2026, sebagian sudah usang) |
-| `docs/specs/`, `docs/tickets/` | spesifikasi dan tiket lama (**historis**, sudah tidak sesuai produk saat ini) |
+| [docs/specs/predictive-maintenance.md](docs/specs/predictive-maintenance.md) | spesifikasi aktif: predictive maintenance v2, MTBF otomatis (draft) |
+| `docs/specs/` lainnya, `docs/tickets/` | spesifikasi dan tiket lama (**historis**, sudah tidak sesuai produk saat ini) |
 | `graphify-out/` | knowledge graph kode (`graphify update .` untuk memperbarui) |
 
 ## Database

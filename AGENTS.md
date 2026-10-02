@@ -90,4 +90,4 @@ Repo punya graph di `graphify-out/` (`GRAPH_REPORT.md`, `graph.json`, `graph.htm
 
 ## Konvensi proses yang sudah ada di `.agents/`
 
-Folder `.agents/` berisi aturan untuk agen lain (Antigravity/Gemini), mis. `rules/idea-orchestrator.md`: untuk **ide fitur mentah**, lewati dulu tahap tanya-jawab (`grill-me`), spesifikasi (`to-spec`), dan tiket (`to-ticket`) sebelum menulis kode. Hormati alur itu bila pemilik menyodorkan ide fitur baru; untuk perbaikan bug dan permintaan yang jelas, langsung kerjakan. `docs/specs/` dan `docs/tickets/` adalah hasil alur lama dan **sudah usang** terhadap produk saat ini.
+Folder `.agents/` berisi aturan untuk agen lain (Antigravity/Gemini), mis. `rules/idea-orchestrator.md`: untuk **ide fitur mentah**, lewati dulu tahap tanya-jawab (`grill-me`), spesifikasi (`to-spec`), dan tiket (`to-ticket`) sebelum menulis kode. Hormati alur itu bila pemilik menyodorkan ide fitur baru; untuk perbaikan bug dan permintaan yang jelas, langsung kerjakan. `docs/specs/` dan `docs/tickets/` adalah hasil alur lama dan **sudah usang** terhadap produk saat ini, **kecuali** `docs/specs/predictive-maintenance.md` (spesifikasi aktif).
