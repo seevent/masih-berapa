@@ -127,8 +127,10 @@ export const PredictiveNeedsPage: React.FC = () => {
                     <div className="font-mono text-cyan-400 font-bold">{sp.sku}</div>
                     <div className="text-white font-medium">{sp.name}</div>
                   </td>
-                  <td className="py-3.5 px-4 text-slate-300">
-                    {sp.equipment_type_name}
+                  <td className="py-3.5 px-4 text-slate-300 whitespace-nowrap">
+                    {sp.equipment_type_name.split(', ').map((nama) => (
+                      <div key={nama}>{nama}</div>
+                    ))}
                   </td>
                   <td className="py-3.5 px-4 text-center whitespace-nowrap">
                     <span className="font-bold text-white">{stok_tersedia} {sp.unit}</span>
