@@ -12,6 +12,7 @@ cp .env.example .env   # isi VITE_SUPABASE_URL dan VITE_SUPABASE_ANON_KEY
 npm run dev            # http://localhost:5173
 npm run typecheck      # tsc --noEmit
 npm run build          # tsc --noEmit && vite build  (harus bersih, tanpa peringatan)
+npm test               # vitest run (fungsi murni di src/utils)
 ```
 
 Vite **tidak** memeriksa tipe saat `dev`; galat tipe baru muncul di `typecheck`/`build`. Selalu jalankan keduanya sebelum menyatakan selesai.
@@ -19,9 +20,9 @@ Vite **tidak** memeriksa tipe saat `dev`; galat tipe baru muncul di `typecheck`/
 ## Peta kode
 
 - `src/context/InventoryContext.tsx` — satu-satunya tempat membaca/menulis Supabase untuk data aplikasi; semua halaman memakai `useInventory()`.
-- `src/utils/stock.ts` — **aturan stok** (fungsi murni). `compatibility.ts` (lokasi/unit cocok), `shiftUtils.ts` (shift PS/M).
+- `src/utils/stock.ts` — **aturan stok** (fungsi murni). `reliability.ts` (MTBF otomatis, status umur, titik pesan; ada tesnya), `compatibility.ts` (lokasi/unit cocok, tipe yang wajib unit), `shiftUtils.ts` (shift PS/M).
 - `src/lib/supabase.ts` — klien + `fetchAllRows` (paginasi).
-- `src/pages/*` — satu file per rute; `src/components/mutation/StockFlowFields.tsx` dipakai 3 halaman.
+- `src/pages/*` — satu file per rute; `src/components/mutation/StockFlowFields.tsx` dan `EquipmentUnitSelect.tsx` dipakai 3 halaman.
 - `docs/migrations/` — migrasi SQL yang sudah/akan diterapkan.
 
 ## Aturan yang mudah salah
@@ -32,33 +33,34 @@ Vite **tidak** memeriksa tipe saat `dev`; galat tipe baru muncul di `typecheck`/
 3. Aturan stok ada di **dua tempat yang harus identik**: `src/utils/stock.ts` dan view SQL `current_stock`. Mengubah salah satunya **wajib** mengubah yang lain + migrasi + dokumen, lalu cocokkan dengan vektor uji (hasil 4 / 5 / 2) di DATABASE.md 3.3.
 4. Tulis mutasi lewat `addMutation`/`updateMutation`/`deleteMutation` saja. Ketiganya membaca ulang mutasi dari database dan menolak hasil yang membuat kantong stok minus. Jangan menambah jalur tulis yang melewati validasi itu.
 5. Kebutuhan tahunan hanya menghitung `Pakai`; `Serah Terima` dan `Rusak` bukan pemakaian.
-6. `isLowStock` (`stok baru <= minimum`) adalah satu-satunya definisi stok rendah.
+6. `isLowStock` (`stok baru <= minimum`) adalah satu-satunya definisi stok rendah. Titik pesan di `reliability.ts` memakai `max(SLA, minimum + 1)` agar selalu selaras dengannya.
+7. **`Pakai` wajib `unit_id`** (form, `addMutation`, `updateMutation`). MTBF dihitung dari `Pakai` per (sparepart, unit); jangan menambah isian MTBF manual dan jangan membaca/menulis `spareparts.mtbf_days`/`last_replaced_at` (kolom usang). Ubah rumus hanya bersama spesifikasi `docs/specs/predictive-maintenance.md` dan tesnya.
 
 ### Database (produksi, dipakai bersama aplikasi lain)
-7. **Database live adalah acuan**, bukan file SQL di repo. Periksa skema sebenarnya sebelum menulis query atau mengubah tipe.
-8. **Jangan mengubah, menghapus, atau menulis** `jadwal_pm`, `laporan_operasional`, `laporan_checklist`, atau `master_configs` (milik aplikasi lain).
-9. **Perubahan skema = migrasi** mengikuti [DATABASE.md bagian 8](docs/DATABASE.md#8-prosedur-mengubah-database): file di `docs/migrations/`, uji dalam transaksi yang dibatalkan, **terapkan hanya setelah pemilik menyetujui**, terapkan **sebelum** deploy kode yang membutuhkannya, lalu perbarui dokumen.
-10. Jangan menjalankan `docs/schema_relational_supabase_v2.sql` (usang). `docs/schema_relational_supabase.sql` hanya acuan baca.
-11. RLS: tanpa login, aplikasi berjalan sebagai `anon`. Penulisan ke `jenis_peralatan`, `tipe_peralatan`, `lokasi`, `titik_lokasi`, `penempatan_peralatan`, `unit_kerja`, `personel` **ditolak** (butuh login). Aplikasi ini **hanya membaca tabel master**: menu Pengaturan dihapus pada 2 Okt 2026, jadi jangan menambahkan penulisan ke tabel master tanpa login. Jangan menganggap sebuah penulisan "pasti berhasil" tanpa memeriksa policy-nya.
-12. PostgREST membatasi 1.000 baris per permintaan: pakai `fetchAllRows` untuk tabel yang bisa lebih besar.
-13. Jangan menaruh service-role key atau rahasia lain di `VITE_*` atau di repo.
+8. **Database live adalah acuan**, bukan file SQL di repo. Periksa skema sebenarnya sebelum menulis query atau mengubah tipe.
+9. **Jangan mengubah, menghapus, atau menulis** `jadwal_pm`, `laporan_operasional`, `laporan_checklist`, atau `master_configs` (milik aplikasi lain).
+10. **Perubahan skema = migrasi** mengikuti [DATABASE.md bagian 8](docs/DATABASE.md#8-prosedur-mengubah-database): file di `docs/migrations/`, uji dalam transaksi yang dibatalkan, **terapkan hanya setelah pemilik menyetujui**, terapkan **sebelum** deploy kode yang membutuhkannya, lalu perbarui dokumen.
+11. Jangan menjalankan `docs/schema_relational_supabase_v2.sql` (usang). `docs/schema_relational_supabase.sql` hanya acuan baca.
+12. RLS: tanpa login, aplikasi berjalan sebagai `anon`. Penulisan ke `jenis_peralatan`, `tipe_peralatan`, `lokasi`, `titik_lokasi`, `penempatan_peralatan`, `unit_kerja`, `personel` **ditolak** (butuh login). Aplikasi ini **hanya membaca tabel master**: menu Pengaturan dihapus pada 2 Okt 2026, jadi jangan menambahkan penulisan ke tabel master tanpa login. Jangan menganggap sebuah penulisan "pasti berhasil" tanpa memeriksa policy-nya.
+13. PostgREST membatasi 1.000 baris per permintaan: pakai `fetchAllRows` untuk tabel yang bisa lebih besar.
+14. Jangan menaruh service-role key atau rahasia lain di `VITE_*` atau di repo.
 
 ### Frontend
-14. Id baru dibuat di klien dengan `crypto.randomUUID()`.
-15. Payload ke Supabase hanya boleh berisi **kolom yang ada di tabel**. Kolom turunan (`equipment_type_name`, `id_jenis`, `stok_*`, `sparepart_name`, `operator_name`) tidak boleh ikut dikirim.
-16. Setiap aksi tulis menampilkan toast (`useNotification`) dan mengembalikan `boolean`; tutup modal/pindah halaman hanya bila `true`.
-17. Teks UI berbahasa Indonesia; ikuti gaya yang ada (kelas Tailwind gelap, `glass-panel`, ikon `lucide-react`).
-18. Cetak label: PDF memakai `html2canvas-pro` (bukan `html2canvas`, gagal pada warna `oklch()` Tailwind v4); pustaka PDF dimuat dinamis. Ukuran label dalam **mm**, tampilan skala sebenarnya.
-19. Callback kamera (`html5-qrcode`) didaftarkan sekali; baca state lewat `ref` agar tidak basi.
-20. Jangan menambah dependensi tanpa alasan. Sudah terpasang tetapi tidak dipakai: `motion`, `clsx`, `tailwind-merge`, `core-js`.
+15. Id baru dibuat di klien dengan `crypto.randomUUID()`.
+16. Payload ke Supabase hanya boleh berisi **kolom yang ada di tabel**. Kolom turunan (`equipment_type_name`, `id_jenis`, `stok_*`, `sparepart_name`, `operator_name`) tidak boleh ikut dikirim.
+17. Setiap aksi tulis menampilkan toast (`useNotification`) dan mengembalikan `boolean`; tutup modal/pindah halaman hanya bila `true`.
+18. Teks UI berbahasa Indonesia; ikuti gaya yang ada (kelas Tailwind gelap, `glass-panel`, ikon `lucide-react`).
+19. Cetak label: PDF memakai `html2canvas-pro` (bukan `html2canvas`, gagal pada warna `oklch()` Tailwind v4); pustaka PDF dimuat dinamis. Ukuran label dalam **mm**, tampilan skala sebenarnya.
+20. Callback kamera (`html5-qrcode`) didaftarkan sekali; baca state lewat `ref` agar tidak basi.
+21. Jangan menambah dependensi tanpa alasan. Sudah terpasang tetapi tidak dipakai: `motion`, `clsx`, `tailwind-merge`, `core-js`.
 
 ## Cara memverifikasi perubahan
 
-1. `npm run typecheck` lalu `npm run build` — bersih.
+1. `npm run typecheck`, `npm test`, lalu `npm run build` — bersih.
 2. Untuk perubahan UI/alur: jalankan `npm run dev` dan uji di browser (Playwright/Chromium tersedia di lingkungan cloud). **Cegat semua permintaan tulis** ke `/rest/v1/` (selain GET) dan jawab palsu supaya data produksi tidak berubah; periksa isi payload yang dicegat.
 3. Untuk perubahan database: uji dalam blok `DO $$ ... RAISE EXCEPTION ... $$` yang dibatalkan, juga sebagai `SET LOCAL ROLE anon`; setelah itu pastikan jumlah baris dan skema tidak berubah.
 4. Untuk perubahan aturan stok: cocokkan `utils/stock.ts` dengan view menggunakan vektor uji.
-5. Belum ada tes otomatis. Fungsi murni di `src/utils/` adalah kandidat pertama bila menambahkannya.
+5. Tes otomatis (`vitest`) baru ada untuk `src/utils/reliability.ts`. Tambahkan tes untuk fungsi murni lain di `src/utils/` saat mengubahnya. Untuk menguji tampilan dengan data, jawab `GET stock_mutations` dengan data simulasi di browser (jangan menulis data uji ke produksi).
 
 ## Alur kerja Git
 
@@ -82,6 +84,7 @@ Repo punya graph di `graphify-out/` (`GRAPH_REPORT.md`, `graph.json`, `graph.htm
 
 | Bila Anda mengubah | Perbarui |
 |---|---|
+| rumus predictive maintenance | `src/utils/reliability.ts` + tes, `docs/specs/predictive-maintenance.md`, PRD.md 7.4–7.5, ARCHITECTURE.md 6.3–6.4 |
 | aturan stok, tipe transaksi | `src/utils/stock.ts`, view `current_stock` + migrasi, DATABASE.md bagian 3, PRD.md bagian 7, ARCHITECTURE.md bagian 5 |
 | skema/RLS | migrasi, `docs/schema_relational_supabase.sql`, DATABASE.md |
 | rute/halaman/fitur | README.md, PRD.md bagian 6, ARCHITECTURE.md bagian 3 |

@@ -10,12 +10,12 @@ Produksi: **https://masih-berapa.vercel.app** · Repo: `seevent/masih-berapa`
 |---|---|---|
 | Dashboard | `/` | total stok dan tren 6 bulan, SKU di bawah minimum, rasio baru vs bekas, level inventaris, top moving, transaksi terbaru |
 | Katalog | `/catalog` | CRUD sparepart (grid/list), SKU otomatis `SP-001`, banyak tipe peralatan kompatibel |
-| Input Transaksi | `/input-sparepart` | catat **Masuk, Pakai, Bekas, Rusak, Serah Terima**; pilih lokasi/unit; petugas = personel yang sedang berdinas |
+| Input Transaksi | `/input-sparepart` | catat **Masuk, Pakai, Bekas, Rusak, Serah Terima**; pilih lokasi/unit (**Pakai wajib unit**); petugas = personel yang sedang berdinas |
 | History & Audit | `/history` | riwayat dengan aliran stok, edit, hapus, ekspor Excel |
 | Scanner QR | `/scanner` | pindai QR dengan kamera atau ketik SKU/URL, lalu catat transaksi |
 | Cetak Label | `/print` | label thermal 50×30 / 70×40 mm dan lembar stiker Tom & Jerry, keluaran PDF |
-| Peringatan | `/alerts` | status KRITIS / PERINGATAN / AMAN dari MTBF dan stok |
-| Kebutuhan | `/needs` | estimasi kebutuhan tahunan dan rekomendasi order, ekspor Excel |
+| Peringatan | `/alerts` | umur komponen terpasang per unit vs **MTBF otomatis** dari data; kecukupan stok 30 hari @ SLA 98% (titik pesan Poisson) |
+| Kebutuhan | `/needs` | kebutuhan tahunan dari pemakaian riil dan rekomendasi order, ekspor Excel |
 | Laporan | `/reports` | klasifikasi fast / medium / slow moving |
 
 ## Cara kerja stok
@@ -32,6 +32,10 @@ Aplikasi **tidak menyimpan saldo**. Stok dihitung dari seluruh riwayat transaksi
 | Serah Terima (terima) | luar gudang | baru / bekas / rusak |
 
 Stok di kantong mana pun tidak boleh minus; transaksi yang membuatnya minus ditolak.
+
+## Predictive maintenance
+
+MTBF **tidak diisi manual**. Setiap `Pakai` mencatat unit peralatan; pemasangan kedua dan seterusnya di unit yang sama dihitung sebagai penggantian. MTBF per sparepart = total hari terpasang di semua unit ÷ jumlah penggantian. Sebelum ada penggantian, statusnya "Belum cukup data". Rincian: [docs/specs/predictive-maintenance.md](docs/specs/predictive-maintenance.md).
 
 ## Teknologi
 
@@ -69,6 +73,7 @@ Tanpa dua variabel pertama aplikasi tetap terbuka tetapi menampilkan "Database t
 | `npm run typecheck` | periksa tipe (`tsc --noEmit`) |
 | `npm run build` | periksa tipe lalu build ke `dist/` (galat tipe menggagalkan build) |
 | `npm run preview` | jalankan hasil build secara lokal |
+| `npm test` | tes otomatis (`vitest`) untuk fungsi murni |
 
 `node_modules/` dan `dist/` tidak disimpan di git; jalankan `npm install` setelah mengambil kode.
 
@@ -78,9 +83,9 @@ Tanpa dua variabel pertama aplikasi tetap terbuka tetapi menampilkan "Database t
 masih-berapa/
 ├── src/
 │   ├── pages/        # satu file per rute
-│   ├── components/   # layout/, mutation/ (field Rusak & Serah Terima)
+│   ├── components/   # layout/, mutation/ (field Rusak & Serah Terima, pilihan unit), predictive/
 │   ├── context/      # InventoryContext (semua data + aksi), NotificationContext (toast)
-│   ├── utils/        # stock.ts (aturan stok), compatibility.ts, shiftUtils.ts
+│   ├── utils/        # stock.ts (aturan stok), reliability.ts (MTBF, titik pesan) + tes, compatibility.ts, shiftUtils.ts
 │   ├── lib/          # klien Supabase
 │   └── types/        # tipe domain
 ├── docs/             # dokumentasi (lihat di bawah) + migrations/ + skema SQL
@@ -98,7 +103,7 @@ masih-berapa/
 | [docs/DATABASE.md](docs/DATABASE.md) | skema Supabase, model stok, RLS, migrasi, risiko |
 | [AGENTS.md](AGENTS.md) | aturan kerja untuk agen AI di repo ini |
 | [HANDOFF.md](HANDOFF.md) | catatan serah terima sesi (snapshot Juli 2026, sebagian sudah usang) |
-| [docs/specs/predictive-maintenance.md](docs/specs/predictive-maintenance.md) | spesifikasi aktif: predictive maintenance v2, MTBF otomatis (draft) |
+| [docs/specs/predictive-maintenance.md](docs/specs/predictive-maintenance.md) | spesifikasi aktif: predictive maintenance v2, MTBF otomatis (disetujui, sudah diimplementasikan) |
 | `docs/specs/` lainnya, `docs/tickets/` | spesifikasi dan tiket lama (**historis**, sudah tidak sesuai produk saat ini) |
 | `graphify-out/` | knowledge graph kode (`graphify update .` untuk memperbarui) |
 
@@ -112,7 +117,7 @@ Supabase PostgreSQL yang **dipakai bersama aplikasi SSES T2 lain**. Tabel yang d
 - Data pribadi personel (NIK, no. HP) terbaca publik oleh kebijakan database saat ini.
 - Validasi stok minus dilakukan di aplikasi dan tidak atomik terhadap pencatatan yang bersamaan.
 - Bukan PWA (tidak bisa di-install dan tidak bisa offline).
-- Belum ada tes otomatis.
+- Tes otomatis baru mencakup perhitungan predictive maintenance (`src/utils/reliability.ts`).
 - Aplikasi **hanya membaca** data master (peralatan, lokasi, personel, shift); menu Pengaturan sudah dihapus. Database menolak penulisan sebagian tabel master tanpa login.
 - Margin lembar Tom & Jerry (3 mm, jarak 2 mm) belum dicocokkan dengan lembar fisik.
 
@@ -120,7 +125,7 @@ Daftar lengkap dan rencana penanganannya: [PRD.md bagian 12](docs/PRD.md#12-stat
 
 ## Alur kontribusi
 
-Kerjakan di branch, buka Pull Request, dan biarkan pemilik me-merge. Vercel membuat link preview per PR (memakai database produksi yang sama). Jalankan `npm run typecheck` dan `npm run build` sebelum membuka PR. Panduan lebih rinci untuk agen AI ada di [AGENTS.md](AGENTS.md).
+Kerjakan di branch, buka Pull Request, dan biarkan pemilik me-merge. Vercel membuat link preview per PR (memakai database produksi yang sama). Jalankan `npm run typecheck`, `npm test`, dan `npm run build` sebelum membuka PR. Panduan lebih rinci untuk agen AI ada di [AGENTS.md](AGENTS.md).
 
 ## Lisensi
 

@@ -32,7 +32,7 @@ Arsitektur teknis aplikasi **Masih Berapa** (manajemen sparepart SSES T2) sesuai
 | State | Satu `InventoryContext` memuat seluruh data; halaman membaca lewat hook `useInventory()` |
 | Hosting | Vercel (static). Deploy otomatis dari GitHub; branch `main` = produksi, branch lain = preview |
 | Autentikasi | **Belum ada** |
-| Tes otomatis | **Belum ada.** Verifikasi dengan `tsc`, build, dan uji browser (lihat [bagian 10](#10-pengujian-dan-verifikasi)) |
+| Tes otomatis | `vitest` untuk `utils/reliability.ts` (`npm test`); sisanya diverifikasi dengan `tsc`, build, dan uji browser (lihat [bagian 10](#10-pengujian-dan-verifikasi)) |
 
 ## 2. Konteks sistem
 
@@ -77,11 +77,15 @@ src/
 │   └── NotificationContext.tsx   # toast
 ├── utils/
 │   ├── stock.ts                  # aturan stok (fungsi murni)  ← sumber aturan di sisi aplikasi
-│   ├── compatibility.ts          # lokasi/titik/unit yang cocok untuk sebuah sparepart
+│   ├── compatibility.ts          # lokasi/titik/unit yang cocok; tipe mana yang memakai/mewajibkan unit
+│   ├── reliability.ts            # predictive maintenance: MTBF otomatis, status umur, titik pesan (fungsi murni)
+│   ├── reliability.test.ts       # tes vitest untuk reliability.ts
 │   └── shiftUtils.ts             # shift PS/M dan personel berdinas
 ├── components/
 │   ├── layout/                   # AppLayout, Sidebar, HeaderStats (FloatingDock tidak dipakai)
 │   ├── mutation/StockFlowFields.tsx   # field Rusak / Serah Terima, dipakai 3 halaman
+│   ├── mutation/EquipmentUnitSelect.tsx  # pilihan unit (kompatibel + unit lain), dipakai 3 halaman
+│   ├── predictive/MtbfBadge.tsx  # tampilan MTBF otomatis + keyakinan
 │   └── dashboard/                # (4 komponen tidak dipakai, lihat bagian 12)
 └── pages/                        # satu file per rute
 ```
@@ -96,11 +100,11 @@ src/
 | `/history` | `HistoryPage` | riwayat, edit, hapus, ekspor Excel |
 | `/scanner` | `ScannerPage` | scan QR (kamera) atau ketik SKU/URL, lalu catat transaksi |
 | `/print` | `PrintLabelPage` | label QR thermal dan lembar Tom & Jerry, keluaran PDF |
-| `/alerts` | `PredictiveAlertsPage` | peringatan berdasarkan MTBF dan stok |
-| `/needs` | `PredictiveNeedsPage` | perencanaan kebutuhan tahunan, ekspor Excel |
+| `/alerts` | `PredictiveAlertsPage` | umur komponen terpasang (MTBF otomatis) dan kecukupan stok 30 hari @ SLA 98% |
+| `/needs` | `PredictiveNeedsPage` | kebutuhan tahunan dari pemakaian riil, ekspor Excel |
 | `/reports` | `ReportsPage` | klasifikasi fast/medium/slow moving |
 
-`AppLayout` membungkus semua rute: sidebar, `HeaderStats` (total stok, jumlah SKU kritis, status koneksi, tombol muat ulang), banner bila database tidak terhubung, dan pengalihan `?sku=` / `?scan=` ke `/scanner`.
+`AppLayout` membungkus semua rute: sidebar, `HeaderStats` (total stok, jumlah "perlu tindakan" = posisi KRITIS/LEWAT + sparepart PESAN dengan tautan ke `/alerts`, status koneksi, tombol muat ulang), banner bila database tidak terhubung, dan pengalihan `?sku=` / `?scan=` ke `/scanner`.
 
 ## 4. Aliran data
 
@@ -119,11 +123,12 @@ sequenceDiagram
     Note over Ctx: Tabel kritis (jenis, tipe, spareparts, stock_mutations) gagal?<br/>toast error, status "tidak terhubung", data tidak diganti
     Note over Ctx: Tabel lain gagal? toast peringatan, sisanya tetap dipakai
     Ctx->>Ctx: hitung stok per sparepart dari mutasi (utils/stock.ts)
-    Ctx->>Ctx: turunkan equipment_type_name, id_jenis, last_replaced_at, operator_name
+    Ctx->>Ctx: turunkan equipment_type_name, id_jenis, operator_name
+    Ctx->>Ctx: useMemo: laporan prediktif (utils/reliability.ts)
     Ctx-->>UI: state baru (spareparts, mutations, ...)
 ```
 
-Field turunan pada `Sparepart` (tidak ada di database): `stok_aktual`, `stok_bekas`, `stok_rusak`, `equipment_type_name`, `id_jenis`, dan `last_replaced_at` efektif (yang lebih baru antara kolom database dan transaksi `Pakai` terakhir). Stok negatif dipotong ke 0 hanya untuk tampilan.
+Field turunan pada `Sparepart` (tidak ada di database): `stok_aktual`, `stok_bekas`, `stok_rusak`, `equipment_type_name`, `id_jenis`. Stok negatif dipotong ke 0 hanya untuk tampilan. Kolom lama `mtbf_days` dan `last_replaced_at` **dibuang** saat memuat dan tidak pernah ditulis lagi.
 
 ### 4.2 Menulis data (contoh: mencatat mutasi)
 
@@ -132,7 +137,8 @@ sequenceDiagram
     participant Form as Form transaksi
     participant Ctx as InventoryContext.addMutation
     participant SB as Supabase
-    Form->>Ctx: addMutation({ sparepart_id, mutation_type, flow, qty, ... })
+    Form->>Ctx: addMutation({ sparepart_id, unit_id, mutation_type, flow, qty, ... })
+    Note over Ctx: Pakai tanpa unit_id? toast "Unit Wajib Dipilih", return false
     Ctx->>SB: baca SEMUA mutasi sparepart ini (data terbaru, bukan cache)
     Ctx->>Ctx: tambahkan transaksi baru, hitung stok per kantong (utils/stock.ts)
     alt ada kantong yang minus
@@ -144,7 +150,7 @@ sequenceDiagram
     end
 ```
 
-`updateMutation` dan `deleteMutation` memakai pola yang sama (membaca ulang, mensimulasikan hasilnya, menolak bila ada kantong minus). `addSparepart` menulis `spareparts`, menyamakan `sparepart_compatibility`, lalu mencatat stok awal sebagai mutasi `Masuk`/`Bekas`.
+`updateMutation` dan `deleteMutation` memakai pola yang sama (membaca ulang, mensimulasikan hasilnya, menolak bila ada kantong minus); `updateMutation` juga menolak `Pakai` tanpa unit dan menulis `unit_id`. `addSparepart` menulis `spareparts`, menyamakan `sparepart_compatibility`, lalu mencatat stok awal sebagai mutasi `Masuk`/`Bekas`.
 
 Semua aksi menampilkan toast dan mengembalikan `boolean`; halaman hanya menutup modal atau berpindah halaman bila hasilnya `true`.
 
@@ -157,7 +163,7 @@ Semua aksi menampilkan toast dan mengembalikan `boolean`; halaman hanya menutup 
 | Sparepart | `addSparepart`, `updateSparepart`, `deleteSparepart` |
 | Mutasi | `addMutation`, `updateMutation`, `deleteMutation` |
 | Master (**tidak dipakai UI** sejak menu Pengaturan dihapus) | `addJenisPeralatan`, `addTipePeralatan`, `addLokasi`, `addTitikLokasi`, `addUnitPeralatan`, `updateUnitStatus`, `addPersonel`, `addJadwalShift` |
-| Perhitungan | `getPredictiveAlerts()`, `getAnnualNeeds()` |
+| Perhitungan | `predictive`: `{ mtbfBySparepart, positionAlerts, stockCoverage, annualNeeds, urgentCount }` dari `buildPredictiveReport` (`utils/reliability.ts`), dihitung ulang dengan `useMemo` saat data berubah |
 
 ## 5. Mesin stok
 
@@ -181,7 +187,7 @@ Konsep: tiga kantong (`baru`, `bekas`, `rusak`) dan `null` = luar gudang. Setiap
 ## 6. Logika domain lainnya
 
 ### 6.1 Kompatibilitas sparepart ↔ peralatan (`utils/compatibility.ts`)
-Untuk sebuah sparepart: kumpulkan tipe utama (`spareparts.id_tipe`) dan semua tipe di `sparepart_compatibility`. Dari `penempatan_peralatan` aktif dicari **lokasi** yang memuat peralatan bertipe tersebut ("Lokasi Kompatibel" tampil di grup tersendiri), lalu titik dan unit yang bisa dipilih. Dipakai Input Transaksi dan Scanner untuk transaksi `Pakai`, `Bekas`, dan `Rusak`.
+Untuk sebuah sparepart: kumpulkan tipe utama (`spareparts.id_tipe`) dan semua tipe di `sparepart_compatibility`. Dari `penempatan_peralatan` aktif dicari **lokasi** yang memuat peralatan bertipe tersebut ("Lokasi Kompatibel" tampil di grup tersendiri), lalu titik dan unit yang bisa dipilih. Dipakai Input Transaksi, Scanner, dan modal edit History untuk transaksi `Pakai`, `Bekas`, dan `Rusak` (`usesEquipmentUnit`). `otherUnits` berisi unit yang tidak tercatat kompatibel; `EquipmentUnitSelect` menampilkannya di grup terpisah agar `Pakai` tidak terblokir saat data kompatibilitas belum lengkap. `requiresEquipmentUnit` = hanya `Pakai`.
 
 ### 6.2 Shift dan personel berdinas (`utils/shiftUtils.ts`)
 - Dua shift: **PS** (pagi/siang, 08.00–20.00) dan **M** (malam, 20.00–08.00).
@@ -190,16 +196,24 @@ Untuk sebuah sparepart: kumpulkan tipe utama (`spareparts.id_tipe`) dan semua ti
 - Bila tidak ada jadwal sama sekali, daftar personel jatuh kembali ke **semua personel** dan UI menampilkan peringatan.
 - Nama ditampilkan dengan awalan unit kerja, mis. `[OM/IAS T2] Nama`.
 
-### 6.3 Peringatan prediktif (`getPredictiveAlerts`)
-- `hari terpakai = hari sejak last_replaced_at efektif` (bila kosong, sejak `created_at`); `sisa = max(0, mtbf_days − hari terpakai)`; `mtbf_days` kosong dianggap 180.
-- **KRITIS**: stok tersedia (baru + bekas) = 0, atau sisa ≤ 7 hari, atau stok baru ≤ minimum.
-- **PERINGATAN**: sisa ≤ 21 hari, atau stok baru ≤ 1,5 × minimum.
-- Diurutkan menurut keparahan lalu sisa hari terkecil.
+### 6.3 Predictive maintenance (`utils/reliability.ts`)
+Fungsi murni, diuji dengan `vitest`. Spesifikasi dan contoh angka: [specs/predictive-maintenance.md](specs/predictive-maintenance.md).
 
-### 6.4 Kebutuhan tahunan (`getAnnualNeeds`)
-- Bila ada pemakaian (`Pakai`) dalam 12 bulan terakhir: `kebutuhan = pemakaian / hari riwayat × 365`, dengan hari riwayat minimal 30 dan maksimal 365 (disetahunkan bila riwayat lebih pendek).
-- Bila belum ada pemakaian: `kebutuhan = ceil(365 / mtbf_days) × jumlah unit kompatibel berstatus operasi/standby` (minimal 1 unit).
-- `rekomendasi order = max(0, kebutuhan − (stok baru + stok bekas))`. `Serah Terima` dan `Rusak` **tidak** dihitung sebagai pemakaian.
+| Fungsi / konstanta | Peran |
+|---|---|
+| `buildPositions(mutasi, unit, now)` | kelompokkan `Pakai` ber-unit per (sparepart, unit): pemasangan pertama/terakhir, paparan `(akhir − t1) × q1` hari, penggantian `Σqty − q1`; akhir = `now`, atau `unit.updated_at` bila unit `gudang`/`rusak`. `Pakai` tanpa unit diabaikan |
+| `estimateMtbf(posisi[])` | `MTBF = Σ paparan / Σ penggantian` (null bila 0 penggantian) + keyakinan `BELUM_CUKUP_DATA`/`RENDAH` (1–2)/`SEDANG` (3–9)/`TINGGI` (≥ 10) |
+| `positionStatus(umur, mtbf)` | rasio < `AGE_RATIO_PERHATIAN` (0,7) NORMAL, < `AGE_RATIO_KRITIS` (0,9) PERHATIAN, ≤ 1 KRITIS, > 1 LEWAT |
+| `demandRate(mutasi, now)` | `r` = qty `Pakai` dalam jendela ÷ jendela; jendela = hari sejak transaksi pertama, dibatasi `DEMAND_WINDOW_MIN_DAYS`–`MAX` (30–365) |
+| `poissonReorderPoint(λ, SLA)` | `s` terkecil dengan `P(Poisson(λ) ≤ s) ≥ SLA`; λ > 500 memakai pendekatan normal |
+| `buildPredictiveReport(sparepart, mutasi, unit, now)` | gabungan untuk UI: MTBF per sparepart, `positionAlerts` (hanya unit aktif, paling mendesak dulu), `stockCoverage`, `annualNeeds`, `urgentCount` |
+| `PLANNING_HORIZON_DAYS` = 30, `SERVICE_LEVEL` = 0,98 | horizon pengganti lead time (belum ada datanya) dan target layanan |
+
+Kecukupan stok: `λ = r × 30`; `reorder_level = max(titik pesan SLA, minimum_stok + 1)`; PESAN bila `stok baru < reorder_level`. "+1" membuat aturan ini selalu memesan bila `isLowStock` benar. Tanpa `Pakai`, titik pesan SLA kosong dan hanya stok minimum yang berlaku.
+
+### 6.4 Kebutuhan tahunan
+- `kebutuhan = ceil(r × 365)` dengan `r` dari `demandRate`; tanpa `Pakai` → `null` ("belum cukup data").
+- `rekomendasi order = max(0, kebutuhan − stok baru)`. Stok bekas tidak dihitung karena `Pakai` hanya mengambil stok baru. `Serah Terima` dan `Rusak` **tidak** dihitung sebagai pemakaian.
 
 ### 6.5 Dashboard
 - **Tren stok 6 bulan**: stok tersedia akhir tiap bulan, dihitung mundur dari stok sekarang dengan membalik mutasi setelah bulan itu.
@@ -233,6 +247,7 @@ Untuk sebuah sparepart: kumpulkan tipe utama (`spareparts.id_tipe`) dan semua ti
 | `npm run typecheck` | `tsc --noEmit` |
 | `npm run build` | `tsc --noEmit && vite build` → `dist/`; **galat tipe menggagalkan build** |
 | `npm run preview` | menjalankan hasil build secara lokal |
+| `npm test` | `vitest run`: tes fungsi murni (`src/**/*.test.ts`) |
 
 Variabel lingkungan (file `.env`, lihat `.env.example`; hanya yang berawalan `VITE_` ikut ke bundel browser):
 
@@ -255,14 +270,14 @@ Tanpa dua variabel pertama, aplikasi tetap terbuka tetapi menampilkan banner "Da
 
 ## 10. Pengujian dan verifikasi
 
-**Tidak ada tes otomatis** (belum ada runner tes di `package.json`). Verifikasi yang dipakai selama pengembangan:
+Tes otomatis: `npm test` (`vitest`), saat ini hanya `src/utils/reliability.test.ts` (contoh angka spesifikasi: MTBF 250 hari, titik pesan 3, ambang status, jendela 30–365, kesesuaian dengan `isLowStock`). Verifikasi lain yang dipakai selama pengembangan:
 
-1. `npm run typecheck` dan `npm run build` harus bersih (tanpa peringatan).
+1. `npm run typecheck`, `npm run build`, dan `npm test` harus bersih (tanpa peringatan).
 2. **Uji browser** dengan Playwright/Chromium terhadap data live: buka semua rute, pastikan tanpa galat konsol. Semua permintaan tulis (`POST/PATCH/DELETE` ke `/rest/v1/`) **dicegat** dan dijawab palsu supaya data produksi tidak berubah, lalu isi payload yang dicegat diperiksa.
 3. **Uji database** dalam blok `DO $$ ... RAISE EXCEPTION` yang dibatalkan, juga sebagai `SET LOCAL ROLE anon` untuk menguji RLS.
 4. **Uji konsistensi stok** dengan vektor di [DATABASE.md 3.3](DATABASE.md#33-dua-implementasi-yang-harus-selalu-sama): view dan `utils/stock.ts` harus sama (4 / 5 / 2).
 
-Kandidat tes otomatis yang bernilai tinggi: unit test `utils/stock.ts`, `utils/shiftUtils.ts`, `utils/compatibility.ts` (fungsi murni, mudah diuji; belum ada `vitest`).
+Kandidat tes berikutnya: `utils/stock.ts` (termasuk vektor uji 4 / 5 / 2), `utils/shiftUtils.ts`, `utils/compatibility.ts`.
 
 ## 11. Keputusan desain
 
@@ -278,6 +293,8 @@ Kandidat tes otomatis yang bernilai tinggi: unit test `utils/stock.ts`, `utils/s
 | D8 | Route di-lazy-load, pustaka PDF dimuat dinamis | bundel awal lebih kecil; build tidak lagi memunculkan peringatan chunk >500 kB | ada jeda singkat saat pertama membuka halaman |
 | D9 | `isLowStock` memakai `<=` minimum | satu definisi untuk Dashboard, Katalog, Peringatan | stok sama dengan minimum sudah dihitung rendah |
 | D10 | Database dibagi dengan aplikasi lain | data master (peralatan, lokasi, personel, shift) tunggal | perubahan skema berisiko bagi aplikasi lain |
+| D11 | MTBF dihitung dari data (paparan ÷ penggantian), bukan diisi manual | memakai juga posisi yang belum pernah diganti (data tersensor), sehingga tidak bias ke bawah | "belum cukup data" sampai ada penggantian; `Pakai` wajib unit |
+| D12 | Titik pesan Poisson dengan horizon 30 hari @ 98% | belum ada data lead time; Poisson cocok untuk pemakaian jarang berupa bilangan bulat | ganti horizon dengan lead time bila datanya ada |
 
 ## 12. Utang teknis dan batasan
 
@@ -288,8 +305,9 @@ Kandidat tes otomatis yang bernilai tinggi: unit test `utils/stock.ts`, `utils/s
 | T3 | Kode mati: `components/dashboard/*` (4 komponen), `lib/sparepartAnalytics.ts`, `components/layout/FloatingDock.tsx`, tipe `PurchaseRequisition` | hapus, atau hubungkan bila fiturnya akan dipakai |
 | T4 | Dependensi terpasang tetapi tidak dipakai: `motion`, `clsx`, `tailwind-merge`, `core-js` | hapus dari `package.json` |
 | T5 | Seluruh `stock_mutations` dimuat ke browser | agregasi/pagination di database bila data bertambah besar |
-| T6 | Tidak ada tes otomatis | tambah `vitest` untuk `utils/*` |
+| T6 | Tes otomatis baru mencakup `utils/reliability.ts` | tambah tes untuk `utils/stock.ts`, `shiftUtils.ts`, `compatibility.ts` |
 | T7 | Fungsi `add*` / `updateUnitStatus` untuk master di `InventoryContext` tidak dipakai UI setelah menu Pengaturan dihapus | hapus bila memang tidak akan dikembalikan |
 | T8 | `master_configs` dibaca tetapi tidak dipakai | bersihkan atau gunakan |
 | T9 | Ukuran lembar Tom & Jerry diasumsikan (margin 3 mm, jarak 2 mm) | cocokkan dengan lembar fisik |
 | T10 | Ekspor Excel/PDF terjadi di browser | untuk data besar bisa lambat |
+| T11 | Kolom `spareparts.mtbf_days` dan `last_replaced_at` tidak dipakai lagi tetapi belum dihapus | hapus lewat migrasi terpisah setelah dipastikan tidak dibaca aplikasi lain |

@@ -21,9 +21,10 @@ import {
 import { useInventory } from '../context/InventoryContext';
 import { Sparepart } from '../types';
 import { isLowStock } from '../utils/stock';
+import { MtbfBadge } from '../components/predictive/MtbfBadge';
 
 export const CatalogPage: React.FC = () => {
-  const { spareparts, mutations, tipePeralatan, jenisPeralatan, sparepartCompatibility, addSparepart, updateSparepart, deleteSparepart } = useInventory();
+  const { spareparts, mutations, tipePeralatan, jenisPeralatan, sparepartCompatibility, predictive, addSparepart, updateSparepart, deleteSparepart } = useInventory();
 
   // View Mode State (Grid vs List)
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
@@ -39,7 +40,6 @@ export const CatalogPage: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
 
   // Form State (mirrors the columns of the `spareparts` table)
-  const todayStr = () => new Date().toISOString().split('T')[0];
   const emptyForm = () => ({
     sku: '',
     name: '',
@@ -50,9 +50,7 @@ export const CatalogPage: React.FC = () => {
     stok_bekas: 0,
     minimum_stok: 5,
     lokasi: '',
-    rack: '',
-    mtbf_days: 180,
-    last_replaced_at: todayStr()
+    rack: ''
   });
   const [formData, setFormData] = useState(emptyForm);
 
@@ -99,9 +97,7 @@ export const CatalogPage: React.FC = () => {
       stok_bekas: sp.stok_bekas || 0,
       minimum_stok: sp.minimum_stok ?? 0,
       lokasi: sp.lokasi || '',
-      rack: sp.rack || '',
-      mtbf_days: sp.mtbf_days || 180,
-      last_replaced_at: sp.last_replaced_at ? sp.last_replaced_at.slice(0, 10) : ''
+      rack: sp.rack || ''
     });
     setSelectedTipeIds(initialTipeIds);
     setIsModalOpen(true);
@@ -119,8 +115,6 @@ export const CatalogPage: React.FC = () => {
       minimum_stok: formData.minimum_stok,
       lokasi: formData.lokasi,
       rack: formData.rack,
-      mtbf_days: formData.mtbf_days,
-      last_replaced_at: formData.last_replaced_at || null,
       tipeIds: selectedTipeIds
     };
 
@@ -349,10 +343,10 @@ export const CatalogPage: React.FC = () => {
                       <span className="text-slate-400">Rak:</span>
                       <span className="font-mono font-semibold text-cyan-300">{sp.rack || '-'}</span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Clock className="w-3.5 h-3.5 text-slate-500" />
-                      <span className="text-slate-400">MTBF Usia Pakai:</span>
-                      <span className="font-semibold text-slate-200">{sp.mtbf_days || 180} Hari</span>
+                    <div className="flex items-start gap-2">
+                      <Clock className="w-3.5 h-3.5 text-slate-500 mt-0.5" />
+                      <span className="text-slate-400">MTBF (data):</span>
+                      <MtbfBadge estimate={predictive.mtbfBySparepart[sp.id]} compact />
                     </div>
                   </div>
 
@@ -699,25 +693,16 @@ export const CatalogPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="flex items-start gap-2 p-3 rounded-xl bg-slate-950/60 border border-slate-800 text-[11px] text-slate-400">
+                <Clock className="w-4 h-4 text-slate-500 shrink-0" />
                 <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">MTBF (Hari Usia Pakai)</label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={formData.mtbf_days}
-                    onChange={(e) => setFormData({ ...formData, mtbf_days: parseInt(e.target.value) || 180 })}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-semibold text-slate-300 mb-1">Terakhir Diganti</label>
-                  <input
-                    type="date"
-                    value={formData.last_replaced_at}
-                    onChange={(e) => setFormData({ ...formData, last_replaced_at: e.target.value })}
-                    className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-white text-xs"
-                  />
+                  <span className="font-semibold text-slate-300">MTBF dihitung otomatis</span> dari riwayat transaksi Pakai per unit
+                  peralatan, tidak diisi manual.
+                  {editingId && (
+                    <div className="mt-1">
+                      <MtbfBadge estimate={predictive.mtbfBySparepart[editingId]} compact />
+                    </div>
+                  )}
                 </div>
               </div>
 

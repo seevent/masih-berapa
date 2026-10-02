@@ -87,7 +87,7 @@ Kolom `stok_asal` (kantong yang berkurang) dan `stok_tujuan` (kantong yang berta
 | `mutation_type` | `stok_asal` | `stok_tujuan` | Keterangan |
 |---|---|---|---|
 | `Masuk` | NULL | `baru` | penerimaan barang baru; kolom `sumber` diisi |
-| `Pakai` | `baru` | NULL | dipakai untuk perbaikan (opsional `unit_id`) |
+| `Pakai` | `baru` | NULL | dipasang ke peralatan; aplikasi **mewajibkan `unit_id`** (dasar MTBF per unit) |
 | `Bekas` | NULL | `bekas` | barang copotan layak pakai dikembalikan ke gudang |
 | `Rusak` | `baru` atau `bekas` | `rusak` | barang tidak layak pakai; boleh langsung dari baru |
 | `Serah Terima` (terima) | NULL | `baru`, `bekas`, atau `rusak` | menerima barang dari pihak lain |
@@ -222,11 +222,11 @@ Master sparepart. **Tidak ada kolom stok.**
 | `minimum_stok` | integer | tidak | `1` | CHECK ≥ 0; batas stok baru minimum |
 | `lokasi` | varchar | ya | | nama gudang (teks bebas) |
 | `rack` | varchar | ya | | kode rak |
-| `mtbf_days` | integer | ya | `180` | umur pakai rata-rata (hari) |
-| `last_replaced_at` | timestamptz | ya | | tanggal pergantian terakhir yang dicatat manual |
+| `mtbf_days` | integer | ya | `180` | **tidak dipakai lagi** sejak 2 Okt 2026 (MTBF dihitung dari `stock_mutations`); belum dihapus |
+| `last_replaced_at` | timestamptz | ya | | **tidak dipakai lagi** sejak 2 Okt 2026; belum dihapus |
 | `created_at`, `updated_at` | timestamptz | ya | `now()` | |
 
-Field turunan di aplikasi (⚙, tidak ada di database): `stok_aktual`, `stok_bekas`, `stok_rusak`, `equipment_type_name`, `id_jenis` (dari tipe), dan `last_replaced_at` yang efektif (yang lebih baru antara kolom ini dan transaksi `Pakai` terakhir).
+Field turunan di aplikasi (⚙, tidak ada di database): `stok_aktual`, `stok_bekas`, `stok_rusak`, `equipment_type_name`, `id_jenis` (dari tipe). MTBF otomatis dihitung dari `stock_mutations` (`Pakai` + `unit_id` + `created_at` + `qty`) dan `unit_peralatan` (`status`, `updated_at`); lihat [ARCHITECTURE.md 6.3](ARCHITECTURE.md#6-logika-domain-lainnya). Aplikasi tidak lagi membaca maupun menulis `mtbf_days` dan `last_replaced_at`; kolom tetap ada karena penghapusan butuh migrasi terpisah setelah dipastikan aplikasi lain tidak membacanya.
 
 ### 4.8 `stock_mutations`
 Log semua pergerakan stok. **Sumber kebenaran stok.**
@@ -235,7 +235,7 @@ Log semua pergerakan stok. **Sumber kebenaran stok.**
 |---|---|---|---|---|
 | `id` | uuid | tidak | `gen_random_uuid()` | PK |
 | `sparepart_id` | uuid | tidak | | FK → `spareparts` (**CASCADE**: menghapus sparepart menghapus riwayatnya) |
-| `unit_id` | uuid | ya | | FK → `unit_peralatan` (SET NULL); unit yang diperbaiki |
+| `unit_id` | uuid | ya | | FK → `unit_peralatan` (SET NULL); unit tempat sparepart dipasang/dicopot. **Wajib untuk `Pakai`** di aplikasi; di database baru diwajibkan bila migrasi `pakai_wajib_unit` diterapkan |
 | `personel_id` | uuid | ya | | FK → `personel` (SET NULL); petugas |
 | `mutation_type` | varchar(50) | tidak | | CHECK: `Masuk`, `Pakai`, `Bekas`, `Rusak`, `Serah Terima` |
 | `qty` | integer | tidak | | CHECK > 0 |
@@ -273,6 +273,7 @@ Rekap stok per sparepart dengan aturan [bagian 3](#3-model-stok-paling-penting):
 ### 5.2 Fungsi dan trigger
 - Fungsi `update_updated_at_column()` mengisi `updated_at = now()`. Trigger `update_unit_peralatan_updated_at` (BEFORE UPDATE) memakainya pada `unit_peralatan`. Catatan keamanan: fungsi ini belum mengunci `search_path` (peringatan Supabase advisor).
 - Tidak ada trigger pada `spareparts` atau `stock_mutations`. Aplikasi mengisi `updated_at` sendiri.
+- **Disiapkan, belum diterapkan:** trigger `stock_mutations_pakai_wajib_unit` ([migrasi](migrations/2026-10-02_pakai_wajib_unit.sql)) yang menolak `Pakai` tanpa `unit_id` pada INSERT/UPDATE langsung, tetapi membiarkan `ON DELETE SET NULL` saat unit dihapus. CHECK constraint sengaja tidak dipakai: dengan CHECK, unit yang punya riwayat `Pakai` tidak bisa dihapus (terbukti dalam uji yang dibatalkan).
 
 ### 5.3 Index (selain primary key dan UNIQUE)
 `spareparts`: `sku`, `id_tipe` (2 index), `lokasi`, `rack` · `stock_mutations`: `sparepart_id`, `created_at DESC` · `sparepart_compatibility`: `sparepart_id`, `id_tipe` · `unit_peralatan`: `status`, `id_tipe` · tabel aplikasi lain: `jadwal_pm`, `laporan_*`.
@@ -309,6 +310,8 @@ Tabel `supabase_migrations.schema_migrations` mencatat:
 | 20261002053010 | `current_stock_security_invoker` | view `security_invoker`, hak hanya `SELECT` |
 
 Perubahan skema sebelum 23 Juli 2026 dibuat lewat dashboard dan tidak tercatat di tabel ini. Salinan kedua migrasi Oktober ada di [`docs/migrations/`](migrations/) beserta perintah rollback.
+
+**Belum diterapkan:** [`2026-10-02_pakai_wajib_unit.sql`](migrations/2026-10-02_pakai_wajib_unit.sql) (trigger `Pakai` wajib unit), menunggu persetujuan pemilik. Kode aplikasi tidak bergantung padanya.
 
 ## 8. Prosedur mengubah database
 
@@ -359,4 +362,5 @@ Sparepart sudah terdaftar tetapi belum ada satu pun transaksi stok, jadi semua s
 | `docs/schema_relational_supabase.sql` | **Acuan skema** (disinkronkan dengan database live). Aman dibaca; jangan dijalankan ulang di produksi. |
 | `docs/migrations/2026-10-02_aliran_stok.sql` | Sudah diterapkan. |
 | `docs/migrations/2026-10-02_current_stock_security_invoker.sql` | Sudah diterapkan. |
+| `docs/migrations/2026-10-02_pakai_wajib_unit.sql` | **Belum diterapkan**; sudah diuji dalam transaksi yang dibatalkan. |
 | `docs/schema_relational_supabase_v2.sql` | **Usang. Jangan dijalankan.** Skrip migrasi lama TEXT→UUID; database sudah memakai UUID. |

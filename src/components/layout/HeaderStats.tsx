@@ -1,5 +1,6 @@
 import React from 'react';
 import { Menu, Database, ShieldAlert, Package, RefreshCw, AlertTriangle } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useInventory } from '../../context/InventoryContext';
 
 interface HeaderStatsProps {
@@ -7,10 +8,11 @@ interface HeaderStatsProps {
 }
 
 export const HeaderStats: React.FC<HeaderStatsProps> = ({ setMobileOpen }) => {
-  const { spareparts, isSupabaseConnected, getPredictiveAlerts, refreshData, isLoading } = useInventory();
+  const { spareparts, isSupabaseConnected, predictive, refreshData, isLoading } = useInventory();
 
   const totalSKU = spareparts.length;
-  const criticalCount = getPredictiveAlerts().filter((a) => a.urgency === 'CRITICAL').length;
+  // Installed positions KRITIS/LEWAT + spareparts that need an order (utils/reliability.ts)
+  const criticalCount = predictive.urgentCount;
   const totalPhysicalStock = spareparts.reduce((acc, p) => acc + p.stok_aktual + p.stok_bekas, 0);
 
   return (
@@ -43,10 +45,14 @@ export const HeaderStats: React.FC<HeaderStatsProps> = ({ setMobileOpen }) => {
         </div>
 
         {criticalCount > 0 && (
-          <div className="flex items-center gap-2 bg-rose-500/15 border border-rose-500/30 px-3 py-1.5 rounded-xl text-rose-300 animate-pulse">
+          <Link
+            to="/alerts"
+            title="Posisi terpasang KRITIS/LEWAT umur + sparepart yang perlu dipesan"
+            className="flex items-center gap-2 bg-rose-500/15 border border-rose-500/30 px-3 py-1.5 rounded-xl text-rose-300 animate-pulse"
+          >
             <ShieldAlert className="w-4 h-4 text-rose-400" />
-            <span className="text-xs font-semibold">{criticalCount} SKU Kritis</span>
-          </div>
+            <span className="text-xs font-semibold">{criticalCount} Perlu Tindakan</span>
+          </Link>
         )}
 
         {/* Database Status Indicator (Full Supabase PostgreSQL) */}

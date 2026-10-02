@@ -26,7 +26,8 @@ import {
   initialStockFlowForm,
   isStockFlowFormComplete
 } from '../components/mutation/StockFlowFields';
-import { getCompatibleEquipment } from '../utils/compatibility';
+import { getCompatibleEquipment, requiresEquipmentUnit, usesEquipmentUnit } from '../utils/compatibility';
+import { EquipmentUnitSelect } from '../components/mutation/EquipmentUnitSelect';
 import { getActiveDutyPersonel } from '../utils/shiftUtils';
 
 /**
@@ -186,7 +187,7 @@ export const ScannerPage: React.FC = () => {
   }, [activeTab]);
 
   // --- Compatible Locations & Equipment Units for Found Sparepart ---
-  const { compatibleLokasiList, otherLokasiList, availableTitikList, availableUnits: availableUnitsForLocation } =
+  const { compatibleLokasiList, otherLokasiList, availableTitikList, availableUnits: availableUnitsForLocation, otherUnits } =
     getCompatibleEquipment({
       part: foundPart,
       sparepartCompatibility,
@@ -198,13 +199,14 @@ export const ScannerPage: React.FC = () => {
       selectedTitikId
     });
 
-  // Equipment unit / location applies when a part goes into or comes out of a machine
-  const usesEquipmentUnit = mutationType === 'Pakai' || mutationType === 'Bekas' || mutationType === 'Rusak';
+  // Equipment unit / location applies when a part goes into or comes out of a machine; 'Pakai' requires it
+  const showsEquipmentUnit = usesEquipmentUnit(mutationType);
+  const unitMissing = requiresEquipmentUnit(mutationType) && !selectedUnitId;
 
   const handleSubmitTransaction = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!foundPart || !selectedPersonelId) return;
-    if (!isStockFlowFormComplete(mutationType, flowForm)) return;
+    if (!isStockFlowFormComplete(mutationType, flowForm) || unitMissing) return;
 
     setIsSubmitting(true);
     const success = await addMutation({
@@ -214,7 +216,7 @@ export const ScannerPage: React.FC = () => {
       sumber: mutationType === 'Masuk' ? sumber : undefined,
       penerima: flowForm.pihak,
       unit_penerima: flowForm.unitPihak,
-      unit_id: usesEquipmentUnit ? selectedUnitId || undefined : undefined,
+      unit_id: showsEquipmentUnit ? selectedUnitId || undefined : undefined,
       personel_id: selectedPersonelId,
       qty: qty,
       notes: notes || `Transaksi via Scan Barcode/QR (${mutationType})`
@@ -414,7 +416,7 @@ export const ScannerPage: React.FC = () => {
             <StockFlowFields mutationType={mutationType} value={flowForm} onChange={setFlowForm} part={foundPart} />
 
             {/* 2. Dynamic Location & Compatible Equipment Dropdowns (Pakai, Bekas & Rusak) */}
-            {usesEquipmentUnit && (
+            {showsEquipmentUnit && (
               <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-2">
@@ -484,22 +486,20 @@ export const ScannerPage: React.FC = () => {
 
                   {/* Select Unit Peralatan */}
                   <div>
-                    <label className="block font-semibold text-slate-300 mb-1">Unit Peralatan Kompatibel</label>
-                    <select
+                    <label className="block font-semibold text-slate-300 mb-1">
+                      Unit Peralatan{requiresEquipmentUnit(mutationType) && <span className="text-amber-400"> *</span>}
+                    </label>
+                    <EquipmentUnitSelect
                       value={selectedUnitId}
-                      onChange={(e) => setSelectedUnitId(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white cursor-pointer"
-                    >
-                      <option value="">-- Tanpa Unit Spesifik --</option>
-                      {availableUnitsForLocation.map((u) => {
-                        const tp = tipePeralatan.find((t) => t.id === u.id_tipe);
-                        return (
-                          <option key={u.id} value={u.id}>
-                            [{tp?.nama || 'Unit'}] {u.serial_number || u.id} ({u.status})
-                          </option>
-                        );
-                      })}
-                    </select>
+                      onChange={setSelectedUnitId}
+                      compatibleUnits={availableUnitsForLocation}
+                      otherUnits={otherUnits}
+                      tipePeralatan={tipePeralatan}
+                      required={requiresEquipmentUnit(mutationType)}
+                    />
+                    {unitMissing && (
+                      <p className="text-[10px] text-amber-400 mt-1">Pakai wajib memilih unit tempat sparepart dipasang.</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -601,7 +601,7 @@ export const ScannerPage: React.FC = () => {
 
             <button
               type="submit"
-              disabled={isSubmitting || !selectedPersonelId || !isStockFlowFormComplete(mutationType, flowForm)}
+              disabled={isSubmitting || !selectedPersonelId || !isStockFlowFormComplete(mutationType, flowForm) || unitMissing}
               className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-500/25 transition-all disabled:opacity-50"
             >
               {isSubmitting ? 'Memproses Transaksi...' : `Simpan Transaksi Mutasi (${mutationType})`}

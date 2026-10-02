@@ -124,8 +124,8 @@ CREATE TABLE IF NOT EXISTS public.spareparts (
   unit character varying(50) DEFAULT 'PCS'::character varying,
   minimum_stok integer NOT NULL DEFAULT 1 CHECK (minimum_stok >= 0),
   lokasi character varying,           -- gudang
-  mtbf_days integer DEFAULT 180,
-  last_replaced_at timestamp with time zone,
+  mtbf_days integer DEFAULT 180,                -- tidak dipakai lagi sejak 2026-10-02 (MTBF otomatis)
+  last_replaced_at timestamp with time zone,    -- tidak dipakai lagi sejak 2026-10-02
   created_at timestamp with time zone DEFAULT now(),
   updated_at timestamp with time zone DEFAULT now(),
   rack character varying,

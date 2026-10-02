@@ -1,4 +1,5 @@
 import {
+  MutationType,
   Sparepart,
   SparepartCompatibility,
   Lokasi,
@@ -6,6 +7,12 @@ import {
   UnitPeralatan,
   PenempatanPeralatan
 } from '../types';
+
+/** Types where a part goes into or comes out of a machine, so a unit can be chosen. */
+export const usesEquipmentUnit = (type: MutationType) => type === 'Pakai' || type === 'Bekas' || type === 'Rusak';
+
+/** 'Pakai' must name the unit it is installed in (predictive maintenance per unit). */
+export const requiresEquipmentUnit = (type: MutationType) => type === 'Pakai';
 
 interface CompatibilityInput {
   part: Sparepart | undefined | null;
@@ -63,13 +70,17 @@ export const getCompatibleEquipment = ({
     ? titikLokasiList.filter((t) => t.id_lokasi === selectedLokasiId)
     : [];
 
-  const availableUnits = compatUnits.filter((unit) => {
+  const matchesSelectedPlace = (unit: UnitPeralatan) => {
     if (!selectedLokasiId) return true;
     const pen = activePenempatanByUnit.get(unit.id);
     if (!pen || pen.id_lokasi !== selectedLokasiId) return false;
     if (selectedTitikId && pen.id_titik !== selectedTitikId) return false;
     return true;
-  });
+  };
 
-  return { compatTypeIds, compatibleLokasiList, otherLokasiList, availableTitikList, availableUnits };
+  const availableUnits = compatUnits.filter(matchesSelectedPlace);
+  // Non-compatible units stay selectable so 'Pakai' is not blocked by incomplete compatibility data
+  const otherUnits = unitPeralatanList.filter((u) => !compatTypeIds.includes(u.id_tipe) && matchesSelectedPlace(u));
+
+  return { compatTypeIds, compatibleLokasiList, otherLokasiList, availableTitikList, availableUnits, otherUnits };
 };
