@@ -134,9 +134,11 @@ CREATE TABLE IF NOT EXISTS public.spareparts (
 );
 
 -- 10. Transaksi Mutasi Stok (sumber kebenaran stok)
---   Masuk  : +stok baru      Pakai : -stok baru
---   Bekas  : +stok bekas     Rusak : -stok bekas (afkir)
---   Serah Terima : tercatat, tidak mengubah stok (ditulis oleh aplikasi lain)
+-- Setiap mutasi memindahkan qty dari stok_asal ke stok_tujuan (kantong: baru | bekas | rusak,
+-- NULL = luar gudang). Lihat docs/migrations/2026-10-02_aliran_stok.sql.
+--   Masuk         : luar -> baru          Pakai : baru -> luar
+--   Bekas         : luar -> bekas         Rusak : baru|bekas -> rusak
+--   Serah Terima  : luar -> baru|bekas|rusak (terima)  atau  baru|bekas|rusak -> luar (serahkan)
 CREATE TABLE IF NOT EXISTS public.stock_mutations (
   id uuid NOT NULL DEFAULT gen_random_uuid(),
   sparepart_id uuid NOT NULL,
@@ -148,8 +150,20 @@ CREATE TABLE IF NOT EXISTS public.stock_mutations (
   created_at timestamp with time zone DEFAULT now(),
   sumber character varying DEFAULT 'VENDOR'::character varying,   -- asal barang, hanya untuk 'Masuk'
   location character varying,
-  penerima text,
-  unit_penerima text,
+  penerima text,                      -- Serah Terima: pihak lain
+  unit_penerima text,                 -- Serah Terima: unit pihak lain
+  stok_asal character varying CHECK (stok_asal IS NULL OR stok_asal IN ('baru', 'bekas', 'rusak')),
+  stok_tujuan character varying CHECK (stok_tujuan IS NULL OR stok_tujuan IN ('baru', 'bekas', 'rusak')),
+  CONSTRAINT stock_mutations_aliran_stok_check CHECK (
+    CASE mutation_type
+      WHEN 'Masuk' THEN stok_asal IS NULL AND (stok_tujuan IS NULL OR stok_tujuan = 'baru')
+      WHEN 'Pakai' THEN (stok_asal IS NULL OR stok_asal = 'baru') AND stok_tujuan IS NULL
+      WHEN 'Bekas' THEN stok_asal IS NULL AND (stok_tujuan IS NULL OR stok_tujuan = 'bekas')
+      WHEN 'Rusak' THEN (stok_asal IS NULL OR stok_asal IN ('baru', 'bekas')) AND (stok_tujuan IS NULL OR stok_tujuan = 'rusak')
+      WHEN 'Serah Terima' THEN stok_asal IS NULL OR stok_tujuan IS NULL
+      ELSE true
+    END
+  ),
   CONSTRAINT stock_mutations_pkey PRIMARY KEY (id),
   CONSTRAINT stock_mutations_sparepart_id_fkey FOREIGN KEY (sparepart_id) REFERENCES public.spareparts(id) ON DELETE CASCADE,
   CONSTRAINT stock_mutations_unit_id_fkey FOREIGN KEY (unit_id) REFERENCES public.unit_peralatan(id) ON DELETE SET NULL,
@@ -169,9 +183,9 @@ CREATE TABLE IF NOT EXISTS public.sparepart_compatibility (
   CONSTRAINT sparepart_compatibility_id_tipe_fkey FOREIGN KEY (id_tipe) REFERENCES public.tipe_peralatan(id) ON DELETE CASCADE
 );
 
--- View ringkasan stok di database (tidak dipakai aplikasi; perhatikan: view ini TIDAK
--- mengurangi stok bekas untuk 'Rusak', sedangkan aplikasi mengurangi stok bekas).
--- CREATE VIEW public.current_stock AS ... (lihat definisi di Supabase)
+-- View current_stock: stok_aktual (baru), stok_bekas, stok_rusak per sparepart, dihitung dengan
+-- aturan yang sama persis dengan aplikasi (src/utils/stock.ts). Definisi lengkap ada di
+-- docs/migrations/2026-10-02_aliran_stok.sql.
 
 -- Row Level Security: RLS AKTIF di semua tabel. Tabel spareparts, stock_mutations dan
 -- sparepart_compatibility memakai policy "Public full access" untuk role anon & authenticated

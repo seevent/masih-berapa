@@ -60,7 +60,7 @@ In this session, we built and delivered the complete **SSES T2 Sparepart Managem
 ## 6. Actionable Next Steps (Backlog for Next Session)
 - [x] Supabase credentials are read from `.env` (the `/settings` config form and seeder were removed).
 - [ ] Add authentication (Supabase Auth) and tighten the RLS policies on `spareparts`, `stock_mutations`, `sparepart_compatibility` (currently full access for `anon`).
-- [ ] Decide how `Serah Terima` mutations should affect stock (currently no effect, same as the `current_stock` view).
+- [x] Stock flow per mutation (`stok_asal` → `stok_tujuan`): `Rusak` from baru or bekas into stok rusak, `Serah Terima` hands over / receives baru, bekas or rusak. Requires migration `docs/migrations/2026-10-02_aliran_stok.sql` to be applied before deploying this code.
 - [ ] Add PDF print template for daily shift schedules.
 - [ ] Add push notifications for mobile PWA camera scanner.
 

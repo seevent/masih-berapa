@@ -13,13 +13,19 @@ import {
   Pencil,
   AlertTriangle,
   X,
-  Check
+  Check,
+  Handshake
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { useInventory } from '../context/InventoryContext';
-import { MutationType, InputMutationType, StockMutation, SupplierType } from '../types';
-
-const EDITABLE_TYPES: string[] = ['Masuk', 'Pakai', 'Bekas', 'Rusak'];
+import { MutationType, StockMutation, SupplierType } from '../types';
+import { describeFlow, flowToOptions, isIncompleteSerahTerima, resolveStockFlow } from '../utils/stock';
+import {
+  StockFlowFields,
+  StockFlowFormState,
+  initialStockFlowForm,
+  isStockFlowFormComplete
+} from '../components/mutation/StockFlowFields';
 
 export const HistoryPage: React.FC = () => {
   const {
@@ -40,7 +46,8 @@ export const HistoryPage: React.FC = () => {
 
   // Edit Modal State
   const [editingMutation, setEditingMutation] = useState<StockMutation | null>(null);
-  const [editType, setEditType] = useState<InputMutationType>('Masuk');
+  const [editType, setEditType] = useState<MutationType>('Masuk');
+  const [editFlow, setEditFlow] = useState<StockFlowFormState>(initialStockFlowForm);
   const [editSumber, setEditSumber] = useState<SupplierType>('VENDOR');
   const [editQty, setEditQty] = useState<number>(1);
   const [editPersonelId, setEditPersonelId] = useState<string>('');
@@ -77,13 +84,15 @@ export const HistoryPage: React.FC = () => {
 
     const personelName = persObj ? persObj.nama : m.operator_name || 'Teknisi';
     const penerimaStr = [m.penerima, m.unit_penerima].filter(Boolean).join(' / ');
+    const flowStr = describeFlow(m);
 
     return {
       ...m,
       tipeName,
       locationStr,
       personelName,
-      penerimaStr
+      penerimaStr,
+      flowStr
     };
   });
 
@@ -113,7 +122,8 @@ export const HistoryPage: React.FC = () => {
       Jumlah: m.qty,
       Personel: m.personelName,
       'Lokasi & Titik': m.locationStr,
-      Penerima: m.penerimaStr || '-',
+      'Aliran Stok': m.flowStr,
+      'Pihak Serah Terima': m.penerimaStr || '-',
       Catatan: m.notes || '-'
     }));
 
@@ -126,8 +136,8 @@ export const HistoryPage: React.FC = () => {
 
   const handleOpenEdit = (m: StockMutation) => {
     setEditingMutation(m);
-    if (!EDITABLE_TYPES.includes(m.mutation_type)) return;
-    setEditType(m.mutation_type as InputMutationType);
+    setEditType(m.mutation_type);
+    setEditFlow({ ...flowToOptions(m), pihak: m.penerima || '', unitPihak: m.unit_penerima || '' });
     setEditSumber(m.sumber || 'VENDOR');
     setEditQty(m.qty);
     setEditPersonelId(m.personel_id || '');
@@ -135,11 +145,14 @@ export const HistoryPage: React.FC = () => {
   };
 
   const handleSaveEdit = async () => {
-    if (!editingMutation) return;
+    if (!editingMutation || !isStockFlowFormComplete(editType, editFlow)) return;
     setIsSubmitting(true);
     try {
       const success = await updateMutation(editingMutation.id, {
         mutation_type: editType,
+        flow: resolveStockFlow(editType, editFlow),
+        penerima: editFlow.pihak,
+        unit_penerima: editFlow.unitPihak,
         sumber: editType === 'Masuk' ? editSumber : null,
         qty: editQty,
         personel_id: editPersonelId || null,
@@ -191,6 +204,13 @@ export const HistoryPage: React.FC = () => {
           <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-500/10 text-rose-400 border border-rose-500/30">
             <Trash2 className="w-3.5 h-3.5" />
             RUSAK
+          </span>
+        );
+      case 'Serah Terima':
+        return (
+          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-violet-500/10 text-violet-300 border border-violet-500/30">
+            <Handshake className="w-3.5 h-3.5" />
+            SERAH TERIMA
           </span>
         );
       default:
@@ -245,6 +265,7 @@ export const HistoryPage: React.FC = () => {
             <option value="Pakai">Pakai (Pemakaian)</option>
             <option value="Bekas">Bekas (Pengembalian)</option>
             <option value="Rusak">Rusak (Afkir)</option>
+            <option value="Serah Terima">Serah Terima</option>
           </select>
         </div>
       </div>
@@ -288,6 +309,13 @@ export const HistoryPage: React.FC = () => {
                     </td>
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       {getMutationBadge(m.mutation_type)}
+                      <div
+                        className={`text-[10px] mt-1 ${
+                          isIncompleteSerahTerima(m) ? 'text-amber-400 font-semibold' : 'text-slate-400'
+                        }`}
+                      >
+                        {m.flowStr}
+                      </div>
                     </td>
                     <td className="py-3.5 px-4">
                       <div className="font-mono text-cyan-400 font-bold">{m.sparepart_sku}</div>
@@ -311,7 +339,9 @@ export const HistoryPage: React.FC = () => {
                     <td className="py-3.5 px-4 text-slate-200 font-medium">
                       {m.personelName}
                       {m.penerimaStr && (
-                        <div className="text-[10px] text-slate-400">Penerima: {m.penerimaStr}</div>
+                        <div className="text-[10px] text-slate-400">
+                          {m.mutation_type === 'Serah Terima' && m.stok_tujuan ? 'Dari' : 'Kepada'}: {m.penerimaStr}
+                        </div>
                       )}
                     </td>
                     <td className="py-3.5 px-4 text-cyan-300 font-medium whitespace-nowrap">
@@ -324,9 +354,8 @@ export const HistoryPage: React.FC = () => {
                       <div className="flex items-center justify-center gap-1.5">
                         <button
                           onClick={() => handleOpenEdit(m)}
-                          disabled={!EDITABLE_TYPES.includes(m.mutation_type)}
-                          title={EDITABLE_TYPES.includes(m.mutation_type) ? 'Edit Transaksi' : 'Tipe transaksi ini tidak dapat diedit dari aplikasi ini'}
-                          className="p-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 transition-all cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                          title="Edit Transaksi"
+                          className="p-1.5 rounded-lg bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-400 border border-cyan-500/30 transition-all cursor-pointer"
                         >
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
@@ -350,7 +379,7 @@ export const HistoryPage: React.FC = () => {
       {/* Edit Transaksi Modal */}
       {editingMutation && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="glass-panel w-full max-w-md p-6 rounded-2xl border border-slate-800 space-y-5 animate-in fade-in zoom-in-95 duration-150">
+          <div className="glass-panel w-full max-w-md max-h-[90vh] overflow-y-auto p-6 rounded-2xl border border-slate-800 space-y-5 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between border-b border-slate-800 pb-3">
               <div>
                 <h3 className="text-lg font-bold text-white">Edit Transaksi Mutasi</h3>
@@ -371,15 +400,23 @@ export const HistoryPage: React.FC = () => {
                 <label className="block text-xs font-semibold text-slate-300 mb-1">Tipe Mutasi</label>
                 <select
                   value={editType}
-                  onChange={(e) => setEditType(e.target.value as InputMutationType)}
+                  onChange={(e) => setEditType(e.target.value as MutationType)}
                   className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white"
                 >
                   <option value="Masuk">Masuk (Penerimaan Stok Baru)</option>
                   <option value="Pakai">Pakai (Pemakaian Unit)</option>
                   <option value="Bekas">Bekas (Pengembalian Rotable)</option>
-                  <option value="Rusak">Rusak (Afkir/Scrapped)</option>
+                  <option value="Rusak">Rusak (Pindah ke Stok Rusak)</option>
+                  <option value="Serah Terima">Serah Terima (Serahkan / Terima)</option>
                 </select>
               </div>
+
+              <StockFlowFields
+                mutationType={editType}
+                value={editFlow}
+                onChange={setEditFlow}
+                part={spareparts.find((s) => s.id === editingMutation.sparepart_id)}
+              />
 
               {editType === 'Masuk' && (
                 <div>
@@ -450,8 +487,8 @@ export const HistoryPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleSaveEdit}
-                disabled={isSubmitting}
-                className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-cyan-600/25"
+                disabled={isSubmitting || !isStockFlowFormComplete(editType, editFlow)}
+                className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-cyan-600/25 disabled:opacity-50"
               >
                 <Check className="w-4 h-4" />
                 <span>{isSubmitting ? 'Menyimpan...' : 'Simpan Perubahan'}</span>

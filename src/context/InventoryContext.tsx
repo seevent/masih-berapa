@@ -15,13 +15,12 @@ import {
   StockMutation,
   SparepartCompatibility,
   MutationType,
-  InputMutationType,
   SupplierType,
   PredictiveAlert,
   AnnualNeed
 } from '../types';
 import { getSupabaseClient, fetchAllRows } from '../lib/supabase';
-import { computeStockBySparepart } from '../utils/stock';
+import { computeStockBySparepart, findNegativeStock, StockFlow } from '../utils/stock';
 import { useNotification } from './NotificationContext';
 
 /** Fields of a sparepart that are stored in the `spareparts` table. */
@@ -46,9 +45,12 @@ export interface NewSparepartInput extends SparepartFormInput {
 
 export interface MutationUpdateInput {
   mutation_type: MutationType;
+  flow: StockFlow;
   sumber?: SupplierType | null;
   qty: number;
   personel_id?: string | null;
+  penerima?: string | null;
+  unit_penerima?: string | null;
   notes?: string | null;
 }
 
@@ -89,9 +91,14 @@ interface InventoryContextType {
     sparepart_id: string;
     unit_id?: string;
     personel_id?: string;
-    mutation_type: InputMutationType;
+    mutation_type: MutationType;
+    /** Which stock bucket decreases / increases (see resolveStockFlow) */
+    flow: StockFlow;
     sumber?: SupplierType;
     qty: number;
+    /** Serah Terima: the other party and their unit */
+    penerima?: string;
+    unit_penerima?: string;
     reference_no?: string;
     notes?: string;
   }) => Promise<boolean>;
@@ -108,33 +115,37 @@ const InventoryContext = createContext<InventoryContextType | undefined>(undefin
 
 const DAY_MS = 1000 * 60 * 60 * 24;
 
-const MUTATION_TYPE_LABEL: Record<string, string> = {
-  Masuk: 'stok baru',
-  Pakai: 'stok baru',
-  Bekas: 'stok bekas',
-  Rusak: 'stok bekas'
-};
+interface StockRow {
+  id: string;
+  sparepart_id: string;
+  mutation_type: MutationType;
+  qty: number;
+  stok_asal?: string | null;
+  stok_tujuan?: string | null;
+}
 
 /** Reads all mutations of one sparepart straight from the database (fresh, not cached state). */
 const fetchSparepartMutations = (supabase: SupabaseClient, sparepartId: string) =>
-  fetchAllRows<{ id: string; sparepart_id: string; mutation_type: MutationType; qty: number }>(() =>
+  fetchAllRows<StockRow>(() =>
     supabase
       .from('stock_mutations')
-      .select('id, sparepart_id, mutation_type, qty')
+      .select('id, sparepart_id, mutation_type, qty, stok_asal, stok_tujuan')
       .eq('sparepart_id', sparepartId)
       .order('id', { ascending: true })
   );
 
 /** Returns an error message when the given mutations would leave negative stock, otherwise null. */
-const validateStock = (
-  muts: Array<{ sparepart_id: string; mutation_type: MutationType; qty: number }>,
-  sparepartId: string
-): string | null => {
-  const stock = computeStockBySparepart(muts)[sparepartId] || { baru: 0, bekas: 0 };
-  if (stock.baru < 0) return `Stok baru akan menjadi ${stock.baru}. Transaksi ini membuat stok baru minus.`;
-  if (stock.bekas < 0) return `Stok bekas akan menjadi ${stock.bekas}. Transaksi ini membuat stok bekas minus.`;
-  return null;
-};
+const validateStock = (muts: StockRow[], sparepartId: string): string | null =>
+  findNegativeStock(computeStockBySparepart(muts)[sparepartId] || { baru: 0, bekas: 0, rusak: 0 });
+
+/** Fields written to the database for the stock flow of a mutation. */
+const flowColumns = (type: MutationType, flow: StockFlow, penerima?: string | null, unitPenerima?: string | null) => ({
+  stok_asal: flow.asal,
+  stok_tujuan: flow.tujuan,
+  // The other party only applies to Serah Terima
+  penerima: type === 'Serah Terima' ? penerima?.trim() || null : null,
+  unit_penerima: type === 'Serah Terima' ? unitPenerima?.trim() || null : null
+});
 
 export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { showToast } = useNotification();
@@ -272,7 +283,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
       const formattedParts: Sparepart[] = spRes.data.map((sp: any) => {
         const tipe = sp.id_tipe ? tpMap.get(sp.id_tipe) : undefined;
-        const stock = stockMap[sp.id] || { baru: 0, bekas: 0 };
+        const stock = stockMap[sp.id] || { baru: 0, bekas: 0, rusak: 0 };
         const lastPakai = lastPakaiMap[sp.id];
         const lastReplaced =
           lastPakai && (!sp.last_replaced_at || new Date(lastPakai) > new Date(sp.last_replaced_at))
@@ -288,6 +299,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           minimum_stok: Number(sp.minimum_stok) || 0,
           stok_aktual: Math.max(0, stock.baru),
           stok_bekas: Math.max(0, stock.bekas),
+          stok_rusak: Math.max(0, stock.rusak),
           last_replaced_at: lastReplaced
         };
       });
@@ -479,6 +491,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         id: crypto.randomUUID(),
         sparepart_id: newId,
         mutation_type: 'Masuk',
+        stok_asal: null,
+        stok_tujuan: 'baru',
         sumber: 'VENDOR',
         qty: input.stok_awal_baru,
         notes: 'Stok awal pendaftaran sparepart baru',
@@ -488,6 +502,8 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         id: crypto.randomUUID(),
         sparepart_id: newId,
         mutation_type: 'Bekas',
+        stok_asal: null,
+        stok_tujuan: 'bekas',
         sumber: null,
         qty: input.stok_awal_bekas,
         notes: 'Stok awal bekas pendaftaran sparepart baru',
@@ -574,11 +590,21 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return false;
     }
     const stockError = validateStock(
-      [...currentMuts, { sparepart_id: targetPart.id, mutation_type: mutationData.mutation_type, qty }],
+      [
+        ...currentMuts,
+        {
+          id: 'new',
+          sparepart_id: targetPart.id,
+          mutation_type: mutationData.mutation_type,
+          qty,
+          stok_asal: mutationData.flow.asal,
+          stok_tujuan: mutationData.flow.tujuan
+        }
+      ],
       targetPart.id
     );
     if (stockError) {
-      showToast(`Stok Tidak Cukup (${MUTATION_TYPE_LABEL[mutationData.mutation_type]})`, stockError, 'error');
+      showToast('Stok Tidak Cukup', stockError, 'error');
       return false;
     }
 
@@ -593,6 +619,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       unit_id: mutationData.unit_id || null,
       personel_id: mutationData.personel_id || null,
       mutation_type: mutationData.mutation_type,
+      ...flowColumns(mutationData.mutation_type, mutationData.flow, mutationData.penerima, mutationData.unit_penerima),
       // Sumber (asal barang) only applies to incoming stock
       sumber: mutationData.mutation_type === 'Masuk' ? mutationData.sumber || 'VENDOR' : null,
       qty,
@@ -633,7 +660,11 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return false;
     }
     const stockError = validateStock(
-      currentMuts.map((m) => (m.id === id ? { ...m, mutation_type: data.mutation_type, qty } : m)),
+      currentMuts.map((m) =>
+        m.id === id
+          ? { ...m, mutation_type: data.mutation_type, qty, stok_asal: data.flow.asal, stok_tujuan: data.flow.tujuan }
+          : m
+      ),
       original.sparepart_id
     );
     if (stockError) {
@@ -645,6 +676,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .from('stock_mutations')
       .update({
         mutation_type: data.mutation_type,
+        ...flowColumns(data.mutation_type, data.flow, data.penerima, data.unit_penerima),
         sumber: data.mutation_type === 'Masuk' ? data.sumber || 'VENDOR' : null,
         qty,
         personel_id: data.personel_id || null,

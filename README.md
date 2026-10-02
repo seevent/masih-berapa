@@ -97,7 +97,18 @@ masih-berapa/
 The app reads and writes a Supabase PostgreSQL database (see `docs/schema_relational_supabase.sql`):
 `jenis_peralatan`, `tipe_peralatan`, `lokasi`, `titik_lokasi`, `unit_peralatan`, `penempatan_peralatan`, `unit_kerja`, `personel`, `jadwal_shift`, `master_configs`, `spareparts`, `stock_mutations`, `sparepart_compatibility`.
 
-- `spareparts` stores no stock columns. Stock is derived from `stock_mutations`: `Masuk` (+new), `Pakai` (−new), `Bekas` (+used), `Rusak` (−used). `Serah Terima` rows are shown but do not change stock.
+- `spareparts` stores no stock columns. Stock is derived from `stock_mutations`, where every row moves `qty` from `stok_asal` to `stok_tujuan` (buckets `baru` / `bekas` / `rusak`, `NULL` = outside the warehouse):
+
+  | Type | From | To |
+  |---|---|---|
+  | `Masuk` | outside | baru |
+  | `Pakai` | baru | outside |
+  | `Bekas` | outside | bekas |
+  | `Rusak` | baru or bekas | rusak |
+  | `Serah Terima` (terima) | outside | baru, bekas or rusak |
+  | `Serah Terima` (serahkan) | baru, bekas or rusak | outside |
+
+  The same rules are used by the app (`src/utils/stock.ts`) and the `current_stock` view (`docs/migrations/2026-10-02_aliran_stok.sql`). Usable stock is baru + bekas; the annual forecast counts only `Pakai`.
 - Deleting a sparepart also deletes its mutation history (`ON DELETE CASCADE`); the UI asks for confirmation.
 - Credentials come only from `.env` (`VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`). `VITE_PUBLIC_APP_URL` sets the URL encoded in printed QR labels.
 - ⚠️ The app has no login. RLS policies give the anon key full access to `spareparts`, `stock_mutations` and `sparepart_compatibility`, so anyone with the deployed URL can change stock data.

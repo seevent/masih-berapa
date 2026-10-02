@@ -14,10 +14,18 @@ import {
   Building2,
   UserCheck,
   Clock,
-  MessageSquare
+  MessageSquare,
+  Handshake
 } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
-import { InputMutationType, SupplierType } from '../types';
+import { MutationType, SupplierType } from '../types';
+import { resolveStockFlow } from '../utils/stock';
+import {
+  StockFlowFields,
+  StockFlowFormState,
+  initialStockFlowForm,
+  isStockFlowFormComplete
+} from '../components/mutation/StockFlowFields';
 import { getCompatibleEquipment } from '../utils/compatibility';
 import { getActiveDutyPersonel } from '../utils/shiftUtils';
 
@@ -64,7 +72,7 @@ export const ScannerPage: React.FC = () => {
   const foundPart = foundPartId ? spareparts.find((sp) => sp.id === foundPartId) || null : null;
 
   // 1. Transaction Type State
-  const [mutationType, setMutationType] = useState<InputMutationType>('Pakai');
+  const [mutationType, setMutationType] = useState<MutationType>('Pakai');
 
   // 2. Personel State
   const [selectedPersonelId, setSelectedPersonelId] = useState('');
@@ -76,6 +84,7 @@ export const ScannerPage: React.FC = () => {
 
   // 4. Quantity, Sumber & Notes
   const [sumber, setSumber] = useState<SupplierType>('IAS');
+  const [flowForm, setFlowForm] = useState<StockFlowFormState>(initialStockFlowForm);
   const [qty, setQty] = useState<number>(1);
   const [notes, setNotes] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -189,16 +198,23 @@ export const ScannerPage: React.FC = () => {
       selectedTitikId
     });
 
+  // Equipment unit / location applies when a part goes into or comes out of a machine
+  const usesEquipmentUnit = mutationType === 'Pakai' || mutationType === 'Bekas' || mutationType === 'Rusak';
+
   const handleSubmitTransaction = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!foundPart || !selectedPersonelId) return;
+    if (!isStockFlowFormComplete(mutationType, flowForm)) return;
 
     setIsSubmitting(true);
     const success = await addMutation({
       sparepart_id: foundPart.id,
       mutation_type: mutationType,
+      flow: resolveStockFlow(mutationType, flowForm),
       sumber: mutationType === 'Masuk' ? sumber : undefined,
-      unit_id: (mutationType === 'Pakai' || mutationType === 'Bekas') ? (selectedUnitId || undefined) : undefined,
+      penerima: flowForm.pihak,
+      unit_penerima: flowForm.unitPihak,
+      unit_id: usesEquipmentUnit ? selectedUnitId || undefined : undefined,
       personel_id: selectedPersonelId,
       qty: qty,
       notes: notes || `Transaksi via Scan Barcode/QR (${mutationType})`
@@ -212,7 +228,7 @@ export const ScannerPage: React.FC = () => {
     }
   };
 
-  const mutationTypes: { type: InputMutationType; label: string; icon: any; color: string; desc: string }[] = [
+  const mutationTypes: { type: MutationType; label: string; icon: any; color: string; desc: string }[] = [
     {
       type: 'Pakai',
       label: 'Pakai Baru',
@@ -239,7 +255,14 @@ export const ScannerPage: React.FC = () => {
       label: 'Scrap Rusak',
       icon: Trash2,
       color: 'from-rose-600 to-red-600 border-rose-500',
-      desc: 'Pencatatan sparepart afkir/rusak'
+      desc: 'Barang baru / bekas tidak layak pakai ke stok rusak'
+    },
+    {
+      type: 'Serah Terima',
+      label: 'Serah Terima',
+      icon: Handshake,
+      color: 'from-violet-600 to-purple-600 border-violet-500',
+      desc: 'Serahkan / terima barang dari pihak lain'
     }
   ];
 
@@ -334,7 +357,7 @@ export const ScannerPage: React.FC = () => {
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 text-xs">
             <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
               <span className="text-[10px] text-slate-400 block uppercase">Peralatan</span>
               <span className="font-semibold text-white truncate block">{foundPart.equipment_type_name || '-'}</span>
@@ -351,6 +374,10 @@ export const ScannerPage: React.FC = () => {
               <span className="text-[10px] text-slate-400 block uppercase">Stok Bekas</span>
               <span className="font-bold text-amber-400 text-sm block">{foundPart.stok_bekas} {foundPart.unit || 'PCS'}</span>
             </div>
+            <div className="bg-slate-900/80 p-3 rounded-xl border border-slate-800">
+              <span className="text-[10px] text-slate-400 block uppercase">Stok Rusak</span>
+              <span className="font-bold text-rose-400 text-sm block">{foundPart.stok_rusak} {foundPart.unit || 'PCS'}</span>
+            </div>
           </div>
 
           {/* Full Transaction Form */}
@@ -359,7 +386,7 @@ export const ScannerPage: React.FC = () => {
               <label className="block text-xs font-bold text-slate-200 uppercase tracking-wider mb-2">
                 1. Jenis Transaksi Mutasi
               </label>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
                 {mutationTypes.map((m) => {
                   const Icon = m.icon;
                   const isSelected = mutationType === m.type;
@@ -383,8 +410,11 @@ export const ScannerPage: React.FC = () => {
               </div>
             </div>
 
-            {/* 2. Dynamic Location & Compatible Equipment Dropdowns (Only for Pakai & Bekas) */}
-            {(mutationType === 'Pakai' || mutationType === 'Bekas') && (
+            {/* Extra fields: Rusak (asal stok) & Serah Terima (arah, kondisi, pihak) */}
+            <StockFlowFields mutationType={mutationType} value={flowForm} onChange={setFlowForm} part={foundPart} />
+
+            {/* 2. Dynamic Location & Compatible Equipment Dropdowns (Pakai, Bekas & Rusak) */}
+            {usesEquipmentUnit && (
               <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-4">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-2">
@@ -571,7 +601,7 @@ export const ScannerPage: React.FC = () => {
 
             <button
               type="submit"
-              disabled={isSubmitting || !selectedPersonelId}
+              disabled={isSubmitting || !selectedPersonelId || !isStockFlowFormComplete(mutationType, flowForm)}
               className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 hover:from-cyan-400 hover:to-blue-500 text-white font-bold text-sm shadow-lg shadow-cyan-500/25 transition-all disabled:opacity-50"
             >
               {isSubmitting ? 'Memproses Transaksi...' : `Simpan Transaksi Mutasi (${mutationType})`}

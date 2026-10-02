@@ -5,7 +5,7 @@ import {
   AlertTriangle,
   Boxes,
   ArrowUpRight,
-  ShoppingCart,
+  Handshake,
   ArrowDownLeft,
   RotateCcw,
   Info,
@@ -14,7 +14,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, AreaChart, Area } from 'recharts';
-import { getTotalStockDelta, isLowStock } from '../utils/stock';
+import { getEffectiveFlow, getUsableStockDelta, isIncompleteSerahTerima, isLowStock } from '../utils/stock';
 
 export const DashboardPage: React.FC = () => {
   const { spareparts, mutations, personelList } = useInventory();
@@ -59,7 +59,7 @@ export const DashboardPage: React.FC = () => {
 
       const changeAfterMonthEnd = mutations.reduce((sum, m) => {
         const t = new Date(m.created_at).getTime();
-        return t >= monthEnd ? sum + getTotalStockDelta(m.mutation_type, m.qty) : sum;
+        return t >= monthEnd ? sum + getUsableStockDelta(m) : sum;
       }, 0);
 
       points.push({ month: label, stock: Math.max(0, totalPartsInStock - changeAfterMonthEnd) });
@@ -174,20 +174,30 @@ export const DashboardPage: React.FC = () => {
         statusColor = 'bg-amber-400';
         qtySign = `+${m.qty} (Bekas)`;
       } else if (m.mutation_type === 'Rusak') {
-        typeLabel = 'Scrapped / Rusak';
+        const asal = getEffectiveFlow(m).asal === 'baru' ? 'Baru' : 'Bekas';
+        typeLabel = `Rusak (dari ${asal})`;
         iconType = 'scrapped';
         statusColor = 'bg-rose-500';
-        qtySign = `-${m.qty} (Afkir)`;
+        qtySign = `-${m.qty} ${asal}`;
       } else if (m.mutation_type === 'Masuk') {
         typeLabel = 'Part Received';
         iconType = 'received';
         statusColor = 'bg-emerald-400';
         qtySign = `+${m.qty}`;
       } else {
-        typeLabel = m.mutation_type;
+        const flow = getEffectiveFlow(m);
         iconType = 'handover';
-        statusColor = 'bg-slate-400';
-        qtySign = `${m.qty}`;
+        statusColor = 'bg-violet-400';
+        if (isIncompleteSerahTerima(m)) {
+          typeLabel = 'Serah Terima (arah belum diisi)';
+          qtySign = `${m.qty}`;
+        } else if (flow.tujuan) {
+          typeLabel = 'Serah Terima - Diterima';
+          qtySign = `+${m.qty} ${flow.tujuan}`;
+        } else {
+          typeLabel = 'Serah Terima - Diserahkan';
+          qtySign = `-${m.qty} ${flow.asal}`;
+        }
       }
 
       return {
@@ -548,8 +558,8 @@ export const DashboardPage: React.FC = () => {
                       </div>
                     )}
                     {tx.iconType === 'handover' && (
-                      <div className="p-1 rounded-md bg-slate-500/20 text-slate-300">
-                        <ShoppingCart className="w-3.5 h-3.5" />
+                      <div className="p-1 rounded-md bg-violet-500/20 text-violet-300">
+                        <Handshake className="w-3.5 h-3.5" />
                       </div>
                     )}
                     {tx.iconType === 'returned' && (

@@ -1,7 +1,6 @@
-// 'Serah Terima' exists in the live DB check constraint (written by other tools);
-// it is displayed in history but has no effect on stock, matching the current_stock view.
+// How each type moves stock between the baru / bekas / rusak buckets: see src/utils/stock.ts
 export type MutationType = 'Masuk' | 'Pakai' | 'Bekas' | 'Rusak' | 'Serah Terima';
-export type InputMutationType = Exclude<MutationType, 'Serah Terima'>;
+export type StockBucketValue = 'baru' | 'bekas' | 'rusak';
 export type SupplierType = 'SUP API' | 'SISA PEKERJAAN' | 'IAS' | 'MANDIRI' | 'DARI UNIT LAIN' | 'VENDOR';
 export type UnitStatus = 'operasi' | 'standby' | 'gudang' | 'rusak';
 
@@ -119,6 +118,7 @@ export interface Sparepart {
   equipment_type_name?: string;
   stok_aktual: number;
   stok_bekas: number;
+  stok_rusak: number;
 }
 
 export interface StockMutation {
@@ -131,7 +131,12 @@ export interface StockMutation {
   mutation_type: MutationType;
   sumber?: SupplierType | null;
   qty: number;
+  /** Bucket that decreases (null = from outside the warehouse) */
+  stok_asal?: StockBucketValue | null;
+  /** Bucket that increases (null = leaves the warehouse) */
+  stok_tujuan?: StockBucketValue | null;
   location?: string | null;
+  /** Serah Terima: the other party (receiver when handed over, giver when received) */
   penerima?: string | null;
   unit_penerima?: string | null;
   operator_name?: string;

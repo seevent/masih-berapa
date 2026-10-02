@@ -391,7 +391,9 @@ export const CatalogPage: React.FC = () => {
                           className="h-full bg-amber-400 transition-all duration-300"
                         />
                       </div>
-                      <span className="text-[10px] text-slate-500 block mt-1">Rotable Reusable</span>
+                      <span className={`text-[10px] block mt-1 ${sp.stok_rusak > 0 ? 'text-rose-400' : 'text-slate-500'}`}>
+                        Rusak: {sp.stok_rusak} {sp.unit || 'PCS'}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -479,7 +481,7 @@ export const CatalogPage: React.FC = () => {
                           <span className="font-extrabold text-sm text-amber-400">
                             {sp.stok_bekas} {sp.unit || 'PCS'}
                           </span>
-                          <div className="text-[10px] text-slate-500">Rotable</div>
+                          <div className={`text-[10px] ${sp.stok_rusak > 0 ? 'text-rose-400' : 'text-slate-500'}`}>Rusak: {sp.stok_rusak}</div>
                         </td>
                         <td className="py-3.5 px-4 text-center whitespace-nowrap">
                           <div className="flex items-center justify-center gap-1.5">
