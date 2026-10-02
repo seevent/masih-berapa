@@ -198,7 +198,7 @@ Rumus lengkap dan contoh angka: [specs/predictive-maintenance.md bagian 4](specs
 - **BR-10** Stok rendah = stok baru ≤ stok minimum (satu definisi di seluruh aplikasi).
 - **BR-11** SKU otomatis berformat `SP-NNN`, berurutan dari angka terbesar yang ada.
 - **BR-12** Menghapus sparepart menghapus riwayat mutasinya; pengguna harus mengonfirmasi.
-- **BR-13** `Pakai` wajib mencatat unit peralatan (dasar perhitungan MTBF per unit). Untuk `Bekas` dan `Rusak` unit tetap opsional.
+- **BR-13** `Pakai` wajib mencatat unit peralatan (dasar perhitungan MTBF per unit). Untuk `Bekas` dan `Rusak` unit tetap opsional. Diberlakukan di aplikasi **dan** di database (trigger `stock_mutations_pakai_wajib_unit`, diterapkan 2 Okt 2026), sehingga penulis lain juga ditolak bila mengirim `Pakai` tanpa `unit_id`.
 
 ## 8. Kebutuhan non-fungsional
 
@@ -271,7 +271,6 @@ F-01 sampai F-09. Pada Oktober 2026 menu Pengaturan (F-10) dihapus, lalu: perbai
 | **P1** | Perluas tes `vitest` ke `utils/stock.ts`, `shiftUtils.ts`, `compatibility.ts` | K6 |
 | **P1** | Bila pengelolaan data master dibutuhkan lagi di aplikasi ini: bangun kembali dengan login (CRUD lengkap, nonaktifkan) | F-10 dihapus |
 | **P1** | Modul pengajuan pembelian (PR) dari rekomendasi order | dashboard sudah menyebut "perlu pengajuan ulang (PR)" |
-| **P1** | Guard database `Pakai` wajib unit (trigger, [migrasi siap](migrations/2026-10-02_pakai_wajib_unit.sql), menunggu persetujuan) | BR-13 juga untuk penulis lain |
 | **P1** | Catat lead time per sparepart, lalu ganti horizon 30 hari dengan lead time | F-07, 7.4 |
 | **P2** | Model Weibull untuk sparepart dengan ≥ 10 penggantian | MTBF konstan tidak menangkap "makin tua makin rawan" |
 | **P1** | Soft-delete sparepart (arsip) agar riwayat tidak hilang | BR-12 |

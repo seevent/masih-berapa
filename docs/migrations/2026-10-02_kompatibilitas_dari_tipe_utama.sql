@@ -1,14 +1,17 @@
 -- ====================================================================
 -- MIGRASI DATA: pindahkan "tipe utama" sparepart ke daftar kompatibel
 -- Tanggal : 2026-10-02
--- Status  : BELUM DITERAPKAN, menunggu persetujuan pemilik
+-- Status  : TIDAK PERLU DITERAPKAN (no-op). Pada 2026-10-02 ~15:50 pemilik menyimpan ulang SP-003 dan
+--           SP-005 lewat aplikasi, sehingga keempat sparepart sudah punya baris kompatibel yang memuat
+--           tipe utamanya (diperiksa di database). Dipertahankan sebagai catatan dan aman dijalankan
+--           bila ada sparepart baru dari penulis lain yang hanya punya id_tipe.
 --
 -- Aplikasi tidak lagi memakai kolom spareparts.id_tipe (tipe utama). Satu-satunya
 -- hubungan sparepart <-> tipe peralatan adalah tabel sparepart_compatibility.
 -- Sparepart lama yang hanya punya id_tipe dan belum pernah disimpan ulang lewat
 -- aplikasi belum punya baris kompatibel; tanpa migrasi ini ia tampil "Umum".
 --
--- TERAPKAN SEBELUM kode baru dideploy. Hanya menambah baris; tidak mengubah skema,
+-- Bila dipakai: terapkan SEBELUM kode baru dideploy. Hanya menambah baris; tidak mengubah skema,
 -- tidak menghapus apa pun, dan aman dijalankan berulang (tidak membuat duplikat).
 -- Kolom spareparts.id_tipe dibiarkan (tidak dibaca dan tidak ditulis lagi).
 --

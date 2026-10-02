@@ -1,6 +1,6 @@
 # Spesifikasi: Predictive Maintenance v2 — MTBF otomatis dari data
 
-**Status: DISETUJUI (U1–U8, 2 Oktober 2026) dan DIIMPLEMENTASIKAN (T1–T7)** · T8 (guard database) siap, belum diterapkan · 2 Oktober 2026
+**Status: DISETUJUI (U1–U8, 2 Oktober 2026) dan DIIMPLEMENTASIKAN (T1–T7)** · T8 (guard database) juga **diterapkan** · 2 Oktober 2026
 Dokumen aktif (bukan bagian dari spesifikasi lama yang historis di folder ini).
 
 > Terkait: [PRD F-07 dan F-08](../PRD.md#6-kebutuhan-fungsional) · [ARCHITECTURE 6.3–6.4](../ARCHITECTURE.md#6-logika-domain-lainnya) · [DATABASE 4.7–4.8](../DATABASE.md#4-kamus-tabel)
@@ -144,7 +144,7 @@ Hanya `Pakai` yang dihitung; Masuk, Bekas, Rusak, dan Serah Terima (termasuk sto
 - `spareparts.mtbf_days` dan `spareparts.last_replaced_at` **tidak dipakai lagi** tetapi **tidak dihapus** dulu (tanpa migrasi destruktif). Penghapusan kolom bisa jadi migrasi terpisah setelah dipastikan tidak ada aplikasi lain yang membacanya.
 - **[Usulan, disetujui]** guard database agar aturan K1 juga berlaku bagi penulis lain. Aman untuk data sekarang (0 transaksi), tetapi akan menolak `Pakai` tanpa unit dari aplikasi lain bila ada.
   - Saat diuji, bentuk `CHECK (mutation_type <> 'Pakai' OR unit_id IS NOT NULL)` ternyata **mencegah penghapusan unit** yang punya riwayat `Pakai`, karena FK `unit_id ON DELETE SET NULL` melanggar CHECK.
-  - Penggantinya adalah **trigger** yang hanya memeriksa penulisan langsung, sehingga penghapusan unit tetap berjalan: [`migrations/2026-10-02_pakai_wajib_unit.sql`](../migrations/2026-10-02_pakai_wajib_unit.sql). Belum diterapkan; menunggu konfirmasi pemilik atas perubahan bentuk ini.
+  - Penggantinya adalah **trigger** yang hanya memeriksa penulisan langsung, sehingga penghapusan unit tetap berjalan: [`migrations/2026-10-02_pakai_wajib_unit.sql`](../migrations/2026-10-02_pakai_wajib_unit.sql). Diterapkan pada 2 Okt 2026 atas persetujuan pemilik.
 
 ## 7. Tiket
 
@@ -157,7 +157,7 @@ Hanya `Pakai` yang dihitung; Masuk, Bekas, Rusak, dan Serah Terima (termasuk sto
 | T5 | Katalog: hapus isian manual, tampilkan MTBF otomatis | payload tambah/ubah sparepart tidak lagi berisi `mtbf_days`/`last_replaced_at` |
 | T6 | Kebutuhan tahunan dan header | sesuai 4.4 dan bagian 5 |
 | T7 | Dokumen: PRD (F-07, F-08, aturan 7.4–7.5), ARCHITECTURE (6.3–6.4), DATABASE (4.7), README, AGENTS; `graphify update` | tautan valid; isi sesuai kode |
-| T8 | (opsional, butuh persetujuan) guard database untuk K1 | diuji dalam transaksi yang dibatalkan, juga sebagai `anon` — **selesai diuji, belum diterapkan** |
+| T8 | (opsional, butuh persetujuan) guard database untuk K1 | diuji dalam transaksi yang dibatalkan, juga sebagai `anon` — **diterapkan 2 Okt 2026** (migrasi `pakai_wajib_unit`) |
 
 Verifikasi: `typecheck`, `build`, tes `vitest`, uji browser dengan penulisan dicegat, dan perbandingan hasil terhadap contoh di bagian 4.
 
