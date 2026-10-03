@@ -184,7 +184,7 @@ Konsep: tiga kantong (`baru`, `bekas`, `rusak`) dan `null` = luar gudang. Setiap
 | `getMutationDelta`, `getUsableStockDelta` | pengaruh satu mutasi pada tiap kantong / pada stok tersedia |
 | `computeStockBySparepart(mutasi[])` | stok semua sparepart sekaligus |
 | `findNegativeStock(stok)` | pesan galat bila ada kantong minus |
-| `describeFlow`, `isIncompleteSerahTerima` | label "Baru → Rusak"; deteksi `Serah Terima` tanpa arah |
+| `describeFlow`, `describeFlowShort`, `isIncompleteSerahTerima` | label "Baru → Rusak" (ekspor Excel); label singkat di tabel Riwayat ("Baru", "Serahkan", "Terima"); deteksi `Serah Terima` tanpa arah |
 | `usableStock(sp)`, `isLowStock(stokTersedia, minimum)` | stok tersedia = baru + bekas; rendah bila `tersedia <= minimum`. Satu definisi dipakai seluruh aplikasi; `minimum` berasal dari `autoMinimumStock` (6.3) |
 
 Komponen form: `TransactionForm` (Input Transaksi dan Scanner) menyusun nota: tipe, daftar baris (sparepart, `KondisiPicker`, jumlah, asal copotan Masuk bekas/rusak: lokasi, titik, unit, dan sumber, semuanya opsional), lokasi/titik/unit Pakai (sekali), field Serah Terima (`StockFlowFields`: arah dan pihak), petugas (`PetugasSelect`), catatan; memperingatkan bila total baris melebihi stok. Scanner memberi `incomingPart` pada setiap scan (jumlah +1 untuk sparepart yang sudah ada; QR yang sama diabaikan 3 detik). Modal edit History memakai `KondisiPicker` dan `StockFlowFields` (asal stok untuk baris lama Rusak).

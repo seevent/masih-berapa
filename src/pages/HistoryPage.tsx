@@ -21,7 +21,14 @@ import { useInventory } from '../context/InventoryContext';
 import { MutationType, StockMutation } from '../types';
 import { extractManualPetugas, stripManualPetugas, withManualPetugas } from '../utils/shiftUtils';
 import { ACTIVE_MUTATION_TYPES } from '../utils/stock';
-import { describeFlow, flowToOptions, getEffectiveFlow, isIncompleteSerahTerima, resolveStockFlow } from '../utils/stock';
+import {
+  describeFlow,
+  describeFlowShort,
+  flowToOptions,
+  getEffectiveFlow,
+  isIncompleteSerahTerima,
+  resolveStockFlow
+} from '../utils/stock';
 import {
   KondisiPicker,
   StockFlowFields,
@@ -117,6 +124,7 @@ export const HistoryPage: React.FC = () => {
     const personelName = persObj ? persObj.nama : m.operator_name || 'Teknisi';
     const penerimaStr = [m.penerima, m.unit_penerima].filter(Boolean).join(' / ');
     const flowStr = describeFlow(m);
+    const flowShortStr = describeFlowShort(m);
 
     return {
       ...m,
@@ -125,7 +133,8 @@ export const HistoryPage: React.FC = () => {
       unitStr,
       personelName,
       penerimaStr,
-      flowStr
+      flowStr,
+      flowShortStr
     };
   });
 
@@ -366,7 +375,7 @@ export const HistoryPage: React.FC = () => {
                           isIncompleteSerahTerima(m) ? 'text-amber-400 font-semibold' : 'text-slate-400'
                         }`}
                       >
-                        {m.flowStr}
+                        {m.flowShortStr}
                       </div>
                     </td>
                     <td className="py-3.5 px-4">

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   computeStockBySparepart,
   describeFlow,
+  describeFlowShort,
   findNegativeStock,
   flowToOptions,
   getEffectiveFlow,
@@ -46,6 +47,32 @@ describe('Aliran stok per transaksi', () => {
     expect(getEffectiveFlow({ mutation_type: 'Bekas' })).toEqual({ asal: null, tujuan: 'bekas' });
     expect(getEffectiveFlow({ mutation_type: 'Rusak' })).toEqual({ asal: 'bekas', tujuan: 'rusak' });
     expect(describeFlow({ mutation_type: 'Serah Terima' })).toContain('belum diisi');
+  });
+});
+
+describe('describeFlowShort', () => {
+  it('Masuk menampilkan kondisi yang diterima', () => {
+    expect(describeFlowShort({ mutation_type: 'Masuk', stok_asal: null, stok_tujuan: 'baru' })).toBe('Baru');
+    expect(describeFlowShort({ mutation_type: 'Masuk', stok_asal: null, stok_tujuan: 'bekas' })).toBe('Bekas');
+    expect(describeFlowShort({ mutation_type: 'Masuk', stok_asal: null, stok_tujuan: 'rusak' })).toBe('Rusak');
+  });
+
+  it('Pakai menampilkan stok asal', () => {
+    expect(describeFlowShort({ mutation_type: 'Pakai', stok_asal: 'baru', stok_tujuan: null })).toBe('Baru');
+    expect(describeFlowShort({ mutation_type: 'Pakai', stok_asal: 'bekas', stok_tujuan: null })).toBe('Bekas');
+  });
+
+  it('Serah Terima menampilkan arah', () => {
+    expect(describeFlowShort({ mutation_type: 'Serah Terima', stok_asal: 'rusak', stok_tujuan: null })).toBe('Serahkan');
+    expect(describeFlowShort({ mutation_type: 'Serah Terima', stok_asal: null, stok_tujuan: 'rusak' })).toBe('Terima');
+    expect(describeFlowShort({ mutation_type: 'Serah Terima' })).toContain('belum diisi');
+  });
+
+  it('baris lama tanpa stok_asal/stok_tujuan memakai default tipenya', () => {
+    expect(describeFlowShort({ mutation_type: 'Masuk' })).toBe('Baru');
+    expect(describeFlowShort({ mutation_type: 'Pakai' })).toBe('Baru');
+    expect(describeFlowShort({ mutation_type: 'Bekas' })).toBe('Bekas');
+    expect(describeFlowShort({ mutation_type: 'Rusak' })).toBe('Rusak');
   });
 });
 
