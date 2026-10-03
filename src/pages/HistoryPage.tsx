@@ -383,7 +383,9 @@ export const HistoryPage: React.FC = () => {
                       )}
                     </td>
                     <td className="py-3.5 px-4 font-semibold text-slate-300 whitespace-nowrap">
-                      {m.tipeName}
+                      {m.tipeName.split(', ').map((nama) => (
+                        <div key={nama}>{nama}</div>
+                      ))}
                     </td>
                     <td className="py-3.5 px-4 text-center font-bold text-sm text-white">
                       {m.qty}
