@@ -38,6 +38,15 @@ import {
 } from '../components/mutation/StockFlowFields';
 import { EquipmentPlacePicker } from '../components/mutation/EquipmentPlacePicker';
 import { SumberInput } from '../components/mutation/SumberInput';
+import { EvidenceGallery } from '../components/mutation/EvidenceGallery';
+import {
+  EvidenceItem,
+  EvidenceUploader,
+  evidenceHasError,
+  evidenceIsBusy,
+  evidenceItemsFromUrls,
+  evidenceUrlsOf
+} from '../components/mutation/EvidenceUploader';
 import { requiresEquipmentUnit, usesEquipmentUnit } from '../utils/compatibility';
 import {
   PlaceValue,
@@ -86,6 +95,7 @@ export const HistoryPage: React.FC = () => {
   const [editManualPetugas, setEditManualPetugas] = useState<string>('');
   const [editPlace, setEditPlace] = useState<PlaceValue>(emptyPlace);
   const [editNotes, setEditNotes] = useState<string>('');
+  const [editEvidence, setEditEvidence] = useState<EvidenceItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Delete Confirmation State
@@ -166,7 +176,8 @@ export const HistoryPage: React.FC = () => {
       'Lokasi & Titik': m.locationStr,
       'Aliran Stok': m.flowStr,
       'Pihak Serah Terima': m.penerimaStr || '-',
-      Catatan: stripManualPetugas(m.notes) || '-'
+      Catatan: stripManualPetugas(m.notes) || '-',
+      'Foto Evidence': (m.evidence_urls || []).join('\n') || '-'
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -187,6 +198,7 @@ export const HistoryPage: React.FC = () => {
     setEditPlace(placeFromMutation(m));
     setEditManualPetugas(extractManualPetugas(m.notes) || '');
     setEditNotes(stripManualPetugas(m.notes));
+    setEditEvidence(evidenceItemsFromUrls(m.evidence_urls));
   };
 
   const editPart = editingMutation ? spareparts.find((s) => s.id === editingMutation.sparepart_id) : undefined;
@@ -217,7 +229,8 @@ export const HistoryPage: React.FC = () => {
         // Types without a place field keep whatever place the row already had; Pakai takes list values only
         place: editShowsUnit ? placeToColumns(editPlace, editType !== 'Pakai') : placeColumnsOf(editingMutation),
         // The hand-written officer is only kept while no personel is chosen
-        notes: (editPersonelId ? editNotes : withManualPetugas(editNotes, editManualPetugas)) || null
+        notes: (editPersonelId ? editNotes : withManualPetugas(editNotes, editManualPetugas)) || null,
+        evidence_urls: evidenceUrlsOf(editEvidence)
       });
       // Keep the modal open when the change was rejected so the user can correct it
       if (success) setEditingMutation(null);
@@ -345,6 +358,7 @@ export const HistoryPage: React.FC = () => {
                 <th className="py-3.5 px-4 text-center">Jumlah (Qty)</th>
                 <th className="py-3.5 px-4">Personel</th>
                 <th className="py-3.5 px-4">Lokasi & Titik</th>
+                <th className="py-3.5 px-4">Evidence</th>
                 <th className="py-3.5 px-4">Catatan</th>
                 <th className="py-3.5 px-4 text-center">Aksi</th>
               </tr>
@@ -352,7 +366,7 @@ export const HistoryPage: React.FC = () => {
             <tbody className="divide-y divide-slate-800/60 text-xs">
               {filteredMutations.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="py-8 text-center text-slate-500">
+                  <td colSpan={11} className="py-8 text-center text-slate-500">
                     Belum ada riwayat mutasi yang cocok.
                   </td>
                 </tr>
@@ -410,6 +424,9 @@ export const HistoryPage: React.FC = () => {
                     <td className="py-3.5 px-4 text-cyan-300 font-medium whitespace-nowrap">
                       {m.locationStr}
                       {m.unitStr && <div className="text-[10px] text-slate-400 font-normal">Unit: {m.unitStr}</div>}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <EvidenceGallery urls={m.evidence_urls} />
                     </td>
                     <td className="py-3.5 px-4 text-slate-400 max-w-xs truncate">
                       {stripManualPetugas(m.notes) || '-'}
@@ -567,6 +584,11 @@ export const HistoryPage: React.FC = () => {
               </div>
 
               <div>
+                <label className="block text-xs font-semibold text-slate-300 mb-1">Foto Evidence</label>
+                <EvidenceUploader items={editEvidence} setItems={setEditEvidence} disabled={isSubmitting} />
+              </div>
+
+              <div>
                 <label className="block text-xs font-semibold text-slate-300 mb-1">Catatan</label>
                 <textarea
                   rows={3}
@@ -590,7 +612,13 @@ export const HistoryPage: React.FC = () => {
               <button
                 type="button"
                 onClick={handleSaveEdit}
-                disabled={isSubmitting || !isStockFlowFormComplete(editType, editFlow) || editUnitMissing}
+                disabled={
+                  isSubmitting ||
+                  !isStockFlowFormComplete(editType, editFlow) ||
+                  editUnitMissing ||
+                  evidenceIsBusy(editEvidence) ||
+                  evidenceHasError(editEvidence)
+                }
                 className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-lg shadow-cyan-600/25 disabled:opacity-50"
               >
                 <Check className="w-4 h-4" />

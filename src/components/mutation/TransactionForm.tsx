@@ -4,6 +4,7 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   Building2,
+  Camera,
   CheckCircle2,
   Clock,
   Handshake,
@@ -29,6 +30,14 @@ import {
 } from './StockFlowFields';
 import { EquipmentPlacePicker } from './EquipmentPlacePicker';
 import { SumberInput } from './SumberInput';
+import {
+  EvidenceItem,
+  EvidenceUploader,
+  evidenceHasError,
+  evidenceIsBusy,
+  evidenceUrlsOf
+} from './EvidenceUploader';
+import { isCloudinaryConfigured } from '../../lib/cloudinary';
 import { PlaceValue, emptyPlace, listOnlyPlace, placeToColumns } from '../../utils/place';
 import { PetugasSelect } from './PetugasSelect';
 
@@ -119,6 +128,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
   const [selectedPersonelId, setSelectedPersonelId] = useState('');
   const [manualPetugas, setManualPetugas] = useState('');
   const [notes, setNotes] = useState('');
+  const [evidence, setEvidence] = useState<EvidenceItem[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { personelOptions, isFallback, shiftInfo } = getActiveDutyPersonel(personelList, jadwalShiftList, unitKerjaList);
@@ -195,6 +205,9 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
   const linesIncomplete = lines.some((l) => !l.sparepart_id || !(l.qty >= 1));
   const hasBaruLine = lines.some((l) => l.kondisi === 'baru');
   const unitMissing = requiresEquipmentUnit(mutationType) && !pakaiPlace.unitId;
+  const evidenceUrls = evidenceUrlsOf(evidence);
+  const evidenceMissing = evidenceUrls.length === 0;
+  const evidencePending = evidenceIsBusy(evidence) || evidenceHasError(evidence);
   const sumberMissing = mutationType === 'Masuk' && hasBaruLine && !sumber.trim();
   const hasShortage = lines.some((l) => shortageOf(l) !== null);
   const canSubmit =
@@ -203,12 +216,16 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
     !petugasMissing &&
     !unitMissing &&
     !sumberMissing &&
+    !evidenceMissing &&
+    !evidencePending &&
+    isCloudinaryConfigured &&
     !hasShortage &&
     isStockFlowFormComplete(mutationType, flowForm);
 
   const resetAfterSave = () => {
     setLines([newLine()]);
     setNotes('');
+    setEvidence([]);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -230,7 +247,8 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
       sumber: mutationType === 'Masuk' ? sumber : undefined,
       penerima: flowForm.pihak,
       unit_penerima: flowForm.unitPihak,
-      notes: notes.trim()
+      notes: notes.trim(),
+      evidence_urls: evidenceUrls
     });
     setIsSubmitting(false);
     if (success) {
@@ -506,6 +524,17 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
           manualName={manualPetugas}
           onManualNameChange={setManualPetugas}
         />
+      </div>
+
+      {/* Evidence photos */}
+      <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 space-y-3">
+        <label className="text-xs font-extrabold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+          <Camera className="w-4 h-4 text-cyan-400" />
+          <span>
+            Foto Evidence<span className="text-amber-400"> *</span>
+          </span>
+        </label>
+        <EvidenceUploader items={evidence} setItems={setEvidence} required disabled={isSubmitting} />
       </div>
 
       {/* Notes */}

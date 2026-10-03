@@ -105,12 +105,14 @@ Tiga tipe transaksi (keputusan pemilik 2 Okt 2026; tipe **Bekas** dan **Rusak** 
 - Setiap transaksi wajib punya petugas; pilihan petugas = personel yang berdinas pada shift saat ini (bila jadwal kosong, semua personel + peringatan), diurutkan **API dulu, lalu IAS**, di dalam unit menurut nomor urut.
 - **Fallback tulis manual:** bila jadwal shift belum diunggah, daftar petugas menambahkan pilihan "Tulis nama manual…" dengan isian nama (wajib). Nama disimpan di awal catatan sebagai `[Petugas: Nama]` (tabel `stock_mutations` tidak punya kolom khusus; `personel_id` kosong), tampil sebagai petugas di History/Dashboard, dan tidak ditampilkan ganda di kolom catatan. Pilihan ini hanya muncul saat jadwal kosong dan bisa diedit dari History.
 - Ada kolom catatan.
+- **Foto evidence (wajib):** tiap transaksi memuat 1-5 foto, ditampilkan satu per satu (bukan kolase). Foto dikompres otomatis di browser lalu disimpan di Cloudinary; database hanya menyimpan URL.
 - **Kriteria:** transaksi yang membuat stok kantong mana pun minus **ditolak** dengan pesan jelas dan tidak tersimpan.
 - **Kriteria:** `Pakai` tanpa unit tidak bisa dikirim dari form dan ditolak oleh aplikasi (BR-13).
 
 ### F-03 Riwayat dan audit — ✅
 - Tabel semua transaksi (waktu, tipe + aliran stok, SKU/nama, sumber, tipe peralatan, qty, petugas, lokasi & titik, catatan). Kolom lokasi memuat tempat dipasang (Pakai, mis. "HBSCP 1.5") atau "Asal: …" (Masuk bekas/rusak) beserta unitnya.
-- Pencarian dan filter tipe; **ekspor Excel**.
+- Kolom **Evidence** menampilkan thumbnail foto (klik untuk memperbesar, panah untuk berpindah). Edit boleh menambah/menghapus foto.
+- Pencarian dan filter tipe; **ekspor Excel** (termasuk URL foto).
 - Edit per baris (tipe Masuk/Pakai/Serah Terima, **kondisi**, sumber, jumlah, petugas, **lokasi, titik, dan unit peralatan**, catatan, field Serah Terima) dan hapus dengan konfirmasi. Mengubah tipe menjadi `Pakai` wajib memilih unit. Baris lama bertipe Bekas/Rusak tetap bisa diedit dengan tipenya.
 - **Kriteria:** edit atau hapus yang membuat stok minus **ditolak**; baris `Serah Terima` tanpa arah (ditulis aplikasi lain) ditandai dan tidak mengubah stok.
 
@@ -204,6 +206,7 @@ Rumus lengkap dan contoh angka: [specs/predictive-maintenance.md bagian 4](specs
 - **BR-11** SKU otomatis berformat `SP-NNN`, berurutan dari angka terbesar yang ada.
 - **BR-12** Menghapus sparepart menghapus riwayat mutasinya; pengguna harus mengonfirmasi.
 - **BR-13** `Pakai` wajib mencatat unit peralatan (dasar perhitungan MTBF per unit). `Pakai` juga menyimpan lokasi dan titik tempat unit dipasang. Untuk `Masuk` bekas/rusak, lokasi, titik, dan unit asal copotan opsional dan boleh ditulis manual (unit manual tersimpan sebagai teks, `unit_id` kosong). Daftar lokasi/titik/unit pada Pakai dan Masuk bekas hanya menampilkan yang kompatibel dengan sparepart terpilih; memilih unit mengisi lokasi dan titiknya. Diberlakukan di aplikasi **dan** di database (trigger `stock_mutations_pakai_wajib_unit`, diterapkan 2 Okt 2026), sehingga penulis lain juga ditolak bila mengirim `Pakai` tanpa `unit_id`.
+- **BR-16** Setiap transaksi baru wajib punya 1-5 foto evidence (dikompres di browser, disimpan di Cloudinary; database hanya menyimpan URL di `evidence_urls`). Pengecualian: stok awal yang dicatat saat mendaftarkan sparepart. Baris lama tanpa foto tetap sah; edit di Riwayat tidak mewajibkan foto.
 
 ## 8. Kebutuhan non-fungsional
 
