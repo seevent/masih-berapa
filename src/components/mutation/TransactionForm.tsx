@@ -14,7 +14,7 @@ import {
   UserCheck
 } from 'lucide-react';
 import { useInventory } from '../../context/InventoryContext';
-import { MutationType, Sparepart, SupplierType } from '../../types';
+import { MutationType, Sparepart } from '../../types';
 import { ACTIVE_MUTATION_TYPES, StockBucket, resolveStockFlow } from '../../utils/stock';
 import { requiresEquipmentUnit } from '../../utils/compatibility';
 import { MANUAL_PETUGAS_ID, cleanManualPetugas, getActiveDutyPersonel } from '../../utils/shiftUtils';
@@ -28,6 +28,8 @@ import {
   stockOf
 } from './StockFlowFields';
 import { EquipmentPlacePicker } from './EquipmentPlacePicker';
+import { SumberInput } from './SumberInput';
+import { PlaceValue, emptyPlace, listOnlyPlace, placeToColumns } from '../../utils/place';
 import { PetugasSelect } from './PetugasSelect';
 
 /** One sparepart line of the form. */
@@ -36,10 +38,10 @@ interface LineState {
   sparepart_id: string;
   qty: number;
   kondisi: StockBucket;
-  /** Masuk bekas/rusak: unit the part was removed from (optional) */
-  unit_id: string;
-  /** Masuk bekas/rusak: origin of the part (optional) */
-  sumber: SupplierType | '';
+  /** Masuk bekas/rusak: where the part was removed from (optional; list or hand-typed) */
+  place: PlaceValue;
+  /** Masuk bekas/rusak: origin of the part (optional; list or hand-typed) */
+  sumber: string;
 }
 
 const newLine = (sparepartId = ''): LineState => ({
@@ -47,7 +49,7 @@ const newLine = (sparepartId = ''): LineState => ({
   sparepart_id: sparepartId,
   qty: 1,
   kondisi: 'baru',
-  unit_id: '',
+  place: emptyPlace,
   sumber: ''
 });
 
@@ -71,8 +73,6 @@ const TYPE_INFO: Record<string, { label: string; desc: string; icon: React.Eleme
     color: 'border-violet-500/40 bg-violet-500/10 text-violet-300'
   }
 };
-
-const SUMBER_OPTIONS: SupplierType[] = ['IASS', 'SUP API', 'SISA PEKERJAAN', 'MANDIRI', 'DARI UNIT LAIN', 'VENDOR'];
 
 interface TransactionFormProps {
   defaultType?: MutationType;
@@ -116,8 +116,9 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
 
   // Header
   const [flowForm, setFlowForm] = useState<StockFlowFormState>(initialStockFlowForm);
-  const [sumber, setSumber] = useState<SupplierType>('IASS');
-  const [selectedUnitId, setSelectedUnitId] = useState('');
+  const [sumber, setSumber] = useState('IASS');
+  // Pakai: where all lines are installed
+  const [pakaiPlace, setPakaiPlace] = useState<PlaceValue>(emptyPlace);
   const [selectedPersonelId, setSelectedPersonelId] = useState('');
   const [manualPetugas, setManualPetugas] = useState('');
   const [notes, setNotes] = useState('');
@@ -195,13 +196,16 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
     ? !cleanManualPetugas(manualPetugas)
     : !personelOptions.some((p) => p.id === selectedPersonelId);
   const linesIncomplete = lines.some((l) => !l.sparepart_id || !(l.qty >= 1));
-  const unitMissing = requiresEquipmentUnit(mutationType) && !selectedUnitId;
+  const hasBaruLine = lines.some((l) => l.kondisi === 'baru');
+  const unitMissing = requiresEquipmentUnit(mutationType) && !pakaiPlace.unitId;
+  const sumberMissing = mutationType === 'Masuk' && hasBaruLine && !sumber.trim();
   const hasShortage = lines.some((l) => shortageOf(l) !== null);
   const canSubmit =
     !isSubmitting &&
     !linesIncomplete &&
     !petugasMissing &&
     !unitMissing &&
+    !sumberMissing &&
     !hasShortage &&
     isStockFlowFormComplete(mutationType, flowForm);
 
@@ -220,12 +224,12 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         sparepart_id: l.sparepart_id,
         qty: l.qty,
         flow: resolveStockFlow(mutationType, { ...flowForm, kondisi: l.kondisi }),
-        unit_id: mutationType === 'Masuk' && l.kondisi !== 'baru' ? l.unit_id || null : null,
-        sumber: mutationType === 'Masuk' && l.kondisi !== 'baru' ? l.sumber || null : null
+        place: mutationType === 'Masuk' && l.kondisi !== 'baru' ? placeToColumns(l.place) : undefined,
+        sumber: mutationType === 'Masuk' && l.kondisi !== 'baru' ? l.sumber.trim() || null : null
       })),
       personel_id: isManualPetugas ? undefined : selectedPersonelId,
       petugas_manual: isManualPetugas ? manualPetugas : undefined,
-      unit_id: mutationType === 'Pakai' ? selectedUnitId : undefined,
+      place: mutationType === 'Pakai' ? listOnlyPlace(placeToColumns(pakaiPlace, false)) : undefined,
       sumber: mutationType === 'Masuk' ? sumber : undefined,
       penerima: flowForm.pihak,
       unit_penerima: flowForm.unitPihak,
@@ -238,7 +242,6 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
     }
   };
 
-  const hasBaruLine = lines.some((l) => l.kondisi === 'baru');
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -356,7 +359,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
                   <select
                     required
                     value={line.sparepart_id}
-                    onChange={(e) => updateLine(line.key, { sparepart_id: e.target.value, unit_id: '' })}
+                    onChange={(e) => updateLine(line.key, { sparepart_id: e.target.value })}
                     className="flex-1 min-w-0 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:border-cyan-500 cursor-pointer"
                   >
                     <option value="">-- Pilih sparepart ({filteredParts.length} item) --</option>
@@ -414,28 +417,17 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
                       </div>
                       <EquipmentPlacePicker
                         parts={[part]}
-                        unitId={line.unit_id}
-                        onUnitChange={(unitId) => updateLine(line.key, { unit_id: unitId })}
+                        value={line.place}
+                        onChange={(place) => updateLine(line.key, { place })}
                         required={false}
-                        unitLabel="Unit Peralatan"
+                        allowManual
                       />
                     </div>
                     <div className="max-w-xs">
                       <label className="block text-[11px] font-semibold text-slate-400 mb-1">
                         Sumber asal barang (opsional)
                       </label>
-                      <select
-                        value={line.sumber}
-                        onChange={(e) => updateLine(line.key, { sumber: e.target.value as SupplierType | '' })}
-                        className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:border-cyan-500 cursor-pointer"
-                      >
-                        <option value="">-- Tidak diisi --</option>
-                        {SUMBER_OPTIONS.map((s) => (
-                          <option key={s} value={s}>
-                            {s}
-                          </option>
-                        ))}
-                      </select>
+                      <SumberInput value={line.sumber} onChange={(v) => updateLine(line.key, { sumber: v })} optional />
                     </div>
                   </div>
                 )}
@@ -463,12 +455,14 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
           </label>
           <EquipmentPlacePicker
             parts={chosenParts}
-            unitId={selectedUnitId}
-            onUnitChange={setSelectedUnitId}
+            value={pakaiPlace}
+            onChange={setPakaiPlace}
             required
+            allowManual={false}
           />
           <p className="text-[11px] text-slate-500">
-            Semua baris dipasang di unit ini. "Unit Kompatibel" = cocok dengan semua sparepart di daftar.
+            Semua baris dipasang di unit ini. Daftar hanya menampilkan lokasi, titik, dan unit yang cocok dengan semua
+            sparepart di daftar. Lokasi dan titik ikut tersimpan.
           </p>
         </div>
       )}
@@ -477,17 +471,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
       {mutationType === 'Masuk' && hasBaruLine && (
         <div className="max-w-xs">
           <label className="block text-xs font-semibold text-slate-300 mb-1">Sumber Asal Barang Baru</label>
-          <select
-            value={sumber}
-            onChange={(e) => setSumber(e.target.value as SupplierType)}
-            className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white font-semibold focus:border-cyan-500 cursor-pointer"
-          >
-            {SUMBER_OPTIONS.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
+          <SumberInput value={sumber} onChange={setSumber} />
         </div>
       )}
 

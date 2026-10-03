@@ -29,7 +29,8 @@ interface CompatibilityInput {
 /**
  * Resolves which locations, titik and equipment units are compatible with the given spareparts
  * (intersection: a unit must fit every part), using the sparepart_compatibility rows (the only
- * sparepart ↔ tipe link) and active penempatan records.
+ * sparepart ↔ tipe link) and active penempatan records. Only compatible ones are returned: with
+ * no sparepart chosen nothing is compatible.
  */
 export const getCompatibleEquipment = ({
   parts,
@@ -68,11 +69,21 @@ export const getCompatibleEquipment = ({
   });
 
   const compatibleLokasiList = lokasiList.filter((lok) => compatLokasiIds.has(lok.id));
-  const otherLokasiList = lokasiList.filter((lok) => !compatLokasiIds.has(lok.id));
 
-  const availableTitikList = selectedLokasiId
-    ? titikLokasiList.filter((t) => t.id_lokasi === selectedLokasiId)
-    : [];
+  // Titik of the selected lokasi where a compatible tipe/unit is actually placed
+  const compatTitikIds = new Set<string>();
+  if (selectedLokasiId) {
+    penempatanList.forEach((pen) => {
+      if (!pen.is_active || pen.id_lokasi !== selectedLokasiId || !pen.id_titik) return;
+      const unitTipe = pen.id_unit ? unitPeralatanList.find((u) => u.id === pen.id_unit)?.id_tipe : undefined;
+      if (compatTypeIds.includes(pen.id_tipe || '') || (unitTipe && compatTypeIds.includes(unitTipe))) {
+        compatTitikIds.add(pen.id_titik);
+      }
+    });
+  }
+  const availableTitikList = titikLokasiList.filter(
+    (t) => t.id_lokasi === selectedLokasiId && compatTitikIds.has(t.id)
+  );
 
   const matchesSelectedPlace = (unit: UnitPeralatan) => {
     if (!selectedLokasiId) return true;
@@ -83,8 +94,6 @@ export const getCompatibleEquipment = ({
   };
 
   const availableUnits = compatUnits.filter(matchesSelectedPlace);
-  // Non-compatible units stay selectable so 'Pakai' is not blocked by incomplete compatibility data
-  const otherUnits = unitPeralatanList.filter((u) => !compatTypeIds.includes(u.id_tipe) && matchesSelectedPlace(u));
 
-  return { compatTypeIds, compatibleLokasiList, otherLokasiList, availableTitikList, availableUnits, otherUnits };
+  return { compatTypeIds, compatibleLokasiList, availableTitikList, availableUnits };
 };

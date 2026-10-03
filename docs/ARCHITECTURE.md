@@ -77,6 +77,7 @@ src/
 │   └── NotificationContext.tsx   # toast
 ├── utils/
 │   ├── stock.ts                  # aturan stok (fungsi murni)  ← sumber aturan di sisi aplikasi
+│   ├── place.ts                  # lokasi/titik/unit (daftar atau manual) ↔ kolom stock_mutations
 │   ├── compatibility.ts          # lokasi/titik/unit yang cocok; tipe mana yang memakai/mewajibkan unit
 │   ├── reliability.ts            # predictive maintenance: MTBF otomatis, status umur, titik pesan (fungsi murni)
 │   ├── reliability.test.ts       # tes vitest untuk reliability.ts
@@ -85,8 +86,9 @@ src/
 │   ├── layout/                   # AppLayout, Sidebar, HeaderStats (FloatingDock tidak dipakai)
 │   ├── mutation/TransactionForm.tsx   # form nota (banyak baris) untuk Input Transaksi dan Scanner
 │   ├── mutation/StockFlowFields.tsx   # KondisiPicker, field Serah Terima, field Rusak (baris lama)
-│   ├── mutation/EquipmentUnitSelect.tsx  # pilihan unit (kompatibel + unit lain), dipakai 3 halaman
-│   ├── mutation/EquipmentPlacePicker.tsx # Lokasi → Titik → Unit; dipakai Pakai (tempat dipasang) dan Masuk bekas/rusak (unit asal)
+│   ├── mutation/EquipmentUnitSelect.tsx  # pilihan unit kompatibel (dipakai oleh EquipmentPlacePicker)
+│   ├── mutation/EquipmentPlacePicker.tsx # Lokasi → Titik → Unit (hanya yang kompatibel; bisa ditulis manual); dipakai Pakai, Masuk bekas/rusak, dan modal edit History
+│   ├── mutation/SumberInput.tsx          # sumber asal barang: pilihan baku atau tulis manual
 │   ├── predictive/MtbfBadge.tsx  # tampilan MTBF otomatis + keyakinan
 │   └── dashboard/                # (4 komponen tidak dipakai, lihat bagian 12)
 └── pages/                        # satu file per rute
@@ -139,8 +141,8 @@ sequenceDiagram
     participant Form as Form transaksi
     participant Ctx as InventoryContext.addMutations
     participant SB as Supabase
-    Form->>Ctx: addMutations({ mutation_type, unit_id, lines: [{ sparepart_id, qty, flow, unit_id }], ... })
-    Note over Ctx: baris kosong / qty <= 0 / Pakai tanpa unit_id? toast, return false
+    Form->>Ctx: addMutations({ mutation_type, place, lines: [{ sparepart_id, qty, flow, place, sumber }], ... })
+    Note over Ctx: baris kosong / qty <= 0 / Pakai tanpa place.unit_id? toast, return false
     Ctx->>SB: baca SEMUA mutasi semua sparepart di nota (data terbaru, bukan cache)
     Ctx->>Ctx: tambahkan semua baris baru, hitung stok per sparepart per kantong (utils/stock.ts)
     alt ada kantong yang minus
@@ -152,7 +154,7 @@ sequenceDiagram
     end
 ```
 
-`updateMutation` dan `deleteMutation` memakai pola yang sama (membaca ulang, mensimulasikan hasilnya, menolak bila ada kantong minus); `updateMutation` juga menolak `Pakai` tanpa unit dan menulis `unit_id`. `addSparepart` menulis `spareparts`, menyamakan `sparepart_compatibility`, lalu mencatat stok awal sebagai mutasi `Masuk` kondisi baru dan `Masuk` kondisi bekas.
+`updateMutation` dan `deleteMutation` memakai pola yang sama (membaca ulang, mensimulasikan hasilnya, menolak bila ada kantong minus); `updateMutation` juga menolak `Pakai` tanpa unit dan menulis `unit_id`, `lokasi_id`, `titik_id` dan teks manualnya. `addSparepart` menulis `spareparts`, menyamakan `sparepart_compatibility`, lalu mencatat stok awal sebagai mutasi `Masuk` kondisi baru dan `Masuk` kondisi bekas.
 
 Semua aksi menampilkan toast dan mengembalikan `boolean`; halaman hanya menutup modal atau berpindah halaman bila hasilnya `true`.
 
@@ -185,12 +187,12 @@ Konsep: tiga kantong (`baru`, `bekas`, `rusak`) dan `null` = luar gudang. Setiap
 | `describeFlow`, `isIncompleteSerahTerima` | label "Baru → Rusak"; deteksi `Serah Terima` tanpa arah |
 | `usableStock(sp)`, `isLowStock(stokTersedia, minimum)` | stok tersedia = baru + bekas; rendah bila `tersedia <= minimum`. Satu definisi dipakai seluruh aplikasi; `minimum` berasal dari `autoMinimumStock` (6.3) |
 
-Komponen form: `TransactionForm` (Input Transaksi dan Scanner) menyusun nota: tipe, daftar baris (sparepart, `KondisiPicker`, jumlah, unit asal untuk Masuk bekas/rusak), unit Pakai (sekali), field Serah Terima (`StockFlowFields`: arah dan pihak), petugas (`PetugasSelect`), catatan; memperingatkan bila total baris melebihi stok. Scanner memberi `incomingPart` pada setiap scan (jumlah +1 untuk sparepart yang sudah ada; QR yang sama diabaikan 3 detik). Modal edit History memakai `KondisiPicker` dan `StockFlowFields` (asal stok untuk baris lama Rusak).
+Komponen form: `TransactionForm` (Input Transaksi dan Scanner) menyusun nota: tipe, daftar baris (sparepart, `KondisiPicker`, jumlah, asal copotan Masuk bekas/rusak: lokasi, titik, unit, dan sumber, semuanya opsional), lokasi/titik/unit Pakai (sekali), field Serah Terima (`StockFlowFields`: arah dan pihak), petugas (`PetugasSelect`), catatan; memperingatkan bila total baris melebihi stok. Scanner memberi `incomingPart` pada setiap scan (jumlah +1 untuk sparepart yang sudah ada; QR yang sama diabaikan 3 detik). Modal edit History memakai `KondisiPicker` dan `StockFlowFields` (asal stok untuk baris lama Rusak).
 
 ## 6. Logika domain lainnya
 
 ### 6.1 Kompatibilitas sparepart ↔ peralatan (`utils/compatibility.ts`)
-Untuk sebuah sparepart: kumpulkan semua tipe di `sparepart_compatibility` (kolom `spareparts.id_tipe` tidak lagi dibaca atau ditulis). `InventoryContext` menurunkan `tipe_ids`, `jenis_ids`, `equipment_type_name`, dan `jenis_name` dari tabel itu untuk katalog, filter, label, dan laporan; sparepart tanpa baris kompatibel tampil "Umum". Dari `penempatan_peralatan` aktif dicari **lokasi** yang memuat peralatan bertipe tersebut ("Lokasi Kompatibel" tampil di grup tersendiri), lalu titik dan unit yang bisa dipilih. Untuk **nota** berisi banyak sparepart, tipe kompatibel = **irisan** tipe semua sparepart (unit harus cocok dengan semuanya); tanpa sparepart, semua unit masuk grup lain. Dipakai unit Pakai di `TransactionForm`, unit asal Masuk bekas/rusak per baris (keduanya lewat `EquipmentPlacePicker`: lokasi dan titik hanya menyaring daftar, yang tersimpan hanya `unit_id`), dan modal edit History (hanya `EquipmentUnitSelect`). `otherUnits` berisi unit yang tidak tercatat kompatibel; `EquipmentUnitSelect` menampilkannya di grup terpisah agar `Pakai` tidak terblokir saat data kompatibilitas belum lengkap. `requiresEquipmentUnit` = hanya `Pakai`.
+Untuk sebuah sparepart: kumpulkan semua tipe di `sparepart_compatibility` (kolom `spareparts.id_tipe` tidak lagi dibaca atau ditulis). `InventoryContext` menurunkan `tipe_ids`, `jenis_ids`, `equipment_type_name`, dan `jenis_name` dari tabel itu untuk katalog, filter, label, dan laporan; sparepart tanpa baris kompatibel tampil "Umum". Dari `penempatan_peralatan` aktif dicari **lokasi** yang memuat peralatan bertipe tersebut, lalu **titik** di lokasi terpilih tempat tipe itu terpasang, dan unit yang cocok; hanya yang kompatibel yang ditampilkan (tanpa sparepart terpilih daftarnya kosong). Untuk **nota** berisi banyak sparepart, tipe kompatibel = **irisan** tipe semua sparepart (unit harus cocok dengan semuanya). `EquipmentPlacePicker` dipakai Pakai (tempat dipasang), asal copotan Masuk bekas/rusak per baris, dan modal edit History: memilih unit mengisi lokasi dan titiknya, dan pilihan yang tak lagi cocok setelah sparepart diganti dikosongkan. Yang tersimpan: `unit_id`, `lokasi_id`, `titik_id` (kolom `stock_mutations`, migrasi 2026-10-03). Pada Masuk bekas/rusak tiap isian boleh **ditulis manual** (`lokasi_manual`, `titik_manual`, `unit_manual`; lokasi manual membuat titik manual juga); Pakai tidak punya jalur manual karena MTBF butuh `unit_id`. Konversi pilihan ↔ kolom ada di `utils/place.ts` (ada tesnya). Sparepart tanpa tipe kompatibel yang terpasang tidak punya unit di daftar Pakai; atur kompatibilitasnya di Katalog. `requiresEquipmentUnit` = hanya `Pakai`.
 
 ### 6.2 Shift dan personel berdinas (`utils/shiftUtils.ts`)
 - Dua shift: **PS** (pagi/siang, 08.00–20.00) dan **M** (malam, 20.00–08.00).
