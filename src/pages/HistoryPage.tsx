@@ -84,19 +84,18 @@ export const HistoryPage: React.FC = () => {
     const tipeObj = unit ? tipePeralatan.find((t) => t.id === unit.id_tipe) : undefined;
     const tipeName = tipeObj ? tipeObj.nama : sp?.equipment_type_name || '-';
 
-    // Determine Lokasi & Titik
+    // Lokasi & Titik = tempat unit dipasang, hanya bermakna untuk transaksi Pakai
+    // Format: "HBSCP 1.5", "X-Ray Conveyor Belt 15"
     let locationStr = '-';
-    if (unit) {
-      const pen = penempatanList.find((p) => p.id_unit === unit.id && p.is_active);
+    if (m.mutation_type === 'Pakai') {
+      const pen = unit ? penempatanList.find((p) => p.id_unit === unit.id && p.is_active) : undefined;
       if (pen) {
         const lok = lokasiList.find((l) => l.id === pen.id_lokasi);
         const titik = titikLokasiList.find((t) => t.id === pen.id_titik);
-        locationStr = lok ? (titik ? `${lok.nama} (Titik ${titik.nomor})` : lok.nama) : '-';
+        if (lok) locationStr = titik ? `${lok.nama} ${titik.nomor}` : lok.nama;
+      } else if (m.location) {
+        locationStr = m.location;
       }
-    } else if (m.location) {
-      locationStr = m.location;
-    } else if (sp?.lokasi) {
-      locationStr = sp.lokasi;
     }
 
     const personelName = persObj ? persObj.nama : m.operator_name || 'Teknisi';
