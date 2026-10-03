@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS public.stock_mutations (
   location character varying,
   penerima text,                      -- Serah Terima: pihak lain
   unit_penerima text,                 -- Serah Terima: unit pihak lain
-  lokasi_id uuid,                     -- Pakai: tempat dipasang · Masuk bekas/rusak: asal copotan (migrasi 2026-10-03, belum diterapkan)
+  lokasi_id uuid,                     -- Pakai: tempat dipasang · Masuk bekas/rusak: asal copotan (migrasi 2026-10-03, sudah diterapkan)
   titik_id uuid,
   lokasi_manual text,                 -- teks manual pengganti lokasi_id/titik_id/unit_id (Masuk bekas/rusak)
   titik_manual text,

@@ -1,9 +1,15 @@
 -- ====================================================================
 -- MIGRASI: Lokasi, titik, dan isian manual pada stock_mutations
 -- Tanggal : 2026-10-03
--- Status  : BELUM DITERAPKAN. Terapkan hanya setelah pemilik menyetujui, dan
---           SEBELUM kode aplikasi yang menulis kolom ini di-deploy (INSERT dari kode baru
---           mengirim kolom-kolom di bawah; tanpa migrasi, PostgREST menolaknya).
+-- Status  : SUDAH DITERAPKAN di Supabase pada 2026-10-03 sebagai "lokasi_titik_mutasi"
+--           (versi 20261003002324) atas persetujuan pemilik, sebelum kode aplikasi yang
+--           menulis kolom ini di-deploy.
+--           Uji sebelum diterapkan (DO-block dibatalkan, sebagai anon): INSERT Pakai dengan
+--           lokasi/titik, INSERT Masuk bekas dengan teks manual, UPDATE kolom baru diterima;
+--           Pakai tanpa unit tetap ditolak trigger. Setelah uji: 7 mutasi, 14 kolom.
+--           Verifikasi setelah diterapkan: 19 kolom, 7 mutasi (tidak berubah), 0 baris terisi,
+--           FK stock_mutations_lokasi_id_fkey dan stock_mutations_titik_id_fkey ada,
+--           trigger stock_mutations_pakai_wajib_unit tetap ada.
 --
 -- Tujuan:
 --   * Pakai        : simpan lokasi dan titik tempat unit dipasang (selain unit_id yang sudah ada).
