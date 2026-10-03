@@ -157,6 +157,7 @@ CREATE TABLE IF NOT EXISTS public.stock_mutations (
   lokasi_manual text,                 -- teks manual pengganti lokasi_id/titik_id/unit_id (Masuk bekas/rusak)
   titik_manual text,
   unit_manual text,
+  evidence_urls text[],               -- URL foto evidence Cloudinary, <= 10 (migrasi 2026-10-03, sudah diterapkan)
   stok_asal character varying CHECK (stok_asal IS NULL OR stok_asal IN ('baru', 'bekas', 'rusak')),
   stok_tujuan character varying CHECK (stok_tujuan IS NULL OR stok_tujuan IN ('baru', 'bekas', 'rusak')),
   CONSTRAINT stock_mutations_aliran_stok_check CHECK (
@@ -169,6 +170,7 @@ CREATE TABLE IF NOT EXISTS public.stock_mutations (
       ELSE true
     END
   ),
+  CONSTRAINT stock_mutations_evidence_urls_check CHECK (evidence_urls IS NULL OR cardinality(evidence_urls) <= 10),
   CONSTRAINT stock_mutations_pkey PRIMARY KEY (id),
   CONSTRAINT stock_mutations_sparepart_id_fkey FOREIGN KEY (sparepart_id) REFERENCES public.spareparts(id) ON DELETE CASCADE,
   CONSTRAINT stock_mutations_unit_id_fkey FOREIGN KEY (unit_id) REFERENCES public.unit_peralatan(id) ON DELETE SET NULL,

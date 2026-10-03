@@ -77,6 +77,7 @@ src/
 │   └── NotificationContext.tsx   # toast
 ├── utils/
 │   ├── stock.ts                  # aturan stok (fungsi murni)  ← sumber aturan di sisi aplikasi
+│   ├── evidence.ts               # foto evidence: batas, ukuran kompresi, URL thumbnail Cloudinary (ada tesnya)
 │   ├── place.ts                  # lokasi/titik/unit (daftar atau manual) ↔ kolom stock_mutations
 │   ├── compatibility.ts          # lokasi/titik/unit yang cocok; tipe mana yang memakai/mewajibkan unit
 │   ├── reliability.ts            # predictive maintenance: MTBF otomatis, status umur, titik pesan (fungsi murni)
@@ -88,6 +89,8 @@ src/
 │   ├── mutation/StockFlowFields.tsx   # KondisiPicker, field Serah Terima, field Rusak (baris lama)
 │   ├── mutation/EquipmentUnitSelect.tsx  # pilihan unit kompatibel (dipakai oleh EquipmentPlacePicker)
 │   ├── mutation/EquipmentPlacePicker.tsx # Lokasi → Titik → Unit (hanya yang kompatibel; bisa ditulis manual); dipakai Pakai, Masuk bekas/rusak, dan modal edit History
+│   ├── mutation/EvidenceUploader.tsx     # unggah foto evidence: kompres di browser, unggah ke Cloudinary, ulangi bila gagal
+│   ├── mutation/EvidenceGallery.tsx      # thumbnail foto di Riwayat + tampilan besar satu per satu
 │   ├── mutation/SumberInput.tsx          # sumber asal barang: pilihan baku atau tulis manual
 │   ├── predictive/MtbfBadge.tsx  # tampilan MTBF otomatis + keyakinan
 │   └── dashboard/                # (4 komponen tidak dipakai, lihat bagian 12)
@@ -187,6 +190,8 @@ Konsep: tiga kantong (`baru`, `bekas`, `rusak`) dan `null` = luar gudang. Setiap
 | `describeFlow`, `describeFlowShort`, `isIncompleteSerahTerima` | label "Baru → Rusak" (ekspor Excel); label singkat di tabel Riwayat ("Baru", "Serahkan", "Terima"); deteksi `Serah Terima` tanpa arah |
 | `usableStock(sp)`, `isLowStock(stokTersedia, minimum)` | stok tersedia = baru + bekas; rendah bila `tersedia <= minimum`. Satu definisi dipakai seluruh aplikasi; `minimum` berasal dari `autoMinimumStock` (6.3) |
 
+**Foto evidence.** Setiap nota wajib punya 1-5 foto (`EvidenceUploader`). Alurnya: pilih foto → `compressImage` (`lib/cloudinary.ts`) memperkecil sisi terpanjang ke 1600 px dan menyandikan ulang ke JPEG (kualitas turun bertahap sampai ≤ 600 kB) → `uploadEvidence` mengunggah ke Cloudinary dengan *unsigned preset* (browser tidak memegang secret) → URL `https` disimpan di `stock_mutations.evidence_urls` (`text[]`, daftar yang sama pada setiap baris satu nota). Foto diunggah satu per satu begitu dipilih (ada status mengunggah/gagal/ulangi); tombol simpan menunggu semua selesai. Thumbnail dan tampilan besar memakai transformasi Cloudinary `q_auto,f_auto` lewat `utils/evidence.ts`. Dipilih **satu per satu, bukan kolase**: detail foto terjaga, tiap foto bisa dihapus/ditambah, dan dikompres sekali saja. Foto tidak ikut terhapus di Cloudinary saat transaksi dihapus (unggahan unsigned tidak bisa menghapus); semuanya bertag `masih-berapa`. Stok awal yang dicatat saat mendaftarkan sparepart di Katalog tidak memerlukan foto. Edit di Riwayat boleh mengubah foto tetapi tidak mewajibkannya (baris lama belum punya foto).
+
 Komponen form: `TransactionForm` (Input Transaksi dan Scanner) menyusun nota: tipe, daftar baris (sparepart, `KondisiPicker`, jumlah, asal copotan Masuk bekas/rusak: lokasi, titik, unit, dan sumber, semuanya opsional), lokasi/titik/unit Pakai (sekali), field Serah Terima (`StockFlowFields`: arah dan pihak), petugas (`PetugasSelect`), catatan; memperingatkan bila total baris melebihi stok. Scanner memberi `incomingPart` pada setiap scan (jumlah +1 untuk sparepart yang sudah ada; QR yang sama diabaikan 3 detik). Modal edit History memakai `KondisiPicker` dan `StockFlowFields` (asal stok untuk baris lama Rusak).
 
 ## 6. Logika domain lainnya
@@ -267,6 +272,7 @@ Variabel lingkungan (file `.env`, lihat `.env.example`; hanya yang berawalan `VI
 |---|---|---|
 | `VITE_SUPABASE_URL` | ya | URL project Supabase |
 | `VITE_SUPABASE_ANON_KEY` | ya | anon/publishable key |
+| `VITE_CLOUDINARY_CLOUD_NAME`, `VITE_CLOUDINARY_UPLOAD_PRESET` | ya (untuk transaksi) | Cloud name dan *unsigned upload preset* Cloudinary untuk foto evidence; keduanya publik, tanpa API secret |
 | `VITE_PUBLIC_APP_URL` | tidak | URL publik yang dienkode di QR label (bawaan `https://masih-berapa.vercel.app`) |
 
 Tanpa dua variabel pertama, aplikasi tetap terbuka tetapi menampilkan banner "Database tidak terhubung" dan data kosong.

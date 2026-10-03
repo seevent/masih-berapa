@@ -20,7 +20,7 @@ Vite **tidak** memeriksa tipe saat `dev`; galat tipe baru muncul di `typecheck`/
 ## Peta kode
 
 - `src/context/InventoryContext.tsx` — satu-satunya tempat membaca/menulis Supabase untuk data aplikasi; semua halaman memakai `useInventory()`.
-- `src/utils/stock.ts` — **aturan stok** (fungsi murni). `reliability.ts` (MTBF otomatis, status umur, titik pesan; ada tesnya), `compatibility.ts` (lokasi/titik/unit yang kompatibel, tipe yang wajib unit), `place.ts` (lokasi/titik/unit daftar atau manual ↔ kolom `stock_mutations`), `shiftUtils.ts` (shift PS/M).
+- `src/utils/stock.ts` — **aturan stok** (fungsi murni). `reliability.ts` (MTBF otomatis, status umur, titik pesan; ada tesnya), `compatibility.ts` (lokasi/titik/unit yang kompatibel, tipe yang wajib unit), `place.ts` (lokasi/titik/unit daftar atau manual ↔ kolom `stock_mutations`), `evidence.ts` (batas dan URL foto evidence; ada tesnya), `shiftUtils.ts` (shift PS/M). Foto evidence: `src/lib/cloudinary.ts` (kompres + unggah unsigned ke Cloudinary), `EvidenceUploader.tsx`, `EvidenceGallery.tsx`.
 - `src/lib/supabase.ts` — klien + `fetchAllRows` (paginasi).
 - `src/pages/*` — satu file per rute; `src/components/mutation/TransactionForm.tsx` = form nota untuk Input Transaksi dan Scanner; `StockFlowFields.tsx` (`KondisiPicker`), `EquipmentUnitSelect.tsx`, `EquipmentPlacePicker.tsx` (lokasi → titik → unit), `PetugasSelect.tsx` dipakai bersama.
 - `docs/migrations/` — migrasi SQL yang sudah/akan diterapkan.
