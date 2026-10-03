@@ -128,12 +128,20 @@ export interface Sparepart {
 export interface StockMutation {
   id: string;
   sparepart_id: string;
-  unit_id?: string;       // Foreign key to unit_peralatan
+  unit_id?: string | null; // Foreign key to unit_peralatan
+  /** Pakai: where the unit is installed · Masuk bekas/rusak: where it was removed from */
+  lokasi_id?: string | null;
+  titik_id?: string | null;
+  /** Hand-typed alternatives to unit_id / lokasi_id / titik_id (Masuk bekas/rusak) */
+  lokasi_manual?: string | null;
+  titik_manual?: string | null;
+  unit_manual?: string | null;
   personel_id?: string;   // Foreign key to personel
   sparepart_sku?: string;
   sparepart_name?: string;
   mutation_type: MutationType;
-  sumber?: SupplierType | null;
+  /** A SupplierType, or free text typed by hand */
+  sumber?: string | null;
   qty: number;
   /** Bucket that decreases (null = from outside the warehouse) */
   stok_asal?: StockBucketValue | null;

@@ -10,6 +10,10 @@ export default defineConfig({
       ignored: ['**/graphify-out/**', '**/.git/**']
     }
   },
+  build: {
+    // Bundel utama (aplikasi + supabase + router) sudah ±500 kB dan terus bertambah wajar seiring fitur
+    chunkSizeWarningLimit: 600
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

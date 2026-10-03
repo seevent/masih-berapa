@@ -14,13 +14,13 @@ import {
   Sparepart,
   StockMutation,
   SparepartCompatibility,
-  MutationType,
-  SupplierType
+  MutationType
 } from '../types';
 import { getSupabaseClient, fetchAllRows } from '../lib/supabase';
 import { computeStockBySparepart, findNegativeStock, StockFlow } from '../utils/stock';
 import { autoMinimumStock, buildPredictiveReport, demandRate, PredictiveReport, ReliabilityMutation } from '../utils/reliability';
 import { requiresEquipmentUnit } from '../utils/compatibility';
+import { emptyPlaceColumns, listOnlyPlace, PlaceColumns } from '../utils/place';
 import { extractManualPetugas, withManualPetugas } from '../utils/shiftUtils';
 import { useNotification } from './NotificationContext';
 
@@ -47,8 +47,10 @@ export interface MutationLineInput {
   qty: number;
   /** Which stock bucket decreases / increases (see resolveStockFlow) */
   flow: StockFlow;
-  /** Masuk bekas/rusak: unit the part was removed from (optional) */
-  unit_id?: string | null;
+  /** Masuk bekas/rusak: where the part was removed from (all optional; list values or hand-typed) */
+  place?: PlaceColumns;
+  /** Masuk bekas/rusak: origin of the part (optional, free text allowed); baru lines use the transaction's `sumber` */
+  sumber?: string | null;
 }
 
 /** A transaction with one or more lines; saved as one stock_mutations row per line, all or nothing. */
@@ -58,10 +60,10 @@ export interface NewTransactionInput {
   personel_id?: string;
   /** Hand-written officer name, only when no schedule/personel is available; stored as "[Petugas: ...]" in notes */
   petugas_manual?: string;
-  /** Pakai: the unit all lines are installed in (required) */
-  unit_id?: string;
-  /** Masuk: origin of the new stock (only written on lines going to stok baru) */
-  sumber?: SupplierType;
+  /** Pakai: the unit all lines are installed in (`unit_id` required) and its lokasi / titik */
+  place?: PlaceColumns;
+  /** Masuk: origin of the new stock (written on lines going to stok baru; required there, defaults to VENDOR) */
+  sumber?: string;
   /** Serah Terima: the other party and their unit */
   penerima?: string;
   unit_penerima?: string;
@@ -72,11 +74,11 @@ export interface NewTransactionInput {
 export interface MutationUpdateInput {
   mutation_type: MutationType;
   flow: StockFlow;
-  sumber?: SupplierType | null;
+  sumber?: string | null;
   qty: number;
   personel_id?: string | null;
-  /** Required for 'Pakai' */
-  unit_id: string | null;
+  /** Unit, lokasi and titik; `unit_id` required for 'Pakai' */
+  place: PlaceColumns;
   penerima?: string | null;
   unit_penerima?: string | null;
   notes?: string | null;
@@ -624,7 +626,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       lines.push({ ...line, qty, part });
     }
 
-    if (requiresEquipmentUnit(type) && !input.unit_id) {
+    if (requiresEquipmentUnit(type) && !input.place?.unit_id) {
       showToast('Unit Wajib Dipilih', 'Transaksi Pakai harus mencatat unit peralatan tempat sparepart dipasang.', 'error');
       return false;
     }
@@ -667,18 +669,22 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     const rows = lines.map((l) => ({
       id: crypto.randomUUID(),
       sparepart_id: l.part.id,
-      // Pakai: the unit the parts go into · Masuk bekas/rusak: the unit they came out of
-      unit_id:
-        type === 'Pakai'
-          ? input.unit_id || null
-          : type === 'Masuk' && l.flow.tujuan !== 'baru'
-            ? l.unit_id || null
-            : null,
+      // Pakai: the unit (and its lokasi/titik) the parts go into · Masuk bekas/rusak: where they came out of
+      ...(type === 'Pakai'
+        ? listOnlyPlace(input.place ?? emptyPlaceColumns)
+        : type === 'Masuk' && l.flow.tujuan !== 'baru'
+          ? l.place ?? emptyPlaceColumns
+          : emptyPlaceColumns),
       personel_id: input.personel_id || null,
       mutation_type: type,
       ...flowColumns(type, l.flow, input.penerima, input.unit_penerima),
-      // Sumber (asal barang) only applies to new stock coming in
-      sumber: type === 'Masuk' && l.flow.tujuan === 'baru' ? input.sumber || 'VENDOR' : null,
+      // Sumber (asal barang) only applies to Masuk: baru always has one, bekas/rusak optionally
+      sumber:
+        type !== 'Masuk'
+          ? null
+          : l.flow.tujuan === 'baru'
+            ? input.sumber?.trim() || 'VENDOR'
+            : l.sumber?.trim() || null,
       qty: l.qty,
       notes: finalNotes || null,
       created_at: now
@@ -716,7 +722,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return false;
     }
 
-    if (requiresEquipmentUnit(data.mutation_type) && !data.unit_id) {
+    if (requiresEquipmentUnit(data.mutation_type) && !data.place.unit_id) {
       showToast('Unit Wajib Dipilih', 'Transaksi Pakai harus mencatat unit peralatan tempat sparepart dipasang.', 'error');
       return false;
     }
@@ -744,10 +750,15 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .update({
         mutation_type: data.mutation_type,
         ...flowColumns(data.mutation_type, data.flow, data.penerima, data.unit_penerima),
-        sumber: data.mutation_type === 'Masuk' && data.flow.tujuan === 'baru' ? data.sumber || 'VENDOR' : null,
+        sumber:
+          data.mutation_type !== 'Masuk'
+            ? null
+            : data.flow.tujuan === 'baru'
+              ? data.sumber?.trim() || 'VENDOR'
+              : data.sumber?.trim() || null,
         qty,
         personel_id: data.personel_id || null,
-        unit_id: data.unit_id || null,
+        ...(data.mutation_type === 'Pakai' ? listOnlyPlace(data.place) : data.place),
         notes: data.notes || null
       })
       .eq('id', id);

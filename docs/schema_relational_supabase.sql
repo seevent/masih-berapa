@@ -152,6 +152,11 @@ CREATE TABLE IF NOT EXISTS public.stock_mutations (
   location character varying,
   penerima text,                      -- Serah Terima: pihak lain
   unit_penerima text,                 -- Serah Terima: unit pihak lain
+  lokasi_id uuid,                     -- Pakai: tempat dipasang · Masuk bekas/rusak: asal copotan (migrasi 2026-10-03, sudah diterapkan)
+  titik_id uuid,
+  lokasi_manual text,                 -- teks manual pengganti lokasi_id/titik_id/unit_id (Masuk bekas/rusak)
+  titik_manual text,
+  unit_manual text,
   stok_asal character varying CHECK (stok_asal IS NULL OR stok_asal IN ('baru', 'bekas', 'rusak')),
   stok_tujuan character varying CHECK (stok_tujuan IS NULL OR stok_tujuan IN ('baru', 'bekas', 'rusak')),
   CONSTRAINT stock_mutations_aliran_stok_check CHECK (
@@ -167,7 +172,9 @@ CREATE TABLE IF NOT EXISTS public.stock_mutations (
   CONSTRAINT stock_mutations_pkey PRIMARY KEY (id),
   CONSTRAINT stock_mutations_sparepart_id_fkey FOREIGN KEY (sparepart_id) REFERENCES public.spareparts(id) ON DELETE CASCADE,
   CONSTRAINT stock_mutations_unit_id_fkey FOREIGN KEY (unit_id) REFERENCES public.unit_peralatan(id) ON DELETE SET NULL,
-  CONSTRAINT stock_mutations_personel_id_fkey FOREIGN KEY (personel_id) REFERENCES public.personel(id) ON DELETE SET NULL
+  CONSTRAINT stock_mutations_personel_id_fkey FOREIGN KEY (personel_id) REFERENCES public.personel(id) ON DELETE SET NULL,
+  CONSTRAINT stock_mutations_lokasi_id_fkey FOREIGN KEY (lokasi_id) REFERENCES public.lokasi(id) ON DELETE SET NULL,
+  CONSTRAINT stock_mutations_titik_id_fkey FOREIGN KEY (titik_id) REFERENCES public.titik_lokasi(id) ON DELETE SET NULL
 );
 
 -- 11. Kompatibilitas Sparepart (sparepart <-> tipe peralatan, banyak-ke-banyak)

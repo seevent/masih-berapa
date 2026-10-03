@@ -14,9 +14,9 @@ import {
   UserCheck
 } from 'lucide-react';
 import { useInventory } from '../../context/InventoryContext';
-import { MutationType, Sparepart, SupplierType } from '../../types';
+import { MutationType, Sparepart } from '../../types';
 import { ACTIVE_MUTATION_TYPES, StockBucket, resolveStockFlow } from '../../utils/stock';
-import { getCompatibleEquipment, requiresEquipmentUnit } from '../../utils/compatibility';
+import { requiresEquipmentUnit } from '../../utils/compatibility';
 import { MANUAL_PETUGAS_ID, cleanManualPetugas, getActiveDutyPersonel } from '../../utils/shiftUtils';
 import {
   KondisiPicker,
@@ -27,7 +27,9 @@ import {
   kondisiIsSource,
   stockOf
 } from './StockFlowFields';
-import { EquipmentUnitSelect } from './EquipmentUnitSelect';
+import { EquipmentPlacePicker } from './EquipmentPlacePicker';
+import { SumberInput } from './SumberInput';
+import { PlaceValue, emptyPlace, listOnlyPlace, placeToColumns } from '../../utils/place';
 import { PetugasSelect } from './PetugasSelect';
 
 /** One sparepart line of the form. */
@@ -36,8 +38,10 @@ interface LineState {
   sparepart_id: string;
   qty: number;
   kondisi: StockBucket;
-  /** Masuk bekas/rusak: unit the part was removed from (optional) */
-  unit_id: string;
+  /** Masuk bekas/rusak: where the part was removed from (optional; list or hand-typed) */
+  place: PlaceValue;
+  /** Masuk bekas/rusak: origin of the part (optional; list or hand-typed) */
+  sumber: string;
 }
 
 const newLine = (sparepartId = ''): LineState => ({
@@ -45,7 +49,8 @@ const newLine = (sparepartId = ''): LineState => ({
   sparepart_id: sparepartId,
   qty: 1,
   kondisi: 'baru',
-  unit_id: ''
+  place: emptyPlace,
+  sumber: ''
 });
 
 const TYPE_INFO: Record<string, { label: string; desc: string; icon: React.ElementType; color: string }> = {
@@ -68,8 +73,6 @@ const TYPE_INFO: Record<string, { label: string; desc: string; icon: React.Eleme
     color: 'border-violet-500/40 bg-violet-500/10 text-violet-300'
   }
 };
-
-const SUMBER_OPTIONS: SupplierType[] = ['IASS', 'SUP API', 'SISA PEKERJAAN', 'MANDIRI', 'DARI UNIT LAIN', 'VENDOR'];
 
 interface TransactionFormProps {
   defaultType?: MutationType;
@@ -97,14 +100,9 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
     spareparts,
     jenisPeralatan,
     tipePeralatan,
-    lokasiList,
-    titikLokasiList,
-    unitPeralatanList,
-    penempatanList,
     unitKerjaList,
     personelList,
     jadwalShiftList,
-    sparepartCompatibility,
     addMutations
   } = useInventory();
 
@@ -118,10 +116,9 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
 
   // Header
   const [flowForm, setFlowForm] = useState<StockFlowFormState>(initialStockFlowForm);
-  const [sumber, setSumber] = useState<SupplierType>('IASS');
-  const [selectedLokasiId, setSelectedLokasiId] = useState('');
-  const [selectedTitikId, setSelectedTitikId] = useState('');
-  const [selectedUnitId, setSelectedUnitId] = useState('');
+  const [sumber, setSumber] = useState('IASS');
+  // Pakai: where all lines are installed
+  const [pakaiPlace, setPakaiPlace] = useState<PlaceValue>(emptyPlace);
   const [selectedPersonelId, setSelectedPersonelId] = useState('');
   const [manualPetugas, setManualPetugas] = useState('');
   const [notes, setNotes] = useState('');
@@ -174,16 +171,6 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
 
   // Pakai: one unit for all lines; "compatible" = fits every chosen part
   const chosenParts = lines.map((l) => partOf(l.sparepart_id)).filter((p): p is Sparepart => Boolean(p));
-  const equipment = getCompatibleEquipment({
-    parts: chosenParts,
-    sparepartCompatibility,
-    lokasiList,
-    titikLokasiList,
-    unitPeralatanList,
-    penempatanList,
-    selectedLokasiId,
-    selectedTitikId
-  });
 
   // Quantity taken from each (part, bucket) by all lines together, to warn before saving
   const isOutgoing = kondisiIsSource(mutationType, flowForm.arah);
@@ -209,13 +196,16 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
     ? !cleanManualPetugas(manualPetugas)
     : !personelOptions.some((p) => p.id === selectedPersonelId);
   const linesIncomplete = lines.some((l) => !l.sparepart_id || !(l.qty >= 1));
-  const unitMissing = requiresEquipmentUnit(mutationType) && !selectedUnitId;
+  const hasBaruLine = lines.some((l) => l.kondisi === 'baru');
+  const unitMissing = requiresEquipmentUnit(mutationType) && !pakaiPlace.unitId;
+  const sumberMissing = mutationType === 'Masuk' && hasBaruLine && !sumber.trim();
   const hasShortage = lines.some((l) => shortageOf(l) !== null);
   const canSubmit =
     !isSubmitting &&
     !linesIncomplete &&
     !petugasMissing &&
     !unitMissing &&
+    !sumberMissing &&
     !hasShortage &&
     isStockFlowFormComplete(mutationType, flowForm);
 
@@ -234,11 +224,12 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
         sparepart_id: l.sparepart_id,
         qty: l.qty,
         flow: resolveStockFlow(mutationType, { ...flowForm, kondisi: l.kondisi }),
-        unit_id: mutationType === 'Masuk' && l.kondisi !== 'baru' ? l.unit_id || null : null
+        place: mutationType === 'Masuk' && l.kondisi !== 'baru' ? placeToColumns(l.place) : undefined,
+        sumber: mutationType === 'Masuk' && l.kondisi !== 'baru' ? l.sumber.trim() || null : null
       })),
       personel_id: isManualPetugas ? undefined : selectedPersonelId,
       petugas_manual: isManualPetugas ? manualPetugas : undefined,
-      unit_id: mutationType === 'Pakai' ? selectedUnitId : undefined,
+      place: mutationType === 'Pakai' ? listOnlyPlace(placeToColumns(pakaiPlace, false)) : undefined,
       sumber: mutationType === 'Masuk' ? sumber : undefined,
       penerima: flowForm.pihak,
       unit_penerima: flowForm.unitPihak,
@@ -251,7 +242,6 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
     }
   };
 
-  const hasBaruLine = lines.some((l) => l.kondisi === 'baru');
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -357,19 +347,8 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
             // Keep the chosen part selectable even when the filter hides it
             const options = part && !filteredParts.includes(part) ? [part, ...filteredParts] : filteredParts;
             const shortage = shortageOf(line);
-            const lineEquipment =
-              mutationType === 'Masuk' && line.kondisi !== 'baru' && part
-                ? getCompatibleEquipment({
-                    parts: [part],
-                    sparepartCompatibility,
-                    lokasiList,
-                    titikLokasiList,
-                    unitPeralatanList,
-                    penempatanList,
-                    selectedLokasiId: '',
-                    selectedTitikId: ''
-                  })
-                : null;
+            // Masuk bekas/rusak: optional origin (unit it was removed from, and where it came from)
+            const showsOrigin = mutationType === 'Masuk' && line.kondisi !== 'baru';
             return (
               <div
                 key={line.key}
@@ -380,7 +359,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
                   <select
                     required
                     value={line.sparepart_id}
-                    onChange={(e) => updateLine(line.key, { sparepart_id: e.target.value, unit_id: '' })}
+                    onChange={(e) => updateLine(line.key, { sparepart_id: e.target.value })}
                     className="flex-1 min-w-0 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white focus:border-cyan-500 cursor-pointer"
                   >
                     <option value="">-- Pilih sparepart ({filteredParts.length} item) --</option>
@@ -430,19 +409,26 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
                   </p>
                 )}
 
-                {lineEquipment && (
-                  <div className="pl-7">
-                    <label className="block text-[11px] font-semibold text-slate-400 mb-1">
-                      Dicopot dari unit (opsional)
-                    </label>
-                    <EquipmentUnitSelect
-                      value={line.unit_id}
-                      onChange={(unitId) => updateLine(line.key, { unit_id: unitId })}
-                      compatibleUnits={lineEquipment.availableUnits}
-                      otherUnits={lineEquipment.otherUnits}
-                      tipePeralatan={tipePeralatan}
-                      required={false}
-                    />
+                {showsOrigin && (
+                  <div className="pl-7 space-y-3">
+                    <div>
+                      <div className="text-[11px] font-semibold text-slate-400 mb-1">
+                        Unit peralatan asal (opsional)
+                      </div>
+                      <EquipmentPlacePicker
+                        parts={[part]}
+                        value={line.place}
+                        onChange={(place) => updateLine(line.key, { place })}
+                        required={false}
+                        allowManual
+                      />
+                    </div>
+                    <div className="max-w-xs">
+                      <label className="block text-[11px] font-semibold text-slate-400 mb-1">
+                        Sumber asal barang (opsional)
+                      </label>
+                      <SumberInput value={line.sumber} onChange={(v) => updateLine(line.key, { sumber: v })} optional />
+                    </div>
                   </div>
                 )}
               </div>
@@ -467,72 +453,16 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
             <Building2 className="w-4 h-4 text-cyan-400" />
             <span>3. Unit Peralatan Tempat Dipasang</span>
           </label>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-            <div>
-              <label className="block font-semibold text-slate-300 mb-1">Lokasi Area</label>
-              <select
-                value={selectedLokasiId}
-                onChange={(e) => {
-                  setSelectedLokasiId(e.target.value);
-                  setSelectedTitikId('');
-                  setSelectedUnitId('');
-                }}
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white cursor-pointer"
-              >
-                <option value="">-- Semua Lokasi --</option>
-                {equipment.compatibleLokasiList.length > 0 && (
-                  <optgroup label="Lokasi Kompatibel">
-                    {equipment.compatibleLokasiList.map((lok) => (
-                      <option key={lok.id} value={lok.id}>
-                        {lok.nama}
-                      </option>
-                    ))}
-                  </optgroup>
-                )}
-                <optgroup label="Lokasi Lain">
-                  {equipment.otherLokasiList.map((lok) => (
-                    <option key={lok.id} value={lok.id}>
-                      {lok.nama}
-                    </option>
-                  ))}
-                </optgroup>
-              </select>
-            </div>
-            <div>
-              <label className="block font-semibold text-slate-300 mb-1">Titik Lokasi</label>
-              <select
-                value={selectedTitikId}
-                onChange={(e) => {
-                  setSelectedTitikId(e.target.value);
-                  setSelectedUnitId('');
-                }}
-                disabled={!selectedLokasiId}
-                className="w-full bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-white cursor-pointer disabled:opacity-50"
-              >
-                <option value="">-- Semua Titik --</option>
-                {equipment.availableTitikList.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    Titik {t.nomor}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <label className="block font-semibold text-slate-300 mb-1">
-                Unit Peralatan<span className="text-amber-400"> *</span>
-              </label>
-              <EquipmentUnitSelect
-                value={selectedUnitId}
-                onChange={setSelectedUnitId}
-                compatibleUnits={equipment.availableUnits}
-                otherUnits={equipment.otherUnits}
-                tipePeralatan={tipePeralatan}
-                required
-              />
-            </div>
-          </div>
+          <EquipmentPlacePicker
+            parts={chosenParts}
+            value={pakaiPlace}
+            onChange={setPakaiPlace}
+            required
+            allowManual={false}
+          />
           <p className="text-[11px] text-slate-500">
-            Semua baris dipasang di unit ini. "Unit Kompatibel" = cocok dengan semua sparepart di daftar.
+            Semua baris dipasang di unit ini. Daftar hanya menampilkan lokasi, titik, dan unit yang cocok dengan semua
+            sparepart di daftar. Lokasi dan titik ikut tersimpan.
           </p>
         </div>
       )}
@@ -541,17 +471,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
       {mutationType === 'Masuk' && hasBaruLine && (
         <div className="max-w-xs">
           <label className="block text-xs font-semibold text-slate-300 mb-1">Sumber Asal Barang Baru</label>
-          <select
-            value={sumber}
-            onChange={(e) => setSumber(e.target.value as SupplierType)}
-            className="w-full bg-slate-950 border border-slate-700 rounded-xl px-3.5 py-2.5 text-xs text-white font-semibold focus:border-cyan-500 cursor-pointer"
-          >
-            {SUMBER_OPTIONS.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
+          <SumberInput value={sumber} onChange={setSumber} />
         </div>
       )}
 
