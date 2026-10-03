@@ -80,8 +80,6 @@ interface TransactionFormProps {
   incomingPart?: { id: string; nonce: number } | null;
   /** Show the search / jenis / tipe filter above the lines */
   showPartFilters?: boolean;
-  /** Notes used when the user leaves the field empty */
-  fallbackNotes?: (type: MutationType) => string;
   onSaved?: () => void;
 }
 
@@ -93,7 +91,6 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
   defaultType = 'Masuk',
   incomingPart,
   showPartFilters = true,
-  fallbackNotes,
   onSaved
 }) => {
   const {
@@ -233,7 +230,7 @@ export const TransactionForm: React.FC<TransactionFormProps> = ({
       sumber: mutationType === 'Masuk' ? sumber : undefined,
       penerima: flowForm.pihak,
       unit_penerima: flowForm.unitPihak,
-      notes: notes.trim() || fallbackNotes?.(mutationType) || ''
+      notes: notes.trim()
     });
     setIsSubmitting(false);
     if (success) {
