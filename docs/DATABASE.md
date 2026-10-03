@@ -246,7 +246,7 @@ Log semua pergerakan stok. **Sumber kebenaran stok.**
 | `sumber` | varchar | ya | `'VENDOR'` | asal barang (hanya bermakna untuk `Masuk`; untuk bekas/rusak boleh NULL): `IASS`, `SUP API`, `SISA PEKERJAAN`, `MANDIRI`, `DARI UNIT LAIN`, `VENDOR`, atau **teks bebas** yang ditulis manual di aplikasi. **Tidak ada CHECK** dan tanpa batas panjang |
 | `lokasi_id`, `titik_id` | uuid | ya | | **Diterapkan 3 Okt 2026.** FK → `lokasi`, `titik_lokasi` (SET NULL): tempat unit dipasang (`Pakai`) atau asal copotan (`Masuk` bekas/rusak), dipilih dari daftar |
 | `lokasi_manual`, `titik_manual`, `unit_manual` | text | ya | | **Diterapkan 3 Okt 2026.** Pengganti `lokasi_id`/`titik_id`/`unit_id` bila ditulis manual (hanya `Masuk` bekas/rusak; `Pakai` wajib `unit_id`). Aplikasi mengisi salah satu dari id atau teks, tidak keduanya |
-| `evidence_urls` | text[] | ya | | **Migrasi 2026-10-03 (belum diterapkan).** URL foto evidence Cloudinary (1-5 oleh aplikasi, CHECK ≤ 10); daftar yang sama pada setiap baris satu nota. NULL untuk baris lama dan stok awal |
+| `evidence_urls` | text[] | ya | | **Diterapkan 3 Okt 2026.** URL foto evidence Cloudinary (1-5 oleh aplikasi, CHECK ≤ 10); daftar yang sama pada setiap baris satu nota. NULL untuk baris lama dan stok awal |
 | `location` | varchar | ya | | lokasi teks bebas; tidak ditulis aplikasi ini, tetapi ditampilkan bila ada |
 | `penerima`, `unit_penerima` | text | ya | | pihak lain pada `Serah Terima` |
 | `stok_asal`, `stok_tujuan` | varchar | ya | | kantong stok; CHECK `baru`/`bekas`/`rusak` atau NULL |
@@ -317,7 +317,7 @@ Tabel `supabase_migrations.schema_migrations` mencatat:
 | 20261002185618 | `transaksi_tiga_tipe` | constraint aliran stok: Masuk ke baru/bekas/rusak, Pakai dari baru/bekas |
 | 20261003002324 | `lokasi_titik_mutasi` | kolom `lokasi_id`, `titik_id`, `lokasi_manual`, `titik_manual`, `unit_manual` pada `stock_mutations` ([migrasi](migrations/2026-10-03_lokasi_titik_mutasi.sql)). Diuji dulu dalam DO-block yang dibatalkan (sebagai `anon`: INSERT Pakai dengan lokasi/titik, INSERT Masuk bekas dengan teks manual, Pakai tanpa unit tetap ditolak trigger). Setelah diterapkan: 19 kolom, 7 mutasi tidak berubah, 0 baris terisi |
 
-| *(belum diterapkan)* | `evidence_foto` | kolom `evidence_urls text[]` + CHECK ≤ 10 elemen pada `stock_mutations` ([migrasi](migrations/2026-10-03_evidence_foto.sql)). Diuji dalam DO-block yang dibatalkan sebagai `anon` (insert Masuk 2 foto dan Pakai 1 foto, update, 11 foto ditolak, Pakai tanpa unit tetap ditolak); setelah uji 8 mutasi dan 19 kolom, tidak berubah |
+| 20261003045155 | `evidence_foto` | kolom `evidence_urls text[]` + CHECK ≤ 10 elemen pada `stock_mutations` ([migrasi](migrations/2026-10-03_evidence_foto.sql)). Diuji dalam DO-block yang dibatalkan sebagai `anon` (insert Masuk 2 foto dan Pakai 1 foto, update, 11 foto ditolak, Pakai tanpa unit tetap ditolak); setelah uji 8 mutasi dan 19 kolom, tidak berubah. Setelah diterapkan: 20 kolom, 0 baris dengan evidence |
 
 Perubahan skema sebelum 23 Juli 2026 dibuat lewat dashboard dan tidak tercatat di tabel ini. Salinan kedua migrasi Oktober ada di [`docs/migrations/`](migrations/) beserta perintah rollback.
 

@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS public.stock_mutations (
   lokasi_manual text,                 -- teks manual pengganti lokasi_id/titik_id/unit_id (Masuk bekas/rusak)
   titik_manual text,
   unit_manual text,
-  evidence_urls text[],               -- URL foto evidence Cloudinary, <= 10 (migrasi 2026-10-03, belum diterapkan)
+  evidence_urls text[],               -- URL foto evidence Cloudinary, <= 10 (migrasi 2026-10-03, sudah diterapkan)
   stok_asal character varying CHECK (stok_asal IS NULL OR stok_asal IN ('baru', 'bekas', 'rusak')),
   stok_tujuan character varying CHECK (stok_tujuan IS NULL OR stok_tujuan IN ('baru', 'bekas', 'rusak')),
   CONSTRAINT stock_mutations_aliran_stok_check CHECK (

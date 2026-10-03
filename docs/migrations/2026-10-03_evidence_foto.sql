@@ -1,9 +1,13 @@
 -- ====================================================================
 -- MIGRASI: Foto evidence pada transaksi (stock_mutations.evidence_urls)
 -- Tanggal : 2026-10-03
--- Status  : BELUM DITERAPKAN. Terapkan hanya setelah pemilik menyetujui, dan SEBELUM kode
---           aplikasi yang menulis kolom ini di-deploy (INSERT dari kode baru mengirim
---           evidence_urls; tanpa migrasi, PostgREST menolaknya).
+-- Status  : SUDAH DITERAPKAN di Supabase pada 2026-10-03 sebagai "evidence_foto"
+--           (versi 20261003045155) atas persetujuan pemilik, sebelum kode aplikasi yang
+--           menulis kolom ini di-deploy.
+--           Uji sebelum diterapkan (DO-block dibatalkan, sebagai anon): insert Masuk 2 foto dan
+--           Pakai 1 foto, update, 11 foto ditolak (23514), Pakai tanpa unit tetap ditolak.
+--           Verifikasi setelah diterapkan: 20 kolom, kolom text[], CHECK ada, 8 mutasi
+--           (tidak berubah), 0 baris dengan evidence, trigger stock_mutations_pakai_wajib_unit utuh.
 --
 -- Tujuan: tiap transaksi menyimpan 1-5 foto evidence. Foto dikompres di browser lalu diunggah
 -- ke Cloudinary (unsigned preset); database hanya menyimpan URL-nya.
