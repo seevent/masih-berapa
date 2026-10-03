@@ -3,6 +3,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Printer, Download, QrCode, Layers, MapPin, Boxes, Check, LayoutGrid, FileText } from 'lucide-react';
 import { useInventory } from '../context/InventoryContext';
 import { useNotification } from '../context/NotificationContext';
+import { getEffectiveFlow } from '../utils/stock';
 
 export interface LabelPreset {
   id: string;
@@ -94,7 +95,7 @@ export const PrintLabelPage: React.FC = () => {
   const selectedPart = spareparts.find((p) => p.id === selectedPartId) || spareparts[0];
   const activePreset = LABEL_PRESETS.find((p) => p.id === selectedPresetId) || LABEL_PRESETS[0];
   // mutations are sorted newest first, so this is the source of the most recent incoming stock
-  const latestSumber = mutations.find((m) => m.sparepart_id === selectedPart?.id && m.mutation_type === 'Masuk' && m.sumber)?.sumber || '-';
+  const latestSumber = mutations.find((m) => m.sparepart_id === selectedPart?.id && m.mutation_type === 'Masuk' && m.sumber && getEffectiveFlow(m).tujuan === 'baru')?.sumber || '-';
 
   // Thermal printers print from a roll, so a sheet layout only exists for Tom & Jerry presets
   const supportsSheet = activePreset.category === 'tom_jerry';

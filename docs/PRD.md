@@ -95,7 +95,7 @@ Tiga tipe transaksi (keputusan pemilik 2 Okt 2026; tipe **Bekas** dan **Rusak** 
 
 | Tipe | Kegunaan | Isian sekali per transaksi | Isian per baris |
 |---|---|---|---|
-| Masuk | barang masuk gudang: baru, copotan layak pakai (bekas), atau copotan rusak | sumber (untuk baris baru): IASS, SUP API, SISA PEKERJAAN, MANDIRI, DARI UNIT LAIN, VENDOR | sparepart, jumlah, kondisi **baru / bekas / rusak**, unit asal copotan (opsional, untuk bekas/rusak) |
+| Masuk | barang masuk gudang: baru, copotan layak pakai (bekas), atau copotan rusak | sumber (wajib untuk baris baru, opsional untuk bekas/rusak): IASS, SUP API, SISA PEKERJAAN, MANDIRI, DARI UNIT LAIN, VENDOR, atau **ditulis manual** | sparepart, jumlah, kondisi **baru / bekas / rusak**, asal copotan untuk bekas/rusak (opsional): **lokasi → titik → unit**, dari daftar atau ditulis manual |
 | Pakai | memasang barang ke peralatan | **satu unit peralatan wajib** untuk semua baris (lokasi/titik sebagai filter; "unit kompatibel" = cocok dengan semua sparepart di nota) | sparepart, jumlah, ambil dari **baru / bekas** |
 | Serah Terima | menyerahkan atau menerima barang ke/dari pihak lain | **arah** (serahkan/terima), **pihak** (wajib), unit pihak | sparepart, jumlah, kondisi **baru / bekas / rusak** |
 
@@ -109,9 +109,9 @@ Tiga tipe transaksi (keputusan pemilik 2 Okt 2026; tipe **Bekas** dan **Rusak** 
 - **Kriteria:** `Pakai` tanpa unit tidak bisa dikirim dari form dan ditolak oleh aplikasi (BR-13).
 
 ### F-03 Riwayat dan audit — ✅
-- Tabel semua transaksi (waktu, tipe + aliran stok, SKU/nama, sumber, tipe peralatan, qty, petugas, lokasi, catatan).
+- Tabel semua transaksi (waktu, tipe + aliran stok, SKU/nama, sumber, tipe peralatan, qty, petugas, lokasi & titik, catatan). Kolom lokasi memuat tempat dipasang (Pakai, mis. "HBSCP 1.5") atau "Asal: …" (Masuk bekas/rusak) beserta unitnya.
 - Pencarian dan filter tipe; **ekspor Excel**.
-- Edit per baris (tipe Masuk/Pakai/Serah Terima, **kondisi**, sumber, jumlah, petugas, **unit peralatan**, catatan, field Serah Terima) dan hapus dengan konfirmasi. Mengubah tipe menjadi `Pakai` wajib memilih unit. Baris lama bertipe Bekas/Rusak tetap bisa diedit dengan tipenya.
+- Edit per baris (tipe Masuk/Pakai/Serah Terima, **kondisi**, sumber, jumlah, petugas, **lokasi, titik, dan unit peralatan**, catatan, field Serah Terima) dan hapus dengan konfirmasi. Mengubah tipe menjadi `Pakai` wajib memilih unit. Baris lama bertipe Bekas/Rusak tetap bisa diedit dengan tipenya.
 - **Kriteria:** edit atau hapus yang membuat stok minus **ditolak**; baris `Serah Terima` tanpa arah (ditulis aplikasi lain) ditandai dan tidak mengubah stok.
 
 ### F-04 Scanner QR — ✅
@@ -175,7 +175,7 @@ Tipe lama tidak lagi ada di form, tetapi baris lama (atau dari aplikasi lain) te
 
 - **BR-2** Stok di kantong mana pun tidak boleh minus.
 - **BR-3** Jumlah transaksi bilangan bulat > 0.
-- **BR-4** `sumber` hanya berlaku untuk `Masuk` kondisi baru.
+- **BR-4** `sumber` hanya berlaku untuk `Masuk`: wajib untuk kondisi baru (bawaan `VENDOR`), opsional untuk bekas/rusak (dipilih per baris, boleh kosong). Selain pilihan baku, sumber boleh ditulis manual (teks bebas).
 - **BR-5** `Serah Terima` wajib mencatat pihak lain.
 - **BR-6** Aturan ini harus identik di aplikasi dan di database (`current_stock`); lihat [DATABASE.md 3.3](DATABASE.md#33-dua-implementasi-yang-harus-selalu-sama).
 
@@ -203,7 +203,7 @@ Rumus lengkap dan contoh angka: [specs/predictive-maintenance.md bagian 4](specs
 - **BR-10** Stok rendah = **stok tersedia (baru + bekas)** ≤ stok minimum (satu definisi di seluruh aplikasi); stok minimum dihitung otomatis (BR-15). Bekas ikut dihitung karena `Pakai` bisa mengambil stok bekas.
 - **BR-11** SKU otomatis berformat `SP-NNN`, berurutan dari angka terbesar yang ada.
 - **BR-12** Menghapus sparepart menghapus riwayat mutasinya; pengguna harus mengonfirmasi.
-- **BR-13** `Pakai` wajib mencatat unit peralatan (dasar perhitungan MTBF per unit). Untuk `Masuk` bekas/rusak unit asal copotan opsional. Diberlakukan di aplikasi **dan** di database (trigger `stock_mutations_pakai_wajib_unit`, diterapkan 2 Okt 2026), sehingga penulis lain juga ditolak bila mengirim `Pakai` tanpa `unit_id`.
+- **BR-13** `Pakai` wajib mencatat unit peralatan (dasar perhitungan MTBF per unit). `Pakai` juga menyimpan lokasi dan titik tempat unit dipasang. Untuk `Masuk` bekas/rusak, lokasi, titik, dan unit asal copotan opsional dan boleh ditulis manual (unit manual tersimpan sebagai teks, `unit_id` kosong). Daftar lokasi/titik/unit pada Pakai dan Masuk bekas hanya menampilkan yang kompatibel dengan sparepart terpilih; memilih unit mengisi lokasi dan titiknya. Diberlakukan di aplikasi **dan** di database (trigger `stock_mutations_pakai_wajib_unit`, diterapkan 2 Okt 2026), sehingga penulis lain juga ditolak bila mengirim `Pakai` tanpa `unit_id`.
 
 ## 8. Kebutuhan non-fungsional
 
