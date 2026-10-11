@@ -21,6 +21,7 @@ import { computeStockBySparepart, findNegativeStock, StockFlow } from '../utils/
 import { autoMinimumStock, buildPredictiveReport, demandRate, PredictiveReport, ReliabilityMutation } from '../utils/reliability';
 import { requiresEquipmentUnit } from '../utils/compatibility';
 import { emptyPlaceColumns, listOnlyPlace, PlaceColumns } from '../utils/place';
+import { MAX_EVIDENCE, cleanEvidenceUrls } from '../utils/evidence';
 import { extractManualPetugas, withManualPetugas } from '../utils/shiftUtils';
 import { useNotification } from './NotificationContext';
 
@@ -69,6 +70,8 @@ export interface NewTransactionInput {
   unit_penerima?: string;
   reference_no?: string;
   notes?: string;
+  /** Photo evidence (Cloudinary URLs): at least one is required for a new transaction */
+  evidence_urls: string[];
 }
 
 export interface MutationUpdateInput {
@@ -82,6 +85,8 @@ export interface MutationUpdateInput {
   penerima?: string | null;
   unit_penerima?: string | null;
   notes?: string | null;
+  /** Photo evidence (Cloudinary URLs); optional when editing old rows */
+  evidence_urls?: string[];
 }
 
 interface InventoryContextType {
@@ -626,6 +631,16 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       lines.push({ ...line, qty, part });
     }
 
+    const evidence = cleanEvidenceUrls(input.evidence_urls);
+    if (evidence.length === 0) {
+      showToast('Foto Evidence Wajib', 'Tambahkan minimal 1 foto evidence untuk transaksi ini.', 'error');
+      return false;
+    }
+    if (input.evidence_urls.length > MAX_EVIDENCE) {
+      showToast('Terlalu Banyak Foto', `Maksimal ${MAX_EVIDENCE} foto evidence per transaksi.`, 'error');
+      return false;
+    }
+
     if (requiresEquipmentUnit(type) && !input.place?.unit_id) {
       showToast('Unit Wajib Dipilih', 'Transaksi Pakai harus mencatat unit peralatan tempat sparepart dipasang.', 'error');
       return false;
@@ -687,6 +702,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
             : l.sumber?.trim() || null,
       qty: l.qty,
       notes: finalNotes || null,
+      evidence_urls: evidence,
       created_at: now
     }));
 
@@ -758,6 +774,7 @@ export const InventoryProvider: React.FC<{ children: React.ReactNode }> = ({ chi
               : data.sumber?.trim() || null,
         qty,
         personel_id: data.personel_id || null,
+        evidence_urls: cleanEvidenceUrls(data.evidence_urls).length ? cleanEvidenceUrls(data.evidence_urls) : null,
         ...(data.mutation_type === 'Pakai' ? listOnlyPlace(data.place) : data.place),
         notes: data.notes || null
       })

@@ -153,6 +153,8 @@ export interface StockMutation {
   unit_penerima?: string | null;
   operator_name?: string;
   notes?: string | null;
+  /** Cloudinary URLs of the evidence photos (the same list on every row of one nota) */
+  evidence_urls?: string[] | null;
   created_at: string;
 }
 

@@ -59,6 +59,7 @@ npm run dev               # http://localhost:5173
 |---|---|---|
 | `VITE_SUPABASE_URL` | ya | URL project Supabase |
 | `VITE_SUPABASE_ANON_KEY` | ya | anon / publishable key |
+| `VITE_CLOUDINARY_CLOUD_NAME`, `VITE_CLOUDINARY_UPLOAD_PRESET` | ya, untuk menyimpan transaksi | Cloud name dan nama *unsigned upload preset* Cloudinary untuk foto evidence. Tanpa keduanya form menolak mengunggah foto, dan foto wajib untuk setiap transaksi baru |
 | `VITE_PUBLIC_APP_URL` | tidak | URL yang dienkode di QR label; bawaan `https://masih-berapa.vercel.app`. Atur **sebelum** mencetak label bila domain berbeda |
 
 Tanpa dua variabel pertama aplikasi tetap terbuka tetapi menampilkan "Database tidak terhubung". Di Vercel, isi variabel untuk lingkungan **Production dan Preview**.
